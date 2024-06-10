@@ -1,0 +1,17 @@
+.carousel {
+  padding: 2rem 3rem;
+  background-color: #fff;
+    border-radius: 2rem;
+  .active {
+    border: none;
+  }
+  .carousel-indicators {
+    display: none;
+  }
+  .carousel-control-prev {
+    left: -2.2rem;
+  }
+  .carousel-control-next {
+    right: -2.2rem;
+  }
+}

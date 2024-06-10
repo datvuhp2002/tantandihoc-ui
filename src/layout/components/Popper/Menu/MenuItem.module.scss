@@ -1,0 +1,9 @@
+.wrapper {
+  display: flex;
+  .item {
+    color: var(--text-light-color);
+    &:hover {
+      color: var(--text-hover);
+    }
+  }
+}

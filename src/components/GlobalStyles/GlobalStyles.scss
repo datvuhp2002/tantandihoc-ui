@@ -1,0 +1,62 @@
+@import "normalize.css";
+@import url("https://fonts.googleapis.com/css2?family=Blinker:wght@100;200;300;400;600;700;800;900&family=Oswald:wght@200;300;400;500;600;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&display=swap");
+:root {
+  --white: #fff;
+  --text-color: #404040;
+  --orange: orange;
+  --dark: #000;
+  --grey-background: #f8f6f8;
+  --grey: #bebebe;
+  --color-card-background: #f3f3f3;
+  --purple-light: #574ee5;
+  --purple-dark: #3026ca;
+  --modal-width: 40rem;
+  --header-image-size: 8rem;
+  --header-height: 7rem;
+  --profile-image-size: 39rem;
+  --active-background-color: #e8ebed;
+  --active-color: #1a1a1a;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: var(--text-color);
+}
+h1 {
+  font-weight: 800;
+}
+h5 {
+  margin: 0;
+  font-size: 100%;
+}
+a {
+  text-decoration: none;
+}
+ul {
+  padding: 0rem;
+}
+li {
+  list-style-type: none;
+}
+input {
+  padding: 0px;
+  outline: none;
+}
+html {
+  font-size: 62.5%;
+}
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 1.6rem;
+  text-rendering: optimizeSpeed;
+  overflow-x: hidden;
+}
+.text-opacity {
+  opacity: 0.6;
+}
+.active {
+  // border-bottom: 0.2rem solid var(--purple-light);
+  background-color: var(--active-background-color) !important;
+  color: var(--active-color) !important;
+}

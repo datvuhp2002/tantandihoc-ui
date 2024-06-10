@@ -1,0 +1,15 @@
+.wrapper {
+  max-width: var(--modal-width);
+  p {
+    font-size: small;
+    opacity: 0.6;
+  }
+  .modal-content {
+  }
+  .modal-header {
+    border: none;
+  }
+  .modal-body {
+    padding: 1rem 4rem 3rem 4rem;
+  }
+}

@@ -1,0 +1,38 @@
+.wrapper {
+  background-color: #d8dcdf;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 500px; // Giới hạn chiều rộng của khung
+  width: 100%; // Chiều rộng của khung
+  margin: 40px 430px;
+  display: flex;
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  height: 350px; /* Chiều cao 100% của viewport */
+    
+  .gui {
+    width: 10rem; /* Đảm bảo nút chiếm toàn bộ chiều rộng của khung */
+    margin-top: 2rem; /* Khoảng cách giữa nút và các thành phần trên */
+    padding: 1rem 2rem; /* Kích thước của padding */
+    font-size: 14px; /* Cỡ chữ */
+    border-radius: 1rem; /* Bo tròn góc */
+    background-color: #2242e1; /* Màu nền */
+    color: #fff; /* Màu chữ */
+    border: none; /* Bỏ viền */
+    transition: background-color 0.3s; /* Hiệu ứng chuyển đổi màu nền */
+  
+      &:hover {
+      background-color: #aa1010; /* Màu nền khi hover */
+    }
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-right: 100px;
+}
+}
+
+
+
+
+}

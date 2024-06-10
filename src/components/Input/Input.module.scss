@@ -1,0 +1,52 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  color: var(--grey);
+  border: 0.3px solid var(--grey);
+  border-radius: 9999rem;
+  height: 5rem;
+  width: 100%;
+  padding: 0 1.6rem 0 1.6rem;
+  transition: border-color 0.2s ease-in-out;
+  overflow: hidden;
+  &:focus-within {
+    border: 0.3px solid var(--purple-light);
+  }
+  .Icon {
+    display: inline-block;
+    text-align: center;
+    font-size: 2rem;
+  }
+  input {
+    padding: 0 0.8rem;
+    flex: 1 1;
+    font-size: 100%;
+    opacity: 0.6;
+    border: none;
+    width: 100%;
+    height: 100%;
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0px 1000px var(--white) inset;
+    }
+  }
+  input:not(:placeholder-shown) {
+    ~ .Icon {
+      border-color: red !important;
+      color: red;
+    }
+  }
+  h5 {
+    padding: 0 0.8rem;
+    width: 100%;
+  }
+  + .wrapper {
+    margin-top: 1rem;
+  }
+  &.file {
+    display: none !important;
+  }
+}
+.transaction_information {
+  min-width: 25rem;
+  color: var(--dark);
+}

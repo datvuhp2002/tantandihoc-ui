@@ -1,0 +1,18 @@
+.content {
+  height: 100%;
+  align-items: center;
+  display: flex;
+
+  .item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  .user {
+    border-radius: 9999rem;
+    &:active {
+      color: transparent;
+    }
+  }
+}
