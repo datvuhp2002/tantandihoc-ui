@@ -6,11 +6,14 @@ import { privateRoutes } from "~/Route/Routes";
 import Button from "~/components/Button";
 import Logo from "~/public/assets/images/logo.png";
 import Image from "~/components/Image";
+import HeadlessTippy from "@tippyjs/react/headless";
+import { useDebounce } from "~/hooks/useDebounce";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeft,
   faChevronLeft,
   faSearch,
+  faX,
 } from "@fortawesome/free-solid-svg-icons";
 import Tippy from "@tippyjs/react";
 import {
@@ -23,11 +26,15 @@ import requestApi from "~/utils/api";
 import Menu from "../Popper/Menu";
 import { onHandleLogout } from "~/helpers";
 import images from "~/public/assets/images";
+import Search from "../Search";
 const cx = classNames.bind(styles);
 const Header = ({ isPublicRoute = false }) => {
   const [userData, setUserData] = useState({});
+  const [searchValue, setSearchValue] = useState("");
+  const [showResult, setShowResult] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
   const isLearningRoute = location.pathname.match("/course-detail");
 
   const handleBackClick = () => {
@@ -44,6 +51,12 @@ const Header = ({ isPublicRoute = false }) => {
       { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],
   ];
+  const handleChange = (e) => {
+    const searchValue = e.target.value;
+    if (!searchValue.startsWith(" ")) {
+      setSearchValue(searchValue);
+    }
+  };
   useEffect(() => {
     try {
       requestApi("/users/profile", "GET")
@@ -122,29 +135,7 @@ const Header = ({ isPublicRoute = false }) => {
             </Button>
           </div>
           {/* search */}
-          <div
-            className={cx(
-              "body",
-              "d-flex justify-content-center align-items-center flex-grow-1"
-            )}
-          >
-            <div
-              className={cx(
-                "SearchWrapper",
-                "d-flex justify-content-start align-items-center"
-              )}
-            >
-              <FontAwesomeIcon
-                className={cx("SearchIcon", "")}
-                icon={faMagnifyingGlass}
-              />
-              <input
-                className={cx("SearchInput", "w-100")}
-                type="text"
-                placeholder="Tìm kiếm khóa học, bài viết, video, ..."
-              />
-            </div>
-          </div>
+          <Search />
           {/* action */}
           <div className={cx("action", "d-flex justify-content-end")}>
             <Menu items={Menu_item}>

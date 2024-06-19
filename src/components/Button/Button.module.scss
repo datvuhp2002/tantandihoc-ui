@@ -52,6 +52,14 @@
 
     // border: 0.1rem solid var(--purple-light);
   }
+  &.x_button {
+    width: auto;
+    box-shadow: none;
+    padding: 0;
+    border: 0;
+    min-width: none;
+    max-width: none;
+  }
   &.forgetPassword {
     box-shadow: none;
     color: var(--purple-light);
