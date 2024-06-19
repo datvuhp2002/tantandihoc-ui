@@ -14,6 +14,8 @@ import CreatePost from "~/pages/CreatePost";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faNewspaper, faRoad } from "@fortawesome/free-solid-svg-icons";
 import PostDetail from "~/pages/PostDetail";
+import SavedPost from "~/pages/SavedPost";
+import MyPost from "~/pages/MyPost";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -48,6 +50,14 @@ const privateRoutes = [
   {
     path: config.routes.Info,
     component: Info,
+  },
+  {
+    path: config.routes.savedPost,
+    component: SavedPost,
+  },
+  {
+    path: config.routes.myPost,
+    component: MyPost,
   },
   { path: config.routes.courseDetail, component: CourseDetail },
   { path: config.routes.postDetail, component: PostDetail },

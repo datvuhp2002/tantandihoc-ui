@@ -21,7 +21,6 @@ const Home = () => {
     dispatch(actions.controlLoading(true));
     requestApi("/courses", "GET")
       .then((res) => {
-        console.log(res.data);
         setCoursesData(res.data.data);
         dispatch(actions.controlLoading(false));
       })

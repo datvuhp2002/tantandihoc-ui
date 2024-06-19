@@ -64,7 +64,7 @@ const PostDetail = () => {
             editor={Editor}
             className="border border-0"
             data={postDetailData.content}
-            disabled={true} // Không cho phép chỉnh sửa
+            disabled={true}
             onInit={(editor) => {
               editor.ui.view.editable.element.parentElement.insertBefore(
                 editor.ui.view.toolbar.element,

@@ -21,6 +21,23 @@ const CourseDetail = () => {
   const [courseData, setCourseData] = useState({});
   const [courseReceivedData, setCourseReceivedData] = useState([]);
   const [lessonData, setLessonData] = useState({});
+  const OnRegisterCourse = async () => {
+    console.log(params.id);
+    await requestApi("/user-progress", "POST", { course_id: params.id })
+      .then((res) => {
+        console.log(res.data);
+        toast.success("Đăng ký học thành công", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .catch((err) => {
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      });
+  };
   useEffect(() => {
     const promiseCourseData = requestApi(`/courses/${params.id}`, "GET");
     const promiseCourseReceivedData = requestApi(
@@ -112,7 +129,14 @@ const CourseDetail = () => {
               <div></div>
             )}
             <h1 className={cx("course-money")}>Miễn phí</h1>
-            <Button rounded>Đăng ký học</Button>
+            <Button
+              onClick={() => {
+                OnRegisterCourse();
+              }}
+              rounded
+            >
+              Đăng ký học
+            </Button>
           </div>
         </div>
       )}

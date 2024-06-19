@@ -6,10 +6,12 @@ const routes = {
   blog: "/blog",
   thietlapungdung: "/thietlapungdung",
   Info: "/info",
-  createPost: "/create-post",
-  postDetail: "/blog/post-detail/:id",
   courseDetail: "/course-detail/:id",
   caidat: "caidat",
   error: "/Error",
+  createPost: "/create-post",
+  savedPost: "/saved-posts",
+  myPost: "/my-posts",
+  postDetail: "/blog/post-detail/:id",
 };
 export default routes;
