@@ -36,6 +36,10 @@ const Header = ({ isPublicRoute = false }) => {
   const Menu_item = [
     [{ title: "Trang cá nhân", path: "/info" }],
     [
+      { title: "Bài viết đã lưu", path: "/saved-posts" },
+      { title: "Bài viết của bạn", path: "/my-posts" },
+    ],
+    [
       { title: "cài đặt", path: "/caidat" },
       { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],

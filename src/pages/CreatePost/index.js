@@ -127,7 +127,6 @@ const CreatePost = () => {
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Nội dung:</label>
             <CKEditor
-              disabled
               editor={Editor}
               data="<p>Hello from CKEditor&nbsp;5!</p>"
               onReady={(editor) => {

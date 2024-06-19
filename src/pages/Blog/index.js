@@ -51,7 +51,7 @@ const Blog = () => {
     <div className={cx("wrapper", "row d-flex")}>
       <div className={cx("header")}>
         <h2 className="fw-2">
-          <strong>Bài viết nổi bật</strong>
+          <strong>Bài viết mới nhất</strong>
         </h2>
       </div>
       {postData.data && postData.data.length > 0 ? (
