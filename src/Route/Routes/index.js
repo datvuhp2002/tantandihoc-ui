@@ -9,11 +9,11 @@ import Info from "~/pages/Info";
 import CaiDat from "~/pages/CaiDat";
 import ReportErrorPage from "~/pages/CaiDat/Error";
 import FooterOnly from "~/layout/FooterOnly";
-import ChiTietGiaoDich from "~/pages/ChiTietGiaoDich";
 import CourseDetail from "~/pages/CourseDetail";
 import CreatePost from "~/pages/CreatePost";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome, faNewspaper, faRoad } from "@fortawesome/free-solid-svg-icons";
+import PostDetail from "~/pages/PostDetail";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -50,9 +50,9 @@ const privateRoutes = [
     component: Info,
   },
   { path: config.routes.courseDetail, component: CourseDetail },
+  { path: config.routes.postDetail, component: PostDetail },
   { path: config.routes.createPost, component: CreatePost },
   { path: config.routes.caidat, component: CaiDat },
   { path: config.routes.error, component: ReportErrorPage },
-  { path: config.routes.chitietgiaodich, component: ChiTietGiaoDich },
 ];
 export { publicRoutes, privateRoutes };

@@ -8,7 +8,6 @@
   .thumbnail {
     position: relative;
     overflow: hidden; /* Đảm bảo lớp phủ không vượt ra ngoài kích thước của thumbnail */
-
     .courseBtn {
       visibility: hidden;
       background-color: #fff;
@@ -22,7 +21,6 @@
       transition: all 0.3s ease 0s;
       z-index: 1;
     }
-
     &::after {
       content: "";
       position: absolute;

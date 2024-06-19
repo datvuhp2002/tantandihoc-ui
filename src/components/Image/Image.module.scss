@@ -17,7 +17,31 @@
   &.avatar_profile {
     width: var(--profile-image-size);
   }
+  &.post_avatar {
+    max-width: 4rem;
+    max-height: 4rem;
+    border-radius: 100%; /* Làm cho hình ảnh trở thành hình tròn */
+    display: block; /* Đảm bảo rằng hình ảnh là một block-level element để các thuộc tính CSS áp dụng chính xác */
+    object-fit: contain; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
+  }
+  &.post_thumbnail {
+    max-width: 20rem;
+    max-height: 10rem;
+    border-radius: 2rem; /* Làm cho hình ảnh trở thành hình tròn */
+    object-fit: contain; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
+  }
+  &.post_thumbnail_other {
+    max-width: 15rem;
+    min-width: 15rem;
+    max-height: 8rem;
+    min-height: 8rem;
+    border-radius: 2rem; /* Làm cho hình ảnh trở thành hình tròn */
+    object-fit: fill; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
+  }
   &.courseImg {
+    border-radius: 0.8rem;
+  }
+  &.courseImgDashboard {
     max-width: 30rem;
     border-radius: 0.8rem;
   }

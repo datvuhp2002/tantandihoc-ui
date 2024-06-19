@@ -16,10 +16,14 @@ const Image = ({
   rounded,
   w50,
   minw30,
+  post_thumbnail,
+  post_avatar,
+  post_thumbnail_other,
   h100,
   h50,
   minh30,
   courseImg,
+  courseImgDashboard,
   ...props
 }) => {
   const [fallback, setFallback] = useState("");
@@ -36,10 +40,14 @@ const Image = ({
     rounded,
     minw30,
     h100,
+    post_thumbnail,
+    post_thumbnail_other,
+    post_avatar,
     avatar_profile,
     h50,
     minh30,
     courseImg,
+    courseImgDashboard,
     [className]: className,
   });
   return (

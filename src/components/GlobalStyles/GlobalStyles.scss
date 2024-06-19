@@ -3,6 +3,7 @@
 :root {
   --white: #fff;
   --text-color: #404040;
+  --primary-color: #f05123;
   --orange: orange;
   --dark: #000;
   --grey-background: #f8f6f8;
@@ -59,4 +60,8 @@ body {
   // border-bottom: 0.2rem solid var(--purple-light);
   background-color: var(--active-background-color) !important;
   color: var(--active-color) !important;
+}
+
+.ck-read-only {
+  border: none !important;
 }

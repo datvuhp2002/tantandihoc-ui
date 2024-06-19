@@ -7,7 +7,7 @@ const routes = {
   thietlapungdung: "/thietlapungdung",
   Info: "/info",
   createPost: "/create-post",
-  chitietgiaodich: "/quanlygiaodich/chitietgiaodich/:id",
+  postDetail: "/blog/post-detail/:id",
   courseDetail: "/course-detail/:id",
   caidat: "caidat",
   error: "/Error",

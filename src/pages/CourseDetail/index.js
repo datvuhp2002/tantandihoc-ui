@@ -12,114 +12,112 @@ import * as actions from "~/redux/actions";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 const CourseDetail = () => {
   const params = useParams();
-  const dispath = useDispatch();
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const [transactionData, setTransactionData] = useState({});
-  const [allCategoryGroupData, setAllCategoryGroupData] = useState([]);
-  const [allCategoryData, setAllCategoryData] = useState([]);
-  const [allCurrencyData, setAllCurrencyData] = useState([]);
-  const [allWalletData, setAllWalletData] = useState([]);
-  const [paymentImage, setPaymentImage] = useState("");
-  const onImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      let reader = new FileReader();
-      reader.onload = (e) => {
-        setPaymentImage(reader.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-  const onChangeCategoriesGroup = (e) => {
-    console.log();
-    requestCategory(e.target.value);
-  };
-  const requestCategory = async (id) => {
-    await requestApi(`/category/getAll?categoriesGroup_id=${id}`, "GET")
+  const dispatch = useDispatch();
+  const [courseData, setCourseData] = useState({});
+  const [courseReceivedData, setCourseReceivedData] = useState([]);
+  const [lessonData, setLessonData] = useState({});
+  useEffect(() => {
+    const promiseCourseData = requestApi(`/courses/${params.id}`, "GET");
+    const promiseCourseReceivedData = requestApi(
+      `/course-received/${params.id}?get_all=true&sort=asc`,
+      "GET"
+    );
+    const promiseLessonData = requestApi(`/lessons?get_all=All`, "GET");
+    dispatch(actions.controlLoading(true));
+    Promise.all([
+      promiseCourseData,
+      promiseCourseReceivedData,
+      promiseLessonData,
+    ])
       .then((res) => {
-        setAllCategoryData(res.data.data);
+        dispatch(actions.controlLoading(false));
+        setCourseData(res[0].data);
+        setCourseReceivedData(res[1].data.data);
+        setLessonData(res[2].data);
+        console.log(res[2].data);
       })
       .catch((err) => {
-        console.log(err);
+        dispatch(actions.controlLoading(false));
       });
-  };
-
-  const onSubmit = async (data) => {
-    data.recordDate = dayjs(data.recordDate).format();
-    let formData = new FormData();
-    for (let key in data) {
-      if (key === "paymentImage") {
-        formData.append(key, data[key][0]);
-      } else {
-        formData.append(key, data[key]);
-      }
-    }
-    dispath(actions.controlLoading(true));
-    try {
-      await requestApi(
-        `/transaction`,
-        "POST",
-        formData,
-        "json",
-        "multipart/form-data"
-      )
-        .then((res) => {
-          dispath(actions.controlLoading(false));
-          toast.success("cập nhật thành công", {
-            position: "top-right",
-          });
-          setTransactionData(data);
-        })
-        .catch((err) => {
-          dispath(actions.controlLoading(false));
-          console.log("Err", err);
-          if (typeof err.response !== "undefined") {
-            if (err.response.status !== 201) {
-              toast.error(err.response.data.message, {
-                position: "top-right",
-              });
-            }
-          } else {
-            toast.error("Server is down, please try again", {
-              position: "top-right",
-            });
-          }
-        });
-    } catch (err) {}
-  };
-  useEffect(() => {
-    const promiseGetAllWallet = requestApi(`/wallet/getAll`, "GET");
-    const promiseGetAllCategoriesGroup = requestApi(`/category-group/getAll`);
-    const promiseGetAllCurrency = requestApi(`/currency`);
-    try {
-      Promise.all([
-        promiseGetAllCurrency,
-        promiseGetAllCategoriesGroup,
-        promiseGetAllWallet,
-      ])
-        .then((res) => {
-          setAllCurrencyData(res[0].data.data);
-          console.log(res[0].data.data);
-          setAllCategoryGroupData(res[1].data.data);
-          setAllWalletData(res[2].data.data);
-          requestCategory(res[1].data.data[0].id);
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-    } catch (err) {
-      console.log(err);
-    }
   }, []);
-
-  return <div className={cx("wrapper", "d-flex row ")}>CourseDetail</div>;
+  return (
+    <div className={cx("wrapper", "")}>
+      {courseData !== null && (
+        <div className={cx("content", "d-flex row")}>
+          <div className={cx("info", "col-8")}>
+            <div className="mb-5">
+              <h1 className="my-2">{courseData.name}</h1>
+              <p>{courseData.description}</p>
+            </div>
+            <div>
+              <h2>Bạn sẽ học được gì?</h2>
+              <ul className="d-flex flex-wrap align-content-start">
+                {courseReceivedData.map((item, index) => {
+                  return (
+                    <li key={index} className="col-6 my-2">
+                      <FontAwesomeIcon className=" me-2 fs-2" icon={faCheck} />
+                      <span>{item.name}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+            <div>
+              <div>
+                <h2 className="me-3">Nội dung bài học</h2>
+                <p className="m-0 mt-2 fs-5">
+                  Số lượng bài học:
+                  <strong className="ms-2">{lessonData.total}</strong>
+                </p>
+              </div>
+              <ul className="d-flex flex-column align-content-start">
+                {lessonData.data &&
+                  lessonData.data.map((item, index) => {
+                    return (
+                      <li key={index} className="my-3">
+                        <Button
+                          lesson
+                          leftIcon={
+                            <FontAwesomeIcon className="me-2" icon={faMinus} />
+                          }
+                        >
+                          <span>
+                            <strong className="me-2 fs-3">{index + 1}.</strong>
+                            {item.title}
+                          </span>
+                        </Button>
+                      </li>
+                    );
+                  })}
+              </ul>
+            </div>
+          </div>
+          <div
+            className={cx(
+              "actions",
+              "col-4 d-flex flex-column align-items-center justify-content-center"
+            )}
+          >
+            {courseData.thumbnail !== undefined ? (
+              <Image
+                courseImg
+                src={`${process.env.REACT_APP_API_URL}/${courseData.thumbnail}`}
+              ></Image>
+            ) : (
+              <div></div>
+            )}
+            <h1 className={cx("course-money")}>Miễn phí</h1>
+            <Button rounded>Đăng ký học</Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CourseDetail;

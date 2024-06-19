@@ -1,4 +1,6 @@
 .wrapper {
+  margin-top: calc(var(--header-height) + 1rem);
+
   .form-login {
     padding: 2rem;
     border-radius: 1rem;

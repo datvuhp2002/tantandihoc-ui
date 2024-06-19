@@ -13,7 +13,7 @@ import * as actions from "~/redux/actions";
 import { useForm } from "react-hook-form";
 const cx = classNames.bind(styles);
 const Info = () => {
-  const dispath = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     register,
@@ -82,7 +82,7 @@ const Info = () => {
       try {
         let formData = new FormData();
         formData.append("avatar", file);
-        dispath(actions.controlLoading(true));
+        dispatch(actions.controlLoading(true));
         requestApi(
           "/users/upload-avatar",
           "POST",
@@ -91,7 +91,7 @@ const Info = () => {
           "multipart/form-data"
         ).then((res) => {
           console.log(res);
-          dispath(actions.controlLoading(false));
+          dispatch(actions.controlLoading(false));
           toast.success("Thay avatar thành công", {
             position: "top-right",
           });
@@ -101,7 +101,7 @@ const Info = () => {
         toast.success(err.response.data.message, {
           position: "top-right",
         });
-        dispath(actions.controlLoading(false));
+        dispatch(actions.controlLoading(false));
       }
     }
   };

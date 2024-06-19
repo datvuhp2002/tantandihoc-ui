@@ -1,0 +1,32 @@
+.wrapper {
+  width: 100%;
+  .other {
+    position: fixed;
+    height: 100%;
+    top: calc(var(--header-height) + 1rem);
+    right: 0.5rem;
+    border-radius: 2rem;
+    bottom: 0;
+    max-height: 40vh;
+    padding: 2rem;
+    background-color: rgb(242, 242, 242);
+    overflow: hidden;
+    overflow: scroll;
+    .post_item {
+      background-color: rgb(242, 242, 242);
+      &.item {
+        & + .item {
+          margin-top: 1rem;
+        }
+      }
+    }
+  }
+}
+figure,
+img {
+  display: flex;
+  // align-items: center;
+  // justify-content: center;
+  max-height: 30rem;
+  object-fit: contain; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
+}

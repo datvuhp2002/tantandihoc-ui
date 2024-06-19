@@ -21,7 +21,7 @@ import {
 import { Wrapper as PopperWrapper } from "../Popper";
 import requestApi from "~/utils/api";
 import Menu from "../Popper/Menu";
-import { onHandleLogout } from "~/helper";
+import { onHandleLogout } from "~/helpers";
 import images from "~/public/assets/images";
 const cx = classNames.bind(styles);
 const Header = ({ isPublicRoute = false }) => {
