@@ -1,0 +1,11 @@
+.wrapper {
+  position: fixed;
+  height: 100%;
+  top: calc(var(--header-height) + 1rem);
+  left: 0;
+  bottom: 0;
+  padding-left: 0.5rem;
+  .sidebar {
+    font-size: 1rem;
+  }
+}

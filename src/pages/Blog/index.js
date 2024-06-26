@@ -19,7 +19,6 @@ import dayjs from "dayjs";
 import * as actions from "~/redux/actions";
 import requestApi from "~/utils/api";
 import { useDispatch } from "react-redux";
-import DataTable from "~/layout/common/DataTable";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import "~/helpers/vi";

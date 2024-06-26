@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import LiveSearch from "../LiveSearch";
+import Image from "~/components/Image";
 
 const DataTable = (props) => {
   const {
@@ -20,7 +21,6 @@ const DataTable = (props) => {
   };
 
   useEffect(() => {
-    console.log("selected rows=> ", selectedRows);
     onSelectedRows(selectedRows);
   }, [selectedRows]);
 
@@ -36,9 +36,15 @@ const DataTable = (props) => {
             onChange={onClickCheckbox}
           />
         </td>
-        {columns.map((col, ind) => (
-          <td key={ind}>{col.element(item)}</td>
-        ))}
+        {columns.map((col, ind) => {
+          return col.name !== "Thumbnail" ? (
+            <td key={ind}>{col.element(item)}</td>
+          ) : (
+            <td key={ind}>
+              <Image tableImg src={col.element(item)} />
+            </td>
+          );
+        })}
       </tr>
     ));
   };
@@ -71,7 +77,6 @@ const DataTable = (props) => {
     const pagination = [];
     const nextPage = currentPage + 1 > numOfPage ? null : currentPage + 1;
     const prevPage = currentPage - 1 < 1 ? null : currentPage - 1;
-
     pagination.push(
       <li key="prev" className={prevPage ? "page-item" : "page-item disabled"}>
         <button className="page-link" onClick={() => onPageChange(prevPage)}>
@@ -79,7 +84,6 @@ const DataTable = (props) => {
         </button>
       </li>
     );
-
     for (let i = 1; i <= numOfPage; i++) {
       pagination.push(
         <li
@@ -92,7 +96,6 @@ const DataTable = (props) => {
         </li>
       );
     }
-
     pagination.push(
       <li key="next" className={nextPage ? "page-item" : "page-item disabled"}>
         <button className="page-link" onClick={() => onPageChange(nextPage)}>
@@ -100,7 +103,6 @@ const DataTable = (props) => {
         </button>
       </li>
     );
-
     return pagination;
   };
 
@@ -120,19 +122,15 @@ const DataTable = (props) => {
         <div className="row mb-3">
           <div className="col-sm-12 col-md-6">
             <label className="d-inline-flex">
-              Show
               <select
                 name="example_length"
                 className="form-select form-select-sm ms-1 me-1"
                 onChange={onChangeOption}
               >
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="5">5</option>
                 <option value="10">10</option>
-              </select>{" "}
-              entries
+                <option value="10">15</option>
+                <option value="10">20</option>
+              </select>
             </label>
           </div>
           <div className="col-sm-12 col-md-6">

@@ -62,6 +62,11 @@ const Login = () => {
           dispatch(actions.controlLoading(false));
           localStorage.setItem("access_token", res.data.access_token);
           localStorage.setItem("refresh_token", res.data.refresh_token);
+          localStorage.setItem("role", res.data.role);
+          console.log(res.data.role === "Admin");
+          if (res.data.role === "Admin") {
+            window.open("/admin/dashboard");
+          }
           navigate("/");
         })
         .catch((err) => {

@@ -14,4 +14,16 @@ const routes = {
   myPost: "/my-posts",
   postDetail: "/blog/post-detail/:id",
 };
-export default routes;
+const routesAdmin = {
+  dashboard: "/admin/dashboard",
+  user: "/admin/user",
+  userAdd: "/admin/user/user-add",
+  userUpdate: "/admin/user/user-update/:id",
+  course: "/admin/course",
+  courseAdd: "/admin/course/course-add",
+  courseUpdate: "/admin/course/course-update/:id",
+  post: "/admin/post",
+  postAdd: "/admin/post/post-add",
+  postUpdate: "/admin/post/post-update/:id",
+};
+export { routes, routesAdmin };
