@@ -14,7 +14,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   border: 1.5px solid transparent;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
   &.disabled {
     pointer-events: none;
     opacity: 0.5;
@@ -51,6 +51,16 @@
     border: 2px solid #dce0e3;
 
     // border: 0.1rem solid var(--purple-light);
+  }
+  &.more {
+    box-shadow: none;
+    color: var(--text-color);
+    font-size: 1rem;
+    padding: 0;
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
   }
   &.x_button {
     width: auto;

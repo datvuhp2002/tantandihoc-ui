@@ -90,12 +90,16 @@
 .header {
   align-items: center;
   display: flex;
-  padding: 6px 0 0;
+  padding: 0.6rem 0 0;
   .loading {
     animation: spinner 0.8s linear infinite;
   }
 }
-
+.search_heading {
+  border-bottom: 0.1rem solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.6rem;
+  // padding: 24px 0 12px;
+}
 @keyframes spinner {
   from {
     transform: rotate(0);

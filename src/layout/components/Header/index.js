@@ -28,7 +28,7 @@ import { onHandleLogout } from "~/helpers";
 import images from "~/public/assets/images";
 import Search from "../Search";
 const cx = classNames.bind(styles);
-const Header = ({ isPublicRoute = false }) => {
+const Header = ({ isPublicRoute = false, navigator = "/" }) => {
   const [userData, setUserData] = useState({});
   const [searchValue, setSearchValue] = useState("");
   const [showResult, setShowResult] = useState(false);
@@ -82,7 +82,11 @@ const Header = ({ isPublicRoute = false }) => {
             "d-flex align-items-center justify-content-between container h-100"
           )}
         >
-          <Button header className={cx("logo", "h-100 d-flex")} to="/">
+          <Button
+            header
+            className={cx("logo", "h-100 d-flex")}
+            to={`${navigator}`}
+          >
             <div
               className={cx(
                 "logo-components",
@@ -108,7 +112,7 @@ const Header = ({ isPublicRoute = false }) => {
             <Button
               header
               className={cx("logo", "h-100 justify-content-start")}
-              to="/"
+              to={`${navigator}`}
             >
               <div
                 className={cx(

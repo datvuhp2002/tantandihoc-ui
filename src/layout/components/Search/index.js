@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   faCircleXmark,
   faMagnifyingGlass,
@@ -13,7 +13,6 @@ import useDebounce from "~/hooks/useDebounce";
 import styles from "./Search.module.scss";
 import { Wrapper } from "../Popper";
 import requestApi from "~/utils/api";
-import { Link } from "react-router-dom";
 import Button from "~/components/Button";
 import SearchCourseResult from "~/components/SearchCourseResult";
 import SearchPostResult from "~/components/SearchPostResult";
@@ -56,7 +55,6 @@ function Search() {
     };
     fetchApi();
   }, [debouncedValue]);
-
   const handleClear = () => {
     setSearchValue("");
     setSearchCoursesResult([]);
@@ -67,7 +65,10 @@ function Search() {
   const handleHideResult = () => {
     setShowResult(false);
   };
-
+  const handleHideResultsAndResetInput = () => {
+    setShowResult(false);
+    setSearchValue("");
+  };
   const handleChange = (e) => {
     const searchValue = e.target.value;
     if (!searchValue.startsWith(" ")) {
@@ -77,10 +78,7 @@ function Search() {
 
   return (
     <div
-      className={cx(
-        "body",
-        "d-flex justify-content-center align-items-center "
-      )}
+      className={cx("body", "d-flex justify-content-center align-items-center")}
     >
       <HeadlessTippy
         interactive
@@ -88,85 +86,95 @@ function Search() {
         render={(attrs) => (
           <div className={cx("search-result")} tabIndex="-1" {...attrs}>
             <Wrapper>
-              <div className={cx("header")}>
-                {loading && (
-                  <div className="d-flex">
-                    <FontAwesomeIcon
-                      className={cx("loading")}
-                      icon={faSpinner}
-                    />
-                    <span className="ms-3">
-                      Đang tìm kiếm kết quả cho {searchValue}
-                    </span>
+              {loading ? (
+                <div className="d-flex">
+                  <FontAwesomeIcon className={cx("loading")} icon={faSpinner} />
+                  <span className="ms-3">
+                    Đang tìm kiếm kết quả cho {searchValue}
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <div className="d-flex align-items-center">
+                    {searchCoursesResult.length === 0 ? (
+                      <div
+                        className={cx(
+                          "d-flex align-items-center justify-content-between my-2"
+                        )}
+                      >
+                        <FontAwesomeIcon
+                          className={cx(
+                            "search-title",
+                            "d-flex align-items-end justify-content-end text-end fs-3"
+                          )}
+                          icon={faMagnifyingGlass}
+                        />
+                        <span className="ms-2">
+                          Không tìm thấy khóa học nào là {searchValue}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="w-100 mb-3">
+                        <div
+                          className={cx(
+                            "search_heading",
+                            "d-flex align-items-center justify-content-between mt-2"
+                          )}
+                        >
+                          <h4 className={cx("search-title")}>KHÓA HỌC</h4>
+                          <Button more className="d-flex align-items-end fs-5">
+                            Xem thêm
+                          </Button>
+                        </div>
+                        {searchCoursesResult.map((result) => (
+                          <SearchCourseResult
+                            key={result.id}
+                            data={result}
+                            onClick={() => handleHideResultsAndResetInput()}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="d-flex align-item-center">
-                {searchCoursesResult.length == 0 ? (
-                  <div className="d-flex">
-                    <FontAwesomeIcon
-                      className={cx(
-                        "SearchIcon",
-                        "d-flex align-item-end justify-content-end text-end fs-3"
-                      )}
-                      icon={faMagnifyingGlass}
-                    />
-                    <span className="ms-2">
-                      Không tìm thấy khóa học nào là {searchValue}
-                    </span>
+                  <div className="d-flex align-items-center">
+                    {searchPostsResult.length === 0 ? (
+                      <div className="d-flex w-100 align-items-center">
+                        <FontAwesomeIcon
+                          className={cx(
+                            "search-title",
+                            "d-flex align-items-end justify-content-end text-end fs-3"
+                          )}
+                          icon={faMagnifyingGlass}
+                        />
+                        <span className="ms-2">
+                          Không tìm thấy bài viết nào là {searchValue}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="w-100 mb-3">
+                        <div
+                          className={cx(
+                            "search_heading",
+                            "d-flex align-items-center justify-content-between"
+                          )}
+                        >
+                          <h4 className={cx("search-title")}>BÀI VIẾT</h4>
+                          <Button more className="d-flex align-items-end fs-5">
+                            Xem thêm
+                          </Button>
+                        </div>
+                        {searchPostsResult.map((result) => (
+                          <SearchPostResult
+                            key={result.id}
+                            data={result}
+                            onClick={() => handleHideResultsAndResetInput()}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                ) : (
-                  <div className="w-100 mb-3">
-                    <div
-                      className={cx(
-                        "search_heading",
-                        "d-flex align-item-center justify-content-between "
-                      )}
-                    >
-                      <h4 className={cx("search-title")}>Khóa học</h4>
-                      <Button className="d-flex align-item-end fs-5">
-                        Xem thêm
-                      </Button>
-                    </div>
-                    {searchCoursesResult.map((result) => (
-                      <SearchCourseResult key={result.id} data={result} />
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="d-flex align-item-center">
-                {searchPostsResult.length == 0 ? (
-                  <div className="d-flex w-100">
-                    <FontAwesomeIcon
-                      className={cx(
-                        "SearchIcon",
-                        "d-flex align-item-end justify-content-end text-end fs-3"
-                      )}
-                      icon={faMagnifyingGlass}
-                    />
-                    <span className="ms-2">
-                      Không tìm thấy bài viết nào là {searchValue}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="w-100 mb-3">
-                    <div
-                      className={cx(
-                        "search_heading",
-                        "d-flex align-item-center justify-content-between "
-                      )}
-                    >
-                      <h4 className={cx("search-title")}>Khóa học</h4>
-                      <Button className="d-flex align-item-end fs-5">
-                        Xem thêm
-                      </Button>
-                    </div>
-                    {searchPostsResult.map((result) => (
-                      <SearchPostResult key={result.id} data={result} />
-                    ))}
-                  </div>
-                )}
-              </div>
+                </>
+              )}
             </Wrapper>
           </div>
         )}
@@ -194,7 +202,7 @@ function Search() {
           />
           {!!searchValue && !loading && (
             <button
-              className="d-flex align-items-center h-100 ps-3 justify-content-end border border-0 bg-transparent "
+              className="d-flex align-items-center h-100 ps-3 justify-content-end border border-0 bg-transparent"
               onClick={handleClear}
             >
               <FontAwesomeIcon className={cx("", "fs-5")} icon={faX} />

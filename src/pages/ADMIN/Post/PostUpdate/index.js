@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./CreatePost.module.scss";
+import styles from "./PostUpdate.module.scss";
 import classNames from "classnames/bind";
 import requestApi from "~/utils/api";
 import { useDispatch } from "react-redux";
@@ -13,23 +13,27 @@ import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
+import { Link, useParams } from "react-router-dom";
 const cx = classNames.bind(styles);
-const CreatePost = () => {
+const PostUpdate = () => {
+  const param = useParams();
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
+  const [contentValue, setContentValue] = useState("");
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const handleSubmitFormAdd = async (data) => {
-    console.log("data form =>", data);
+  const handleSubmitFormUpdate = async (data) => {
     let formData = new FormData();
     for (let key in data) {
-      if (key == "thumbnail") {
-        formData.append(key, data[key][0]);
+      if (key === "thumbnail") {
+        if (data[key] && data[key].length > 0) {
+          formData.append(key, data[key][0]);
+        }
       } else {
         formData.append(key, data[key]);
       }
@@ -37,15 +41,14 @@ const CreatePost = () => {
     dispatch(actions.controlLoading(true));
     try {
       const res = await requestApi(
-        "/posts",
-        "POST",
+        `/posts/${param.id}`,
+        "PUT",
         formData,
         "json",
         "multipart/form-data"
       );
-      console.log("res=>", res);
       dispatch(actions.controlLoading(false));
-      toast.success("Thêm bài viết thành công", {
+      toast.success("Cập nhật bài viết thành công", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -72,10 +75,19 @@ const CreatePost = () => {
   };
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
+    const categories = requestApi("/categories", "GET");
+    const posts = requestApi(`/posts/${param.id}`, "GET");
+    Promise.all([categories, posts])
       .then((res) => {
-        console.log("res=>", res.data);
-        setCategories(res.data.data);
+        setCategories(res[0].data.data);
+        console.log(res[1].data);
+        setValue("categoryId", res[1].data.categoryId);
+        setValue("title", res[1].data.title);
+        setValue("summary", res[1].data.summary);
+        setContentValue(res[1].data.content);
+        setThumbnail({
+          img: `${process.env.REACT_APP_API_URL}/${res[1].data.thumbnail}`,
+        });
         dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
@@ -90,13 +102,45 @@ const CreatePost = () => {
   }
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <form>
+      <h1 className="mt-4 p-0">Posts Add</h1>
+      <ol className="breadcrumb mb-4">
+        <li className="breadcrumb-item">
+          <Link to="/admin/dashboard">Dashboard</Link>
+        </li>
+        <li className="breadcrumb-item">
+          <Link to="/admin/post">Posts</Link>
+        </li>
+        <li className="breadcrumb-item">Posts Update</li>
+      </ol>
+      <form className="p-0">
         <div className={cx("", "col-md-6")}>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Thể loại bài viết:</label>
+            <select
+              type="text"
+              className="form-control"
+              placeholder="Nội dung bài viết của bạn"
+              {...register("categoryId", {
+                required: "Vui lòng viết nội dung của bài viết",
+              })}
+            >
+              {categories.map((item, index) => {
+                return (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.category_id && (
+              <p className="text-danger">{errors.category_id.message}</p>
+            )}
+          </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tiêu đề:</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Tiêu đề bài viết"
               {...register("title", {
                 required: "Vui lòng nhập tiêu đề bài viết",
@@ -110,7 +154,7 @@ const CreatePost = () => {
             <label className="form-label">Tóm tắt:</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Tóm tắt bài viết"
               {...register("summary", {
                 required: "Vui lòng viết tóm tắt của bài viết",
@@ -124,7 +168,7 @@ const CreatePost = () => {
             <label className="form-label">Nội dung:</label>
             <CKEditor
               editor={Editor}
-              data="<p>Hello from CKEditor&nbsp;5!</p>"
+              data={contentValue}
               onReady={(editor) => {
                 register(`content`, {
                   required: `Vui lòng viết nội dung cho bài viết của bạn`,
@@ -132,9 +176,7 @@ const CreatePost = () => {
               }}
               onChange={(event, editor) => {
                 const data = editor.getData();
-                console.log("data =>", data);
                 setValue("content", data);
-                console.log(event);
               }}
               config={{
                 extraPlugins: [uploadPlugin],
@@ -159,7 +201,6 @@ const CreatePost = () => {
               accept="image/*"
               className="d-none"
               {...register("thumbnail", {
-                required: "Vui lòng viết thêm ảnh của bài viết",
                 onChange: onImageChange,
               })}
             />
@@ -167,30 +208,9 @@ const CreatePost = () => {
               <p className="text-danger">{errors.thumbnail.message}</p>
             )}
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung bài viết của bạn"
-              {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
-              })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
-            )}
-          </div>
+
           <Button
-            onClick={handleSubmit(handleSubmitFormAdd)}
+            onClick={handleSubmit(handleSubmitFormUpdate)}
             className="btn btn-success"
           >
             Submit
@@ -200,4 +220,4 @@ const CreatePost = () => {
     </div>
   );
 };
-export default CreatePost;
+export default PostUpdate;

@@ -4,9 +4,11 @@ import { DefaultLayout } from "~/layout";
 import { Container } from "react-bootstrap";
 import PrivateRoutes from "~/Route/PrivateRoutes";
 import PublicRoutes from "~/Route/PublicRoutes";
-import { privateRoutes, publicRoutes } from "~/Route/Routes";
+import { adminRoutes, privateRoutes, publicRoutes } from "~/Route/Routes";
 import Layout from "./layout/layout";
 import requestApi from "./utils/api";
+import AdminRoutes from "./Route/AdminRoutes";
+import AdminLayout from "./layout/AdminLayout";
 function App() {
   return (
     <Router>
@@ -37,10 +39,34 @@ function App() {
                 );
               })}
             </Route>
-            <Route element={<PublicRoutes />}>
+            <Route element={<Layout />}>
               {publicRoutes.map((route, index) => {
                 const Page = route.component;
                 let Layout = DefaultLayout;
+                if (route.layout) {
+                  Layout = route.layout;
+                } else if (route.layout === null) {
+                  Layout = DefaultLayout;
+                }
+                return (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                      <Layout>
+                        <Container style={{ minWidth: "85%" }}>
+                          <Page />
+                        </Container>
+                      </Layout>
+                    }
+                  />
+                );
+              })}
+            </Route>
+            <Route element={<AdminRoutes />}>
+              {adminRoutes.map((route, index) => {
+                const Page = route.component;
+                let Layout = AdminLayout;
                 if (route.layout) {
                   Layout = route.layout;
                 } else if (route.layout === null) {

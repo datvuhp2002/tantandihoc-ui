@@ -2,6 +2,7 @@
   overflow: hidden;
   width: 100%;
   height: 100%;
+  object-fit: cover;
   &.logo {
     width: var(--header-image-size);
   }
@@ -24,11 +25,16 @@
     display: block; /* Đảm bảo rằng hình ảnh là một block-level element để các thuộc tính CSS áp dụng chính xác */
     object-fit: contain; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
   }
+  &.tableImg {
+    max-width: 20rem;
+    object-fit: contain;
+  }
   &.post_thumbnail {
     max-width: 20rem;
+    min-width: 20rem;
     max-height: 10rem;
     border-radius: 2rem; /* Làm cho hình ảnh trở thành hình tròn */
-    object-fit: contain; /* Đảm bảo rằng hình ảnh giữ đúng tỷ lệ bên trong khung hình tròn */
+    object-fit: cover;
   }
   &.post_thumbnail_other {
     max-width: 15rem;
@@ -40,9 +46,10 @@
   }
   &.courseImg {
     border-radius: 0.8rem;
+    min-width: 20rem;
   }
   &.courseImgDashboard {
-    max-width: 30rem;
+    object-fit: contain;
     border-radius: 0.8rem;
   }
 }

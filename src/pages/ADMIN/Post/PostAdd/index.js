@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./CreatePost.module.scss";
+import styles from "./PostAdd.module.scss";
 import classNames from "classnames/bind";
 import requestApi from "~/utils/api";
 import { useDispatch } from "react-redux";
@@ -13,8 +13,9 @@ import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 // import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
+import { Link } from "react-router-dom";
 const cx = classNames.bind(styles);
-const CreatePost = () => {
+const PostAdd = () => {
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
@@ -90,13 +91,45 @@ const CreatePost = () => {
   }
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <form>
+      <h1 className="mt-4 p-0">Posts Add</h1>
+      <ol className="breadcrumb mb-4">
+        <li className="breadcrumb-item">
+          <Link to="/admin/dashboard">Dashboard</Link>
+        </li>
+        <li className="breadcrumb-item">
+          <Link to="/admin/post">Posts</Link>
+        </li>
+        <li className="breadcrumb-item">Posts Add</li>
+      </ol>
+      <form className="p-0">
         <div className={cx("", "col-md-6")}>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Thể loại bài viết:</label>
+            <select
+              type="text"
+              className="form-control"
+              placeholder="Nội dung bài viết của bạn"
+              {...register("categoryId", {
+                required: "Vui lòng viết nội dung của bài viết",
+              })}
+            >
+              {categories.map((item, index) => {
+                return (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.category_id && (
+              <p className="text-danger">{errors.category_id.message}</p>
+            )}
+          </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tiêu đề:</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Tiêu đề bài viết"
               {...register("title", {
                 required: "Vui lòng nhập tiêu đề bài viết",
@@ -110,7 +143,7 @@ const CreatePost = () => {
             <label className="form-label">Tóm tắt:</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Tóm tắt bài viết"
               {...register("summary", {
                 required: "Vui lòng viết tóm tắt của bài viết",
@@ -167,28 +200,7 @@ const CreatePost = () => {
               <p className="text-danger">{errors.thumbnail.message}</p>
             )}
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung bài viết của bạn"
-              {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
-              })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
-            )}
-          </div>
+
           <Button
             onClick={handleSubmit(handleSubmitFormAdd)}
             className="btn btn-success"
@@ -200,4 +212,4 @@ const CreatePost = () => {
     </div>
   );
 };
-export default CreatePost;
+export default PostAdd;

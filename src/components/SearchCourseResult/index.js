@@ -8,10 +8,17 @@ import styles from "./SearchCourseResult.module.scss";
 
 const cx = classNames.bind(styles);
 
-function SearchCourseResult({ data }) {
+function SearchCourseResult({ data, onClick }) {
   return (
-    <Link to={`/course-detail/${data.id}`} className={cx("wrapper")}>
-      <Image className={cx("avatar")} src={data.thumbnail} />
+    <Link
+      to={`/course-detail/${data.id}`}
+      className={cx("wrapper")}
+      onClick={onClick}
+    >
+      <Image
+        className={cx("avatar")}
+        src={`${process.env.REACT_APP_API_URL}/${data.thumbnail}`}
+      />
       <div className={cx("info")}>
         <h4 className={cx("title")}>
           <span>{data.name}</span>

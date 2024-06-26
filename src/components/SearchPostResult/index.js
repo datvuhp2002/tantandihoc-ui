@@ -8,10 +8,17 @@ import styles from "./SearchPostResult.module.scss";
 
 const cx = classNames.bind(styles);
 
-function SearchPostResult({ data }) {
+function SearchPostResult({ data, onClick }) {
   return (
-    <Link to={`/blog/post-detail/${data.id}`} className={cx("wrapper")}>
-      <Image className={cx("avatar")} src={data.thumbnail} />
+    <Link
+      to={`/blog/post-detail/${data.id}`}
+      className={cx("wrapper")}
+      onClick={onClick}
+    >
+      <Image
+        className={cx("avatar")}
+        src={`${process.env.REACT_APP_API_URL}/${data.thumbnail}`}
+      />
       <div className={cx("info")}>
         <h4 className={cx("title")}>
           <span>{data.title}</span>
