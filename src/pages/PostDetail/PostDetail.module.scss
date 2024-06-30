@@ -20,6 +20,21 @@
         }
       }
     }
+    p {
+      margin-top: 8px;
+      font-size: 1.4rem;
+      line-height: 2.2rem;
+      overflow: hidden;
+      word-wrap: break-word;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+    }
+  }
+  .thumbnail {
+    width: 15rem;
+    height: 10rem;
+    border-radius: 2rem; /* Làm cho hình ảnh trở thành hình tròn */
   }
 }
 figure,

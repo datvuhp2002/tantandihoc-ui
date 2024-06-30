@@ -1,0 +1,33 @@
+.wrapper {
+  color: red;
+  height: var(--header-height);
+  background-color: #29303b;
+  color: #fff !important;
+  width: 100%;
+  position: fixed;
+  z-index: 100 !important;
+  top: 0;
+  right: 0;
+}
+.content {
+  height: 100%;
+  min-width: 98.5%;
+}
+.navbar {
+  flex: 1 1;
+  height: 100%;
+}
+.logo {
+  flex: 1 1;
+  background-color: #29303b;
+  padding: 0;
+  color: #fff;
+}
+
+.action {
+  flex: 1 1;
+  justify-content: flex-end;
+}
+.result {
+  background-color: #fff;
+}

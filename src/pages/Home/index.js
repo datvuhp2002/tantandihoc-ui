@@ -11,6 +11,8 @@ const Home = () => {
   const [coursesData, setCoursesData] = useState([]);
   useEffect(() => {
     dispatch(actions.controlLoading(true));
+    let i = 1;
+    console.log(i++);
     requestApi("/courses", "GET")
       .then((res) => {
         setCoursesData(res.data.data);
@@ -25,10 +27,14 @@ const Home = () => {
       <div className="mb-5">
         <div className={cx("", "d-flex row mt-5")}>
           <h1>Khóa học miễn phí</h1>
-          <div className={cx("group-corse")}>
+          <div className={cx("group-corse", "row")}>
             {coursesData && coursesData.length > 0 ? (
               coursesData.map((item, index) => {
-                return <Card key={index} data={item} />;
+                return (
+                  <div key={index} className="col-3 mb-4">
+                    <Card data={item} />
+                  </div>
+                );
               })
             ) : (
               <p>No posts available</p>

@@ -33,6 +33,12 @@ import CourseUpdate from "~/pages/ADMIN/Course/CourseUpdate";
 import Post from "~/pages/ADMIN/Post";
 import PostAdd from "~/pages/ADMIN/Post/PostAdd";
 import PostUpdate from "~/pages/ADMIN/Post/PostUpdate";
+import CourseReceived from "~/pages/ADMIN/Course/CourseReceived";
+import LessonAdd from "~/pages/ADMIN/Lesson/LessonAdd";
+import MyCourses from "~/pages/MyCourse";
+import Learning from "~/pages/Learning";
+import LessonLayout from "~/layout/LessonLayout";
+import ProfileLayout from "~/layout/ProfileLayout";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -53,7 +59,7 @@ const privateRoutes = [
     icon: <FontAwesomeIcon icon={faHome} />,
   },
   {
-    path: config.routes.LearningParts,
+    path: config.routes.learningParts,
     component: LearningParts,
     name: "Lộ trình",
     icon: <FontAwesomeIcon icon={faRoad} />,
@@ -67,6 +73,7 @@ const privateRoutes = [
   {
     path: config.routes.Info,
     component: Info,
+    layout: ProfileLayout,
   },
   {
     path: config.routes.savedPost,
@@ -76,11 +83,21 @@ const privateRoutes = [
     path: config.routes.myPost,
     component: MyPost,
   },
+  {
+    path: config.routes.myCourses,
+    component: MyCourses,
+  },
   { path: config.routes.courseDetail, component: CourseDetail },
   { path: config.routes.postDetail, component: PostDetail },
   { path: config.routes.createPost, component: CreatePost },
   { path: config.routes.caidat, component: CaiDat },
   { path: config.routes.error, component: ReportErrorPage },
+  {
+    path: config.routes.learning,
+    component: Learning,
+    layout: LessonLayout,
+    isNotNeedContainer: true,
+  },
 ];
 const adminRoutes = [
   {
@@ -118,6 +135,10 @@ const adminRoutes = [
     component: CourseUpdate,
   },
   {
+    path: config.routesAdmin.courseReceived,
+    component: CourseReceived,
+  },
+  {
     name: "Post",
     path: config.routesAdmin.post,
     component: Post,
@@ -130,6 +151,10 @@ const adminRoutes = [
   {
     path: config.routesAdmin.postUpdate,
     component: PostUpdate,
+  },
+  {
+    path: config.routesAdmin.lessonAdd,
+    component: LessonAdd,
   },
 ];
 export { publicRoutes, privateRoutes, adminRoutes };

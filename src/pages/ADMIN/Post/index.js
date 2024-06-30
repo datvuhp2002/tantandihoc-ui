@@ -118,6 +118,7 @@ const Post = () => {
   useEffect(() => {
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
+    console.log("query=> ", query);
     requestApi(`/posts${query}`, "GET", [])
       .then((response) => {
         console.log("response=> ", response.data);

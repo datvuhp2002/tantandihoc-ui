@@ -9,10 +9,13 @@ import * as actions from "~/redux/actions";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Image from "~/components/Image";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 const CourseAdd = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigate();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
   const {
@@ -44,6 +47,7 @@ const CourseAdd = () => {
         position: "top-right",
         autoClose: 3000,
       });
+      navigation(`/admin/course/course-received/${res.data.id}`);
     } catch (err) {
       console.log("err=>", err);
       dispatch(actions.controlLoading(false));
@@ -69,7 +73,7 @@ const CourseAdd = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Courses Update</h1>
+      <h1 className="mt-4 p-0">Courses Add</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
           <Link to="/admin/dashboard">Dashboard</Link>
@@ -77,16 +81,16 @@ const CourseAdd = () => {
         <li className="breadcrumb-item">
           <Link to="/admin/course">Courses</Link>
         </li>
-        <li className="breadcrumb-item">Courses add</li>
+        <li className="breadcrumb-item">Courses Add</li>
       </ol>
-      <form>
-        <div className={cx("", "col-md-6")}>
+      <form className=" row d-flex align-item-center justify-content-between mb-5">
+        <div className="col-md-7">
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tên khóa học:</label>
             <input
               type="text"
-              className="form-control p-3"
-              placeholder="Tên khóa học"
+              className="form-control p-3 fs-5"
+              placeholder="Tên khóa học..."
               {...register("name", {
                 required: "Vui lòng nhập tên khóa học",
               })}
@@ -99,8 +103,8 @@ const CourseAdd = () => {
             <label className="form-label">Miêu tả khóa học:</label>
             <input
               type="text"
-              className="form-control p-3"
-              placeholder="Miêu tả khóa học"
+              className="form-control p-3 fs-5"
+              placeholder="Miêu tả khóa học..."
               {...register("description", {
                 required: "Vui lòng viết miêu tả của khóa học",
               })}
@@ -109,32 +113,41 @@ const CourseAdd = () => {
               <p className="text-danger">{errors.description.message}</p>
             )}
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeThumbnail")}>
-              thêm bìa bài viết
-            </label>
-            {thumbnail.img && (
-              <Image avatar_profile rounded src={thumbnail.img}></Image>
-            )}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              className="d-none"
-              {...register("thumbnail", {
-                required: "Vui lòng viết thêm ảnh của bài viết",
-                onChange: onImageChange,
-              })}
-            />
-            {errors.thumbnail && (
-              <p className="text-danger">{errors.thumbnail.message}</p>
-            )}
-          </div>
-          <Button onClick={handleSubmit(handleSubmitFormAdd)} className="btn">
-            Tạo mới
-          </Button>
+        </div>
+        <div
+          className={cx(
+            "",
+            "mb-3 mt-3 col-md-5 d-flex flex-column align-items-center "
+          )}
+        >
+          <label htmlFor="file" className={cx("btn_changeThumbnail", "mb-3")}>
+            thêm bìa bài viết
+          </label>
+          {thumbnail.img && <Image avatar_profile src={thumbnail.img}></Image>}
+          <input
+            id="file"
+            type="file"
+            accept="image/*"
+            className="d-none"
+            {...register("thumbnail", {
+              required: "Vui lòng viết thêm ảnh của bài viết",
+              onChange: onImageChange,
+            })}
+          />
+          {errors.thumbnail && (
+            <p className="text-danger">{errors.thumbnail.message}</p>
+          )}
         </div>
       </form>
+      <div className="d-flex align-items-center justify-content-end">
+        <Button
+          onClick={handleSubmit(handleSubmitFormAdd)}
+          rightIcon={<FontAwesomeIcon icon={faArrowRight} />}
+          className="btn"
+        >
+          Tiếp tục
+        </Button>
+      </div>
     </div>
   );
 };

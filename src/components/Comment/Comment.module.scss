@@ -1,0 +1,62 @@
+.wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 35;
+  display: flex;
+  justify-content: flex-end;
+  cursor: pointer;
+  will-change: opacity;
+  animation: _fade-in_clz7v_1 ease 0.5s;
+  .overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    background-color: #0009;
+  }
+  .comment {
+    width: 40vw;
+    height: 100vh;
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    padding-bottom: 2rem;
+    overflow-y: scroll;
+    background-color: #fff;
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 6px;
+      z-index: 2;
+      font-size: 2rem;
+      color: #757575;
+      padding: 16px 20px;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .comment_modal {
+      position: relative;
+      max-height: 100vh;
+      padding: 40px 30px 60px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+  }
+
+  .comment-list {
+    color: var(--text-color);
+    .header {
+      .comment-header-title {
+        color: #4e586b;
+        font-size: 2rem;
+      }
+    }
+  }
+}

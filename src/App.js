@@ -30,9 +30,13 @@ function App() {
                     path={route.path}
                     element={
                       <Layout>
-                        <Container style={{ minWidth: "85%" }}>
+                        {!route.isNotNeedContainer ? (
+                          <Container style={{ minWidth: "85%" }}>
+                            <Page />
+                          </Container>
+                        ) : (
                           <Page />
-                        </Container>
+                        )}
                       </Layout>
                     }
                   />
