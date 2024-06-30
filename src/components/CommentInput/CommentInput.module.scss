@@ -1,0 +1,21 @@
+.wrapper {
+  display: block;
+  box-sizing: border-box;
+  color: #2e3441;
+  background-color: #fff;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  font-variant-ligatures: none;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-user-drag: none;
+  .avatar {
+    width: 5rem;
+    height: 5rem;
+    border: 0.2rem solid#00000082;
+    border-radius: 50%;
+  }
+}

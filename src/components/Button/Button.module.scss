@@ -9,6 +9,7 @@
   padding: 1rem 1.4rem;
   font-weight: 700;
   font-size: 1.6rem;
+  color: #000;
   background: var(--white);
   outline: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -52,14 +53,103 @@
 
     // border: 0.1rem solid var(--purple-light);
   }
+  &.header_lesson {
+    background-color: transparent;
+    span {
+      div {
+        svg path,
+        h5 {
+          color: #fff3f3 !important;
+        }
+      }
+    }
+    // background: transparent;
+  }
+  &.next_lesson {
+    display: inline-block;
+    min-width: 14.8rem;
+    height: 32px;
+    border-radius: 9999rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.8;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s;
+    background-color: #0093fc;
+    outline: none;
+    border: none;
+    -webkit-user-select: none;
+    user-select: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    span {
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      border-radius: 9999rem;
+    }
+    .Icon {
+      margin: 0;
+    }
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+  &.previous_lesson {
+    display: inline-block;
+    min-width: 14.8rem;
+    height: 32px;
+    border-radius: 9999rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.8;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: #fff;
+    transition: opacity 0.2s;
+    outline: none;
+    border: none;
+    -webkit-user-select: none;
+    background: #fff;
+    user-select: none;
+    padding: 0;
+    color: transparent;
+    cursor: pointer;
+    span {
+      color: #000;
+      border-radius: inherit;
+      border: 1px solid transparent;
+      background-clip: padding-box;
+      border-radius: 9999rem;
+    }
+    &:hover {
+      opacity: 0.6;
+    }
+  }
   &.more {
     box-shadow: none;
     color: var(--text-color);
     font-size: 1rem;
     padding: 0;
     opacity: 0.7;
+    background-color: transparent;
     &:hover {
       opacity: 1;
+    }
+  }
+  &.reply {
+    box-shadow: none;
+    color: #0093fc;
+    font-size: 1rem;
+    padding: 0;
+    &:hover {
+      opacity: 0.8;
     }
   }
   &.x_button {
@@ -180,8 +270,7 @@
 .rounded {
   border-radius: 9999rem;
   &:hover {
-    // border-color: var(--purple-light);
-    color: var(--white);
+    opacity: 0.7;
     background-color: #dce0e3;
   }
 }

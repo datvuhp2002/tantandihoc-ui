@@ -97,11 +97,14 @@ const PostDetail = () => {
                     className="d-flex justify-content-start align-item-start"
                     href={`/blog/post-detail/${item.id}`}
                   >
-                    <Image
-                      post_thumbnail_other
-                      src={`${process.env.REACT_APP_API_URL}/${item.thumbnail}`}
-                    />
-                    {item.title}
+                    <div className={cx("thumbnail", "col-6 me-3")}>
+                      <Image
+                        post_thumbnail_other
+                        className="w-100"
+                        src={`${process.env.REACT_APP_API_URL}/${item.thumbnail}`}
+                      />
+                    </div>
+                    <p className="text-wrap fs-5 col-6">{item.title}</p>
                   </Button>
                 </div>
               );

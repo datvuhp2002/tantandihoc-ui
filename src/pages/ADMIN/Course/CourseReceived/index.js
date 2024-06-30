@@ -6,13 +6,23 @@ import { useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as actions from "~/redux/actions";
+import { Button, Modal } from "react-bootstrap";
 import Input from "~/components/Input";
-import Button from "~/components/Button";
+import Btn from "~/components/Button";
 import Image from "~/components/Image";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowRight,
+  faPencilAlt,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 const CourseReceived = () => {
   const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
+  const navigator = useNavigate();
+  const params = useParams();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
   const {
@@ -22,28 +32,38 @@ const CourseReceived = () => {
     formState: { errors },
   } = useForm();
   const handleSubmitFormAdd = async (data) => {
-    let formData = new FormData();
-    for (let key in data) {
-      if (key == "thumbnail") {
-        formData.append(key, data[key][0]);
-      } else {
-        formData.append(key, data[key]);
-      }
-    }
     dispatch(actions.controlLoading(true));
+    data.course_id = Number(params.id);
     try {
-      const res = await requestApi(
-        "/courses",
-        "POST",
-        formData,
-        "json",
-        "multipart/form-data"
-      );
+      await requestApi("/course-received", "POST", data);
       dispatch(actions.controlLoading(false));
-      toast.success("Thêm khoá học thành công", {
+      toast.success("Thêm thành công", {
         position: "top-right",
         autoClose: 3000,
       });
+      setValue("name", "");
+    } catch (err) {
+      console.log("err=>", err);
+      dispatch(actions.controlLoading(false));
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+  const handleDelete = async () => {
+    setShowModal(true);
+  };
+  const requestDeleteApi = async () => {
+    console.log("delete");
+    try {
+      await requestApi(`/courses/${params.id}`, "DELETE");
+      dispatch(actions.controlLoading(false));
+      toast.success("Hủy thành công", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      navigator("/admin/course");
     } catch (err) {
       console.log("err=>", err);
       dispatch(actions.controlLoading(false));
@@ -69,72 +89,84 @@ const CourseReceived = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Courses Update</h1>
-      <ol className="breadcrumb mb-4">
-        <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
-        </li>
-        <li className="breadcrumb-item">
-          <Link to="/admin/course">Courses</Link>
-        </li>
-        <li className="breadcrumb-item">Courses add</li>
-      </ol>
+      <div className="d-flex align-item-center justify-content-between">
+        <div>
+          <h1 className="mt-4 p-0">Courses Received</h1>
+          <ol className="breadcrumb mb-4">
+            <li className="breadcrumb-item">
+              <Link to="/admin/dashboard">Dashboard</Link>
+            </li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/course">Courses</Link>
+            </li>
+            <li className="breadcrumb-item">Courses Add</li>
+            <li className="breadcrumb-item">Course Received</li>
+          </ol>
+        </div>
+        <div
+          className={cx(
+            "",
+            "col-md-6 align-item-center justify-content-center d-flex"
+          )}
+        >
+          <div className="d-flex align-items-center">
+            <Btn
+              onClick={handleDelete}
+              className="btn btn-danger"
+              leftIcon={<FontAwesomeIcon icon={faTrash} />}
+            >
+              Hủy tạo
+            </Btn>
+          </div>
+          <div className="d-flex align-items-center ms-2">
+            <Btn
+              className="btn "
+              leftIcon={<FontAwesomeIcon icon={faPencilAlt} />}
+            >
+              Nháp
+            </Btn>
+          </div>
+          <div className="d-flex align-items-center ms-2">
+            <Btn
+              className="btn"
+              rightIcon={<FontAwesomeIcon icon={faArrowRight} />}
+              onClick={() => navigator(`/admin/lesson/lesson-add/${params.id}`)}
+            >
+              Tiếp tục
+            </Btn>
+          </div>
+        </div>
+      </div>
       <form>
         <div className={cx("", "col-md-6")}>
           <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tên khóa học:</label>
+            <label className="form-label">Khóa học mang lại:</label>
             <input
               type="text"
-              className="form-control p-3"
-              placeholder="Tên khóa học"
-              {...register("name", {
-                required: "Vui lòng nhập tên khóa học",
-              })}
+              className="form-control p-3 fs-5"
+              placeholder="Khóa học mang lại..."
+              {...register("name")}
             ></input>
-            {errors.name && (
-              <p className="text-danger">{errors.name.message}</p>
-            )}
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Miêu tả khóa học:</label>
-            <input
-              type="text"
-              className="form-control p-3"
-              placeholder="Miêu tả khóa học"
-              {...register("description", {
-                required: "Vui lòng viết miêu tả của khóa học",
-              })}
-            ></input>
-            {errors.description && (
-              <p className="text-danger">{errors.description.message}</p>
-            )}
+          <div className="d-flex justify-content-end">
+            <Btn onClick={handleSubmit(handleSubmitFormAdd)} className="btn">
+              Tạo
+            </Btn>
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeThumbnail")}>
-              thêm bìa bài viết
-            </label>
-            {thumbnail.img && (
-              <Image avatar_profile rounded src={thumbnail.img}></Image>
-            )}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              className="d-none"
-              {...register("thumbnail", {
-                required: "Vui lòng viết thêm ảnh của bài viết",
-                onChange: onImageChange,
-              })}
-            />
-            {errors.thumbnail && (
-              <p className="text-danger">{errors.thumbnail.message}</p>
-            )}
-          </div>
-          <Button onClick={handleSubmit(handleSubmitFormAdd)} className="btn">
-            Tạo mới
-          </Button>
         </div>
       </form>
+      <Modal show={showModal} onHide={() => setShowModal(false)} size="sm">
+        <Modal.Header closeButton>
+          <Modal.Title>Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Bạn có chắc là muốn hủy tạo?</Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => setShowModal(false)}>Đóng</Button>
+          <Button className="btn-danger" onClick={requestDeleteApi}>
+            Hủy tạo
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

@@ -42,6 +42,7 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
   };
   const Menu_item = [
     [{ title: "Trang cá nhân", path: "/info" }],
+    [{ title: "Khoá học của tôi", path: "/my-courses" }],
     [
       { title: "Bài viết đã lưu", path: "/saved-posts" },
       { title: "Bài viết của bạn", path: "/my-posts" },
@@ -143,7 +144,11 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
           {/* action */}
           <div className={cx("action", "d-flex justify-content-end")}>
             <Menu items={Menu_item}>
-              <Image avatar rounded alt="" src={images.logo} />
+              {userData.avatar ? (
+                <Image avatar rounded alt="" src={userData.avatar} />
+              ) : (
+                <Image avatar rounded alt="" src={Logo} />
+              )}
             </Menu>
           </div>
         </div>

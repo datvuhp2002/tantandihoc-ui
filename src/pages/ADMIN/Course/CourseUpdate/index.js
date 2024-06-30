@@ -25,8 +25,10 @@ const CourseUpdate = () => {
   const handleSubmitFormUpdate = async (data) => {
     let formData = new FormData();
     for (let key in data) {
-      if (key == "thumbnail") {
-        formData.append(key, data[key][0]);
+      if (key === "thumbnail") {
+        if (data[key] && data[key].length > 0) {
+          formData.append(key, data[key][0]);
+        }
       } else {
         formData.append(key, data[key]);
       }

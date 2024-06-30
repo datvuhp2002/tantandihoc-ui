@@ -10,7 +10,7 @@
   transition: border-color 0.2s ease-in-out;
   overflow: hidden;
   &:focus-within {
-    border: 0.3px solid var(--purple-light);
+    border: 1.5px solid #444;
   }
   .Icon {
     display: inline-block;
@@ -31,8 +31,7 @@
   }
   input:not(:placeholder-shown) {
     ~ .Icon {
-      border-color: red !important;
-      color: red;
+      color: #444;
     }
   }
   h5 {

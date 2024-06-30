@@ -128,14 +128,14 @@ const DataTable = (props) => {
                 onChange={onChangeOption}
               >
                 <option value="10">10</option>
-                <option value="10">15</option>
-                <option value="10">20</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
               </select>
             </label>
           </div>
           <div className="col-sm-12 col-md-6">
-            <label className="d-inline-flex float-end">
-              Search:
+            <label className="d-inline-flex float-end align-items-center ">
+              <p className="p-0 me-2 d-flex align-item-center m-0">Search:</p>
               <LiveSearch onKeySearch={onKeySearch} />
             </label>
           </div>

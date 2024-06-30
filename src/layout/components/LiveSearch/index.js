@@ -14,9 +14,6 @@ const LiveSearch = ({ onKeySearch }) => {
 
   const onTyping = (event) => {
     const target = event.target;
-
-    console.log("keyword typing=> ", target.value);
-
     setKeyword(target.value);
   };
   return (
@@ -24,8 +21,8 @@ const LiveSearch = ({ onKeySearch }) => {
       type="search"
       onChange={onTyping}
       value={keyword}
-      className="form-control form-control-sm ms-1"
-      placeholder="Email or Name"
+      className="form-control form-control-sm ms-1 p-3 fs-5"
+      placeholder="Searching..."
     />
   );
 };

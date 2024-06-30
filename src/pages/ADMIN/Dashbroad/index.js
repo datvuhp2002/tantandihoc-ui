@@ -52,7 +52,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-4">
-          <div className="card bg-secondary text-white mb-4">
+          <div className="card bg-warning text-white mb-4">
             <div className="card-body">
               Tổng khoá học
               {dashboardData.totalCourse && (
@@ -75,7 +75,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-4">
-          <div className="card bg-secondary text-white mb-4">
+          <div className="card bg-success text-white mb-4">
             <div className="card-body">
               Tổng bài viết
               {dashboardData.totalPost && (

@@ -3,7 +3,7 @@
   .item {
     color: var(--text-light-color);
     &:hover {
-      color: var(--text-hover);
+      opacity: 0.7;
     }
   }
 }
