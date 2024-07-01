@@ -13,7 +13,7 @@ const Home = () => {
     dispatch(actions.controlLoading(true));
     let i = 1;
     console.log(i++);
-    requestApi("/courses", "GET")
+    requestApi("/courses?items_per_page=8", "GET")
       .then((res) => {
         setCoursesData(res.data.data);
         dispatch(actions.controlLoading(false));
@@ -26,7 +26,9 @@ const Home = () => {
     <div className={cx("wrapper")}>
       <div className="mb-5">
         <div className={cx("", "d-flex row mt-5")}>
-          <h1>Khóa học miễn phí</h1>
+          <h2 className="fs-2">
+            <strong>Khóa học mới</strong>
+          </h2>
           <div className={cx("group-corse", "row")}>
             {coursesData && coursesData.length > 0 ? (
               coursesData.map((item, index) => {

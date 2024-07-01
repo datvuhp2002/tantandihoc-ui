@@ -12,16 +12,13 @@
   }
   &.avatar {
     width: var(--header-image-size);
-    border-radius: 2rem;
+    border-radius: 50%;
   }
   &.rounded {
     border-radius: 9999rem;
   }
   &.avatar_profile {
-    width: 20rem;
-    height: 20rem;
     object-fit: cover;
-    border-radius: 50%;
   }
   &.post_avatar {
     max-width: 4rem;
@@ -35,9 +32,6 @@
     object-fit: contain;
   }
   &.post_thumbnail {
-    max-width: 20rem;
-    min-width: 20rem;
-    max-height: 10rem;
     border-radius: 2rem;
     object-fit: cover;
   }

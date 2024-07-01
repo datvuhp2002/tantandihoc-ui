@@ -21,6 +21,7 @@ import {
 import LessonCard from "~/layout/components/LessonCard";
 import Comment from "~/components/Comment";
 const cx = classNames.bind(styles);
+
 const Learning = () => {
   const params = useParams();
   const dispatch = useDispatch();
@@ -34,14 +35,16 @@ const Learning = () => {
   const [showLesson, setShowLesson] = useState(true);
   const [listsComment, setListsComment] = useState({});
   const [isShowComment, setShowComment] = useState(false);
+  const [listLessonId, setListLessonId] = useState([]);
 
   const onNavigate = (i) => {
     navigate(`/course/learning/${params.id}?lesson=${i}`);
-    // onUpdateUserProgress(i);
   };
+
   const onSetShowComment = () => {
     setShowComment(!isShowComment);
   };
+
   const fetchComments = async () => {
     await requestApi(
       `/comment-lessons/get-all-comments-in-lessons/${lesson}`,
@@ -86,6 +89,9 @@ const Learning = () => {
         setCourseData(res[0].data);
         setCourseReceivedData(res[1].data.data);
         setLessonData(res[2].data);
+        const lessonIdArray = res[2].data.data.map((item) => item.id);
+        console.log(lessonIdArray);
+        setListLessonId(lessonIdArray);
         setDetailLessonData(res[3].data);
         setListsComment(res[4].data);
       })
@@ -93,12 +99,21 @@ const Learning = () => {
         dispatch(actions.controlLoading(false));
       });
   }, [location.search]);
+
+  const currentLessonIndex = listLessonId.indexOf(parseInt(lesson));
+  const previousLessonId =
+    currentLessonIndex > 0 ? listLessonId[currentLessonIndex - 1] : null;
+  const nextLessonId =
+    currentLessonIndex < listLessonId.length - 1
+      ? listLessonId[currentLessonIndex + 1]
+      : null;
+
   return (
     <div className={cx("wrapper", `d-flex`)}>
       <div
         className={cx(
           "course",
-          `${!showLesson ? "w-100" : ""}  ${
+          `${!showLesson ? "w-100" : ""} ${
             isShowComment ? "overflow-hidden" : ""
           }`
         )}
@@ -187,18 +202,16 @@ const Learning = () => {
             <Button
               leftIcon={<FontAwesomeIcon icon={faChevronLeft} />}
               previous_lesson
-              onClick={() => onNavigate(lesson - 1)}
-              disabled={lessonData.data[0].id == lesson}
+              onClick={() => onNavigate(previousLessonId)}
+              disabled={previousLessonId === null}
             >
               Bài trước
             </Button>
             <Button
               rightIcon={<FontAwesomeIcon icon={faChevronRight} />}
               next_lesson
-              onClick={() => onNavigate(Number(lesson) + 1)}
-              disabled={
-                lessonData.data[lessonData.data.length - 1].id == lesson
-              }
+              onClick={() => onNavigate(nextLessonId)}
+              disabled={nextLessonId === null}
             >
               Bài tiếp theo
             </Button>
@@ -231,6 +244,7 @@ const Learning = () => {
           onClick={onSetShowComment}
           location={location.search}
           data={listsComment}
+          isLesson={true}
           fetchComments={fetchComments}
         />
       )}

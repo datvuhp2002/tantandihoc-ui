@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 const ListComment = ({
   data,
   profile,
+  isLesson = true,
   onClick,
   location,
   replyMode,
@@ -24,17 +25,38 @@ const ListComment = ({
   const [replyData, setReplyData] = useState({});
   const [isShowReplyComments, setIsShowReplyComments] = useState(false);
   const fetchReplyComment = async (data, isReply) => {
-    await requestApi(
-      `/comment-lessons/get-all-reply-comments/${data.lesson_id}?reply=${data.id}`
-    ).then((res) => {
-      setReplyData(res.data);
-    });
-    if (replyMode || isReply) {
-      setIsShowReplyComments(true);
+    if (isLesson == true) {
+      await requestApi(
+        `/comment-lessons/get-all-reply-comments/${data.lesson_id}?reply=${data.id}`
+      ).then((res) => {
+        setReplyData(res.data);
+      });
+      if (replyMode || isReply) {
+        setIsShowReplyComments(true);
+      }
+    } else if (isLesson == false) {
+      await requestApi(
+        `/comment-posts/get-all-reply-comments/${data.post_id}?reply=${data.id}`
+      ).then((res) => {
+        setReplyData(res.data);
+        console.log(
+          "reply data:::",
+          res.data,
+          "post_id",
+          data.post_id,
+          "reply",
+          data.id
+        );
+      });
+      if (replyMode || isReply) {
+        setIsShowReplyComments(true);
+      }
     }
   };
+
   useEffect(() => {
     fetchReplyComment(data, false);
+    if (!isLesson) console.log(data);
   }, []);
   return (
     <div
@@ -80,8 +102,9 @@ const ListComment = ({
           <CommentInput
             data={profile}
             isReply={true}
+            isLesson={isLesson}
             reply_id={data.id}
-            lesson={data.lesson_id}
+            id={isLesson ? data.lesson_id : data.post_id}
             onCommentCreated={onCommentCreated}
             onReplyCreated={fetchReplyComment}
           />
@@ -106,6 +129,7 @@ const ListComment = ({
                 <ListComment
                   key={index}
                   data={item}
+                  isLesson={isLesson}
                   profile={profile}
                   onCommentCreated={onCommentCreated}
                   replyMode

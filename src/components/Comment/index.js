@@ -14,17 +14,23 @@ const Comment = ({
   data,
   onClick,
   location,
+  isLesson = true,
   fetchComments,
   fetchReplyComment,
   ...passProps
 }) => {
   let _props = { ...passProps };
   const [userProfile, setUserProfile] = useState({});
-  const [lesson, setLesson] = useState(0);
+  const [id, setId] = useState(0);
   useEffect(() => {
-    const searchParams = new URLSearchParams(location);
-    const lesson = searchParams.get("lesson");
-    setLesson(lesson);
+    console.log(location);
+    if (isLesson) {
+      const searchParams = new URLSearchParams(location);
+      const lesson = searchParams.get("lesson");
+      setId(lesson);
+    } else {
+      setId(location);
+    }
     requestApi("/users/profile", "GET").then((res) => {
       setUserProfile(res.data);
     });
@@ -44,8 +50,8 @@ const Comment = ({
         <div className={cx("comment_modal", "mt-2")}>
           <CommentInput
             data={userProfile}
-            lesson={lesson}
-            isLesson={true}
+            id={id}
+            isLesson={isLesson}
             onCommentCreated={fetchComments}
           />
           <div className={cx("comment-list", "mt-2")} {..._props}>
@@ -57,6 +63,7 @@ const Comment = ({
             <div className={cx("content")}>
               {data.comments.map((item, index) => (
                 <ListComment
+                  isLesson={isLesson}
                   key={index}
                   profile={userProfile}
                   data={item}

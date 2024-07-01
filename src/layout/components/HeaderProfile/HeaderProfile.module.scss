@@ -21,6 +21,11 @@
 .logo {
   flex: 1 1;
   padding: 0;
+  .logo-link {
+    :hover {
+      opacity: 0.7;
+    }
+  }
 }
 
 .action {

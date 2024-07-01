@@ -70,11 +70,11 @@ const Info = () => {
           </div>
         </div>
       </div>
-      <div className="d-flex align-items-center justify-content-center">
+      <div className="d-flex align-items-center justify-content-center row">
         <div
           className={cx(
             "content-left",
-            "col-md-5 h-100 d-flex flex-column mt-2"
+            "col-md-5 col-sm-12 h-100 d-flex flex-column mt-2"
           )}
         >
           <div className={cx("information")}>
@@ -133,7 +133,7 @@ const Info = () => {
         <div
           className={cx(
             "content-right",
-            "col-md-7 ms-3 h-100 d-flex flex-column mt-2 justify-content-start"
+            "col-md-7 col-sm-12 ms-3 h-100 d-flex flex-column mt-2 justify-content-start"
           )}
         >
           <div className={cx("information")}>
