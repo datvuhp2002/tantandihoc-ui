@@ -39,6 +39,7 @@ import MyCourses from "~/pages/MyCourse";
 import Learning from "~/pages/Learning";
 import LessonLayout from "~/layout/LessonLayout";
 import ProfileLayout from "~/layout/ProfileLayout";
+import PostLayout from "~/layout/PostLayout";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -88,7 +89,7 @@ const privateRoutes = [
     component: MyCourses,
   },
   { path: config.routes.courseDetail, component: CourseDetail },
-  { path: config.routes.postDetail, component: PostDetail },
+  { path: config.routes.postDetail, component: PostDetail, layout: PostLayout },
   { path: config.routes.createPost, component: CreatePost },
   { path: config.routes.caidat, component: CaiDat },
   { path: config.routes.error, component: ReportErrorPage },

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import requestApi from "~/utils/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
 import styles from "./MyPost.module.scss";
 import Image from "~/components/Image";
@@ -11,28 +11,48 @@ import { Wrapper } from "~/layout/components/Popper";
 import { useDispatch } from "react-redux";
 import * as actions from "~/redux/actions";
 import { useForm } from "react-hook-form";
+import Card from "~/layout/components/Card";
+import moment from "moment";
 const cx = classNames.bind(styles);
 const MyPost = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm();
-  const [userData, setUserData] = useState({});
-  const [showForm, setShowForm] = useState(true);
-
-  const onHandleShowForm = () => {
-    Object.keys(userData).map((key) => {
-      setValue(key, userData[key]);
+  const [listPostSaved, setListPostSaved] = useState({});
+  useEffect(() => {
+    requestApi(`/posts/get-all-my-post`, "get").then((res) => {
+      console.log(res.data);
+      setListPostSaved(res.data);
     });
-    setShowForm(!showForm);
-  };
-  const onImageChange = (e) => {};
-
-  return <div className={cx("wrapper", "d-flex row ")}>saved</div>;
+  }, []);
+  return (
+    <div className={cx("wrapper")}>
+      <div className="mb-5">
+        <div className={cx("", "d-flex row mt-5 col-8")}>
+          <h1 className="p-0">Bài viết của bạn</h1>
+          <div className={cx("group-post")}>
+            <h2>
+              <strong>Bài viết ({listPostSaved.total})</strong>
+            </h2>
+          </div>
+          {listPostSaved.data &&
+            listPostSaved.data.map((item) => (
+              <div className={cx("item")}>
+                <Link key={item.id} to={`/blog/post-detail/${item.id}`}>
+                  <h3>{item.title}</h3>
+                  <div className={cx("author", "fs-4")}>
+                    <span className={cx("time")}>
+                      Đã viết {moment(item.createdAt).fromNow()}
+                    </span>
+                    <span className={cx("dot")}>-</span>
+                    <span className={cx("author_info")}>
+                      Tác giả <strong>{item.owner.username}</strong>
+                    </span>
+                  </div>
+                </Link>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default MyPost;

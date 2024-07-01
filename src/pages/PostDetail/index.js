@@ -13,20 +13,53 @@ import DOMPurify from "dompurify";
 import parse from "html-react-parser";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faArrowAltCircleUp,
+  faComment,
+  faComments,
+} from "@fortawesome/free-solid-svg-icons";
+import { faBookmark as faBookmarkSolid } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark } from "@fortawesome/fontawesome-free-regular";
+import moment from "moment";
+import PostCard from "~/layout/components/PostCard";
+import Comment from "~/components/Comment";
 const cx = classNames.bind(styles);
 const PostDetail = () => {
+  const [isSavedPost, setIsSavedPost] = useState(false);
   const dispatch = useDispatch();
   const [postDetailData, setPostDetailData] = useState({});
   const [listPostData, setListPostData] = useState({});
   const params = useParams();
-  useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    requestApi(`/posts/${params.id}`, "GET")
+  const [isShowComment, setShowComment] = useState(false);
+  const [listsComment, setListsComment] = useState({});
+
+  const onSetShowComment = () => {
+    setShowComment(!isShowComment);
+  };
+  const OnSavedPost = async (post_id) => {
+    await requestApi("/saved-post", "POST", { post_id }).then((res) => {
+      if (res.data.statusCode == 200) {
+        toast.success(`${res.data.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        toast.info(`${res.data.message}`, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+      setIsSavedPost(!isSavedPost);
+    });
+  };
+  const getPostsData = async () => {
+    await requestApi(`/posts/${params.id}`, "GET")
       .then((res) => {
         console.log(res.data);
         setPostDetailData(res.data);
         requestApi(
-          `/posts?category_id=${res.data.categoryId}&except=${params.id}`
+          `/posts?category_id=${res.data.categoryId}&except=${params.id}&items_per_page=3`
         )
           .then((res) => {
             setListPostData(res.data);
@@ -41,10 +74,44 @@ const PostDetail = () => {
       .finally(() => {
         dispatch(actions.controlLoading(false));
       });
-  }, []);
+  };
+  const scrollToTop = () => {
+    window.scrollTo(0, 0);
+  };
+  const fetchComments = async () => {
+    await requestApi(
+      `/comment-posts/get-all-comments-in-posts/${params.id}`,
+      "GET"
+    )
+      .then((res) => {
+        setListsComment(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  useEffect(() => {
+    scrollToTop();
+    dispatch(actions.controlLoading(true));
+    requestApi(`/saved-post/${params.id}`, "GET")
+      .then((res) => {
+        setIsSavedPost(res.data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+    getPostsData();
+    fetchComments();
+  }, [params.id]);
   return (
-    <div className={cx("wrapper", "d-flex row")}>
-      <div className="col-8">
+    <div
+      className={cx(
+        "wrapper",
+        "d-flex pt-5 algin-items-center justify-content-center"
+      )}
+    >
+      <div className="w-75">
         <h1
           className={cx(
             "title",
@@ -53,6 +120,43 @@ const PostDetail = () => {
         >
           <strong>{postDetailData.title}</strong>
         </h1>
+        <div className={cx("post_info")}>
+          {postDetailData.owner && (
+            <div className={cx("author_info")}>
+              <div className={cx("avatar")}>
+                <Image
+                  avatar
+                  src={`${process.env.REACT_APP_API_URL}/${postDetailData.owner.avatar}`}
+                  className="h-100 w-100"
+                />
+              </div>
+              <div className={cx("detail")}>
+                <span className={cx("username", "p-0 m-0")}>
+                  {postDetailData.owner.username}
+                </span>
+                <p className="p-0 m-0">
+                  {moment(postDetailData.createdAt).fromNow()}
+                </p>
+              </div>
+            </div>
+          )}
+          <div>
+            <div className={cx("actions", "d-flex justify-content-end")}>
+              <Button
+                className="justify-content-end"
+                saved
+                onClick={() => OnSavedPost(postDetailData.id)}
+                leftIcon={
+                  isSavedPost ? (
+                    <FontAwesomeIcon icon={faBookmarkSolid}></FontAwesomeIcon>
+                  ) : (
+                    <FontAwesomeIcon icon={faBookmark}></FontAwesomeIcon>
+                  )
+                }
+              ></Button>
+            </div>
+          </div>
+        </div>
         <div
           className={cx(
             "content",
@@ -78,39 +182,44 @@ const PostDetail = () => {
             }}
           />
         )}
-      </div>
-      <div className={cx("other", "col-3")}>
-        <h1>Có thể bạn sẽ thích</h1>
-        <div className={cx("post_item")}>
-          {listPostData.data &&
-            listPostData.data.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  className={cx(
-                    "item",
-                    "d-flex justify-content-start align-item-start mt-2"
-                  )}
-                >
-                  <Button
-                    blog_navigate
-                    className="d-flex justify-content-start align-item-start"
-                    href={`/blog/post-detail/${item.id}`}
-                  >
-                    <div className={cx("thumbnail", "col-6 me-3")}>
-                      <Image
-                        post_thumbnail_other
-                        className="w-100"
-                        src={`${process.env.REACT_APP_API_URL}/${item.thumbnail}`}
-                      />
-                    </div>
-                    <p className="text-wrap fs-5 col-6">{item.title}</p>
-                  </Button>
-                </div>
-              );
-            })}
+        <div className={cx("other", "")}>
+          <h2 className={cx("heading")}>Bài viết cùng thể loại khác</h2>
+          <div className={cx("post_item", "mt-5 w-100 row")}>
+            {listPostData.data &&
+              listPostData.data.map((item, index) => {
+                return <PostCard key={index} data={item} className="w-100" />;
+              })}
+          </div>
         </div>
       </div>
+      <div className={cx("comment", "d-flex")}>
+        <Button
+          rounded
+          leftIcon={<FontAwesomeIcon icon={faComments} />}
+          onClick={() => {
+            onSetShowComment();
+          }}
+        >
+          Bình luận
+        </Button>
+        <Button
+          className="p-0 fs-1 m-0"
+          scroll_to_top_btn
+          onClick={() => {
+            scrollToTop();
+          }}
+          leftIcon={<FontAwesomeIcon icon={faArrowAltCircleUp} />}
+        />
+      </div>
+      {isShowComment && (
+        <Comment
+          onClick={onSetShowComment}
+          location={params.id}
+          isLesson={false}
+          data={listsComment}
+          fetchComments={fetchComments}
+        />
+      )}
     </div>
   );
 };

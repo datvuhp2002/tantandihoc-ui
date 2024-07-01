@@ -18,7 +18,7 @@ const CommentInput = ({
   isLesson = false,
   isReply = false,
   reply_id,
-  lesson,
+  id,
   onCommentCreated,
   onReplyCreated,
 }) => {
@@ -39,7 +39,7 @@ const CommentInput = ({
   const onSubmitLessonComment = async () => {
     dispatch(actions.controlLoading(true));
     const newComment = {
-      lesson_id: Number(lesson),
+      lesson_id: Number(id),
       message: searchValue,
     };
     if (isReply) {
@@ -70,7 +70,38 @@ const CommentInput = ({
         });
       });
   };
-
+  const onSubmitPostsComment = async () => {
+    // dispatch(actions.controlLoading(true));
+    const newComment = {
+      post_id: Number(id),
+      message: searchValue,
+    };
+    if (isReply) {
+      newComment.reply = Number(reply_id);
+    }
+    console.log("new commet", newComment);
+    await requestApi("/comment-posts", "POST", newComment)
+      .then((res) => {
+        dispatch(actions.controlLoading(false));
+        toast.success("Thêm bình luận thành công", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+        handleClear();
+        onCommentCreated();
+        if (isReply) {
+          onReplyCreated({ post_id: newComment.post_id, id: reply_id }, true);
+        }
+      })
+      .catch((err) => {
+        console.log("err=>", err);
+        dispatch(actions.controlLoading(false));
+        toast.error("Thêm bình luận thất bại", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      });
+  };
   return (
     <div className={cx("wrapper")}>
       <div className="d-flex">
@@ -97,7 +128,18 @@ const CommentInput = ({
             Hủy
           </Button>
         )}
-        <Button rounded className="" onClick={onSubmitLessonComment}>
+        <Button
+          rounded
+          className=""
+          onClick={() => {
+            console.log(isLesson);
+            if (isLesson == true) {
+              onSubmitLessonComment();
+            } else {
+              onSubmitPostsComment();
+            }
+          }}
+        >
           Bình luận
         </Button>
       </div>

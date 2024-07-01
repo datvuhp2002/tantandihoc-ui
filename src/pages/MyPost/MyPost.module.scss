@@ -1,40 +1,28 @@
 .wrapper {
-  color: var(--grey);
-  .information {
-    font-size: 1.4rem;
-    box-shadow: rgb(0 0 0/12%) 0px 2px 12px;
-    padding: 12px 24px;
-    border-radius: 1rem;
-  }
-  .user-information {
-    + .user-information {
-      margin-top: 1rem;
-    }
-  }
-  .btn_changeAvatar {
-    border-radius: 999rem;
+  .group-corse {
     display: flex;
-    flex-direction: row;
-    font-family: "Roboto", sans-serif;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    min-width: 100px;
-    padding: 1rem 1.4rem;
-    font-weight: 700;
-    font-size: 1.6rem;
-    background-color: var(--purple-light);
-    color: var(--white);
-    outline: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    border: 1.5px solid transparent;
-    transition: all 0.2s ease-in-out;
-    &:hover {
-      background-color: var(--purple-dark);
-    }
   }
-  h1 {
-    margin-bottom: 1.5rem;
+  .group-post {
+    display: flex;
+    list-style: none;
+    margin-bottom: 0;
+    margin-top: 16px;
+    padding-left: 0;
+    padding: 1.3rem 0;
+    border-bottom: 1px solid #000;
+  }
+  .item {
+    border: 2px solid #e8e8e8;
+    border-radius: 16px;
+    margin-top: 16px;
+    padding: 16px 24px 22px;
+    position: relative;
+    color: var(--text-color);
+    .time {
+      color: #029e74;
+    }
+    .dot {
+      padding: 0 0.6rem;
+    }
   }
 }

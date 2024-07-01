@@ -111,8 +111,6 @@ const LessonAdd = () => {
               extraPlugins: [uploadPlugin],
             }}
           />
-        </div>
-        <div className="d-flex flex-column col-md-6 ms-3">
           <div
             className={cx("", "mb-3 mt-3 d-flex flex-column align-item-start")}
           >
@@ -143,6 +141,8 @@ const LessonAdd = () => {
               <p className="text-danger">{errors.summary.message}</p>
             )}
           </div>
+        </div>
+        <div className="d-flex flex-column col-md-6 ms-3">
           <div
             className={cx(
               "",
@@ -153,11 +153,13 @@ const LessonAdd = () => {
               thêm bìa hình ảnh
             </label>
             {thumbnail.img && (
-              <Image
-                avatar_profile
-                src={thumbnail.img}
-                className={cx("avatar-img")}
-              ></Image>
+              <div className={cx("thumbnail")}>
+                <Image
+                  avatar_profile
+                  src={thumbnail.img}
+                  className={cx("avatar-img", "w-100")}
+                ></Image>
+              </div>
             )}
             <input
               id="file"

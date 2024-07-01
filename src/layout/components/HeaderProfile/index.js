@@ -86,8 +86,12 @@ const HeaderProfile = ({ navigator = "/" }) => {
         <div className={cx("logo", "d-flex")}>
           <Button
             header
-            className={cx("logo", "h-100 justify-content-start")}
+            className={cx(
+              "logo-link",
+              "h-100 justify-content-start fs-2 text-dark"
+            )}
             to={`${navigator}`}
+            leftIcon={<FontAwesomeIcon icon={faArrowLeft} />}
           >
             <div
               className={cx(
