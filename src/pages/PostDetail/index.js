@@ -111,7 +111,7 @@ const PostDetail = () => {
         "d-flex pt-5 algin-items-center justify-content-center"
       )}
     >
-      <div className="w-75">
+      <div className={cx("wrapper_content")}>
         <h1
           className={cx(
             "title",
