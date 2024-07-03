@@ -48,7 +48,7 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
       { title: "Bài viết của bạn", path: "/my-posts" },
     ],
     [
-      { title: "cài đặt", path: "/caidat" },
+      { title: "cài đặt", path: `/setting/${userData.id}` },
       { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],
   ];
@@ -66,6 +66,7 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
             ...res.data,
             avatar: `${process.env.REACT_APP_API_URL}/${res.data.avatar}`,
           });
+          console.log(res.data);
         })
         .catch((err) => {
           console.log(err);

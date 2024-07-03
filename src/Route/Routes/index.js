@@ -6,8 +6,7 @@ import LearningParts from "~/pages/LearningParts";
 import Blog from "~/pages/Blog";
 import ThietLapUngDung from "~/pages/thietlapungdung";
 import Info from "~/pages/Info";
-import CaiDat from "~/pages/CaiDat";
-import ReportErrorPage from "~/pages/CaiDat/Error";
+import Setting from "~/pages/Setting";
 import FooterOnly from "~/layout/FooterOnly";
 import CourseDetail from "~/pages/CourseDetail";
 import CreatePost from "~/pages/CreatePost";
@@ -40,6 +39,7 @@ import Learning from "~/pages/Learning";
 import LessonLayout from "~/layout/LessonLayout";
 import ProfileLayout from "~/layout/ProfileLayout";
 import PostLayout from "~/layout/PostLayout";
+import SettingLayout from "~/layout/SettingLayout";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -91,8 +91,7 @@ const privateRoutes = [
   { path: config.routes.courseDetail, component: CourseDetail },
   { path: config.routes.postDetail, component: PostDetail, layout: PostLayout },
   { path: config.routes.createPost, component: CreatePost },
-  { path: config.routes.caidat, component: CaiDat },
-  { path: config.routes.error, component: ReportErrorPage },
+  { path: config.routes.setting, component: Setting, layout: SettingLayout },
   {
     path: config.routes.learning,
     component: Learning,
