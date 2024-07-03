@@ -48,7 +48,7 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
       { title: "Bài viết của bạn", path: "/my-posts" },
     ],
     [
-      { title: "cài đặt", path: `/setting/${userData.id}` },
+      { title: "cài đặt", path: `/setting` },
       { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],
   ];

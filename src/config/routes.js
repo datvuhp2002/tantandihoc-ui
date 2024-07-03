@@ -8,7 +8,7 @@ const routes = {
   courseDetail: "/course-detail/:id",
   learning: "/course/learning/:id",
   learningParts: "/learning-parts",
-  setting: "setting/:id",
+  setting: "setting",
   createPost: "/create-post",
   savedPost: "/saved-posts",
   myPost: "/my-posts",
