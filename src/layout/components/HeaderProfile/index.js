@@ -48,7 +48,7 @@ const HeaderProfile = ({ navigator = "/" }) => {
       { title: "Bài viết của bạn", path: "/my-posts" },
     ],
     [
-      { title: "cài đặt", path: "/caidat" },
+      { title: "cài đặt", path: `/setting` },
       { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],
   ];

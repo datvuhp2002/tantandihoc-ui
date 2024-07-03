@@ -37,13 +37,20 @@ const Setting = () => {
   const [isShowOldPassword, setIsShowOldPassword] = useState(false);
   const [isShowNewPassword, setIsShowNewPassword] = useState(false);
   const [isShowRepeatPassword, setIsShowRepeatPassword] = useState(false);
+  const [isFullnameEmpty, setIsFullnameEmpty] = useState(false);
+  const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
+  const [isOldPasswordEmpty, setIsOldPasswordEmpty] = useState(false);
+  const [isRepeatPasswordEmpty, setIsRepeatPasswordEmpty] = useState(false);
+  const [isNewPasswordEmpty, setIsNewPasswordEmpty] = useState(false);
   const onCloseModalUsernameShow = () => {
     setUserNameValue(userData.username);
     setModalUsernameShow(false);
+    setIsUsernameEmpty(false);
   };
   const onCloseModalFullnameShow = () => {
     setFullnameValue(userData.fullname);
     setModalFullnameShow(false);
+    setIsFullnameEmpty(false);
   };
   const onCloseModalAvatarShow = () => {
     setModalAvatarShow(false);
@@ -57,15 +64,28 @@ const Setting = () => {
     setIsShowNewPassword(false);
     setIsShowOldPassword(false);
     setIsShowRepeatPassword(false);
+    setIsOldPasswordEmpty(false);
+    setIsNewPasswordEmpty(false);
+    setIsRepeatPasswordEmpty(false);
   };
   const handleChangeUsername = useCallback((e) => {
     const username = e.target.value;
+    if (username == "") {
+      setIsUsernameEmpty(true);
+    } else {
+      setIsUsernameEmpty(false);
+    }
     if (!username.startsWith(" ")) {
       setUserNameValue(username);
     }
   }, []);
   const handleChangeFullname = useCallback((e) => {
     const fullnameValue = e.target.value;
+    if (fullnameValue == "") {
+      setIsFullnameEmpty(true);
+    } else {
+      setIsFullnameEmpty(false);
+    }
     if (!fullnameValue.startsWith(" ")) {
       setFullnameValue(fullnameValue);
     }
@@ -109,6 +129,11 @@ const Setting = () => {
   };
   const handleChangeOldPassword = useCallback((e) => {
     const oldPassword = e.target.value;
+    if (oldPassword === "") {
+      setIsOldPasswordEmpty(true);
+    } else {
+      setIsOldPasswordEmpty(false);
+    }
     if (!oldPassword.startsWith(" ")) {
       setOldPasswordValue(oldPassword);
     }
@@ -116,6 +141,11 @@ const Setting = () => {
   const handleChangeNewPassword = useCallback(
     (e) => {
       const newPassword = e.target.value;
+      if (newPassword === "") {
+        setIsNewPasswordEmpty(true);
+      } else {
+        setIsNewPasswordEmpty(false);
+      }
       if (!newPassword.startsWith(" ")) {
         setNewPasswordValue(newPassword);
       }
@@ -138,6 +168,11 @@ const Setting = () => {
   const handleChangeRepeatPassword = useCallback(
     (e) => {
       const repeatPassword = e.target.value;
+      if (repeatPassword === "") {
+        setIsRepeatPasswordEmpty(true);
+      } else {
+        setIsRepeatPasswordEmpty(false);
+      }
       if (!repeatPassword.startsWith(" ")) {
         setRepeatNewPasswordValue(repeatPassword);
         if (repeatPassword !== newPasswordValue) {
@@ -354,6 +389,8 @@ const Setting = () => {
         </div>
       </div>
       <UpdateUserName
+        isUsernameEmpty={isUsernameEmpty}
+        setIsUsernameEmpty={setIsUsernameEmpty}
         show={modalUsernameShow}
         onHide={() => onCloseModalUsernameShow()}
         onSubmitUpdate={onSubmitUpdate}
@@ -361,6 +398,8 @@ const Setting = () => {
         handleChange={handleChangeUsername}
       />
       <UpdateFullname
+        isFullnameEmpty={isFullnameEmpty}
+        setIsFullnameEmpty={setIsFullnameEmpty}
         show={modalFullnameShow}
         onHide={() => onCloseModalFullnameShow()}
         onSubmitUpdate={onSubmitUpdate}
@@ -368,6 +407,9 @@ const Setting = () => {
         handleChange={handleChangeFullname}
       />
       <UpdatePassword
+        isOldPasswordEmpty={isOldPasswordEmpty}
+        isNewPasswordEmpty={isNewPasswordEmpty}
+        isRepeatPasswordEmpty={isRepeatPasswordEmpty}
         isPasswordEqual={isPasswordEqual}
         show={modalPasswordShow}
         oldPassword={oldPasswordValue}
@@ -397,14 +439,23 @@ const Setting = () => {
   );
 };
 
-function UpdateUserName({ value, onSubmitUpdate, handleChange, ...props }) {
+function UpdateUserName({
+  value,
+  isUsernameEmpty,
+  onSubmitUpdate,
+  handleChange,
+  setIsUsernameEmpty,
+  ...props
+}) {
   const checkIsNull = (data) => {
     if (data == "") {
+      setIsUsernameEmpty(true);
       toast.error("Không được bỏ trống tên người dùng!!!", {
         position: "top-right",
         autoClose: 3000,
       });
     } else {
+      setIsUsernameEmpty(false);
       onSubmitUpdate({ username: data });
     }
   };
@@ -429,10 +480,18 @@ function UpdateUserName({ value, onSubmitUpdate, handleChange, ...props }) {
             </div>
             <div>
               <Input
+                error={isUsernameEmpty}
                 placeholder="Nhập họ và tên của bạn..."
                 value={value}
                 onChange={handleChange}
               />
+              {isUsernameEmpty ? (
+                <p className="text-danger mt-2">
+                  Không được để trống tên người dùng
+                </p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="w-100 my-3">
@@ -450,8 +509,26 @@ function UpdateUserName({ value, onSubmitUpdate, handleChange, ...props }) {
     </Modal>
   );
 }
-
-function UpdateFullname({ value, onSubmitUpdate, handleChange, ...props }) {
+function UpdateFullname({
+  isFullnameEmpty,
+  setIsFullnameEmpty,
+  value,
+  onSubmitUpdate,
+  handleChange,
+  ...props
+}) {
+  const checkIsNull = (data) => {
+    if (data == "") {
+      setIsFullnameEmpty(true);
+      toast.error("Không được bỏ trống tên người dùng!!!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } else {
+      setIsFullnameEmpty(false);
+      onSubmitUpdate({ fullname: value });
+    }
+  };
   return (
     <Modal
       {...props}
@@ -473,17 +550,25 @@ function UpdateFullname({ value, onSubmitUpdate, handleChange, ...props }) {
             </div>
             <div>
               <Input
+                error={isFullnameEmpty}
                 placeholder="Nhập họ và tên của bạn..."
                 value={value}
                 onChange={handleChange}
               />
+              {isFullnameEmpty ? (
+                <p className="text-danger mt-2">
+                  Không được để trống họ và tên người dùng
+                </p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="w-100 my-3">
             <Button
               className="w-100"
               rounded
-              onClick={() => onSubmitUpdate({ fullname: value })}
+              onClick={() => checkIsNull(value)}
             >
               Lưu lại
             </Button>
@@ -539,6 +624,9 @@ function UpdateAvatar({ value, onSubmitUpdate, onImageChange, ...props }) {
   );
 }
 function UpdatePassword({
+  isOldPasswordEmpty,
+  isNewPasswordEmpty,
+  isRepeatPasswordEmpty,
   isPasswordEqual,
   isEqualToOldPassword,
   oldPassword,
@@ -574,6 +662,7 @@ function UpdatePassword({
             </div>
             <div>
               <Input
+                error={isOldPasswordEmpty}
                 placeholder="Nhập mật khẩu cũ của bạn..."
                 value={oldPassword}
                 onChange={handleChangeOldPassword}
@@ -585,6 +674,11 @@ function UpdatePassword({
                   />
                 }
               />
+              {isOldPasswordEmpty ? (
+                <p className="text-danger mt-2">Không được để trống mật khẩu</p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="modal-wrapper-item">
@@ -595,7 +689,7 @@ function UpdatePassword({
               <Input
                 placeholder="Nhập mật khẩu mới của bạn..."
                 value={newPassword}
-                error={isEqualToOldPassword}
+                error={isEqualToOldPassword || isNewPasswordEmpty}
                 onChange={handleChangeNewPassword}
                 type={!isShowNewPassword ? "password" : ""}
                 rightIcon={
@@ -612,6 +706,11 @@ function UpdatePassword({
                   Mật khẩu mới không được trùng với mật khẩu cũ
                 </p>
               )}
+              {isNewPasswordEmpty ? (
+                <p className="text-danger mt-2">Không được để trống mật khẩu</p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="modal-wrapper-item">
@@ -622,7 +721,7 @@ function UpdatePassword({
               <Input
                 placeholder="Nhập lại mật khẩu mới của bạn..."
                 value={repeatPassword}
-                error={!isPasswordEqual}
+                error={!isPasswordEqual || isRepeatPasswordEmpty}
                 onChange={handleChangeRepeatPassword}
                 type={!isShowRepeatPassword ? "password" : ""}
                 rightIcon={
@@ -634,6 +733,11 @@ function UpdatePassword({
                   />
                 }
               />
+              {isRepeatPasswordEmpty ? (
+                <p className="text-danger mt-2">Không được để trống mật khẩu</p>
+              ) : (
+                ""
+              )}
               {isPasswordEqual ? (
                 <div className="mt-2"></div>
               ) : (
