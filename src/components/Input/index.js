@@ -15,6 +15,7 @@ export default function Input({
   children,
   onChange,
   register,
+  error,
   keyName,
   ...passProps
 }) {
@@ -25,6 +26,7 @@ export default function Input({
   }
   const classes = cx("wrapper", {
     login,
+    error,
     file,
     transaction_information,
     [className]: className,

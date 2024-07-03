@@ -29,6 +29,7 @@
       -webkit-box-shadow: 0 0 0px 1000px var(--white) inset;
     }
   }
+
   input:not(:placeholder-shown) {
     ~ .Icon {
       color: #444;
@@ -48,4 +49,11 @@
 .transaction_information {
   min-width: 25rem;
   color: var(--dark);
+}
+.error {
+  border: 1.5px solid red;
+
+  &:focus-within {
+    border: 1.5px solid red;
+  }
 }

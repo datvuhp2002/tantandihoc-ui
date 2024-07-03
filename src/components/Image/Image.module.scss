@@ -13,6 +13,11 @@
   &.avatar {
     width: var(--header-image-size);
     border-radius: 50%;
+    object-fit: fill;
+  }
+  &.avatar_setting {
+    object-fit: cover;
+    border-radius: 50%;
   }
   &.rounded {
     border-radius: 9999rem;

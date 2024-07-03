@@ -1,0 +1,100 @@
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .wrapper_children {
+    width: 90%;
+  }
+  .personal-info {
+    width: 100%;
+    .body {
+    }
+  }
+  .wrapper-content {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+    .content,
+    .content_hasImg {
+      position: relative;
+      height: 6.2rem;
+      padding: 0 1.6rem;
+      transition: background-color 0.1s;
+      &:hover {
+        cursor: pointer;
+        background: #0000000d;
+      }
+      .info {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1px;
+        height: 100%;
+        .value {
+          padding-right: 50px;
+          font-size: 1.5rem;
+          opacity: 0.8;
+          overflow: hidden;
+          word-wrap: break-word;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+        }
+        .avatar {
+          border-radius: 50%;
+          width: 5rem;
+          height: 5rem;
+          margin: 5rem;
+        }
+      }
+      .actions {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 1px;
+        height: 100%;
+      }
+      + .content {
+        border-top: 1px solid var(--divider-color);
+      }
+    }
+    .content_hasImg {
+      height: 10.4rem;
+      border-top: 1px solid var(--divider-color);
+    }
+  }
+}
+.btn_changeAvatar {
+  border-radius: 999rem;
+  display: flex;
+  flex-direction: row;
+  font-family: "Roboto", sans-serif;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  min-width: 100px;
+  padding: 1rem 1.4rem;
+  font-weight: 700;
+  font-size: 1.6rem;
+  background-color: var(--purple-light);
+  color: var(--white);
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    background-color: var(--purple-dark);
+  }
+}
+.modal-wrapper-avatar {
+  padding: 4rem;
+  display: block;
+  width: 80%;
+  margin: auto;
+  border-radius: 50%;
+}

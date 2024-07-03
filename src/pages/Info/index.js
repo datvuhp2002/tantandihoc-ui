@@ -6,16 +6,15 @@ import classNames from "classnames/bind";
 import styles from "./Info.module.scss";
 import Image from "~/components/Image";
 import Button from "~/components/Button";
-import Input from "~/components/Input";
-import { Wrapper } from "~/layout/components/Popper";
 import { useDispatch } from "react-redux";
 import * as actions from "~/redux/actions";
-import images from "../../public/assets/images";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
+
 const cx = classNames.bind(styles);
+
 const Info = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -28,11 +27,11 @@ const Info = () => {
   const [userData, setUserData] = useState({});
   const [listCourses, setListCourses] = useState({});
   const [myPosts, setMyPosts] = useState({});
+
   useEffect(() => {
     try {
       requestApi(`/posts/get-all-my-post?items_per_page=5`, "GET").then(
         (res) => {
-          console.log(res.data);
           setMyPosts(res.data);
         }
       );
@@ -56,10 +55,14 @@ const Info = () => {
       console.log(err);
     }
   }, []);
+
   return (
-    <div className={cx("wrapper", "d-flex row w-100 m-0 pb-5")}>
+    <div className={cx("wrapper", "row w-100 m-0 pb-5")}>
       <div
-        className={cx("avatar", "d-flex flex-column align-items-start mb-5")}
+        className={cx(
+          "avatar",
+          "col-12 d-flex flex-column align-items-start mb-5"
+        )}
       >
         <div className={cx("avatar-item")}>
           <div className={cx("avatar-img")}>
@@ -70,13 +73,8 @@ const Info = () => {
           </div>
         </div>
       </div>
-      <div className="d-flex align-items-center justify-content-center row">
-        <div
-          className={cx(
-            "content-left",
-            "col-md-5 col-sm-12 h-100 d-flex flex-column mt-2"
-          )}
-        >
+      <div className="d-flex align-items-start justify-content-between row w-100">
+        <div className={cx("content-left", "col-md-5 col-sm-12 mt-2")}>
           <div className={cx("information")}>
             <h2>Giới thiệu</h2>
             <div className={cx("group-item", "d-flex")}>
@@ -88,17 +86,17 @@ const Info = () => {
             </div>
           </div>
           <div className={cx("information")}>
-            <div className="d-flex align-item-center justify-content-between">
+            <div className="d-flex align-items-center justify-content-between">
               <h2>Bài viết của bạn</h2>
               <Button
                 more
                 to={`/my-posts`}
-                className="d-flex align-item-end justify-content-end"
+                className="d-flex align-items-end justify-content-end"
               >
                 Xem thêm
               </Button>
             </div>
-            <div className={cx("group-item", "")}>
+            <div className={cx("group-item")}>
               {myPosts.data &&
                 myPosts.data.map((item, index) => (
                   <div key={index} className={cx("my-courses-card")}>
@@ -130,24 +128,19 @@ const Info = () => {
             </div>
           </div>
         </div>
-        <div
-          className={cx(
-            "content-right",
-            "col-md-7 col-sm-12 ms-3 h-100 d-flex flex-column mt-2 justify-content-start"
-          )}
-        >
+        <div className={cx("content-right", "col-md-7 col-sm-12 mt-2")}>
           <div className={cx("information")}>
-            <div className="d-flex align-item-center justify-content-between">
+            <div className="d-flex align-items-center justify-content-between">
               <h2>Khoá học đã tham gia</h2>
               <Button
                 more
                 to={`/my-courses`}
-                className="d-flex align-item-end justify-content-end"
+                className="d-flex align-items-end justify-content-end"
               >
                 Xem thêm
               </Button>
             </div>
-            <div className={cx("group-item", "")}>
+            <div className={cx("group-item")}>
               {listCourses.data &&
                 listCourses.data.map((item, index) => (
                   <div key={index} className={cx("my-courses-card")}>
