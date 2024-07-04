@@ -99,13 +99,13 @@ const CourseAdd = () => {
       <form className=" row d-flex align-item-center justify-content-between mb-5">
         <div className="col-md-7">
           <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
+            <label className="form-label">Thể loại khóa học:</label>
             <select
               type="text"
               className="form-control"
-              placeholder="Nội dung bài viết của bạn"
+              placeholder="Nội dung khóa học của bạn"
               {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
+                required: "Vui lòng viết nội dung của khóa học",
               })}
             >
               {categories.map((item, index) => {
@@ -156,7 +156,7 @@ const CourseAdd = () => {
           )}
         >
           <label htmlFor="file" className={cx("btn_changeThumbnail", "mb-3")}>
-            thêm bìa bài viết
+            Thêm bìa khóa học
           </label>
           {thumbnail.img && <Image avatar_profile src={thumbnail.img}></Image>}
           <input
@@ -165,7 +165,7 @@ const CourseAdd = () => {
             accept="image/*"
             className="d-none"
             {...register("thumbnail", {
-              required: "Vui lòng viết thêm ảnh của bài viết",
+              required: "Vui lòng viết thêm ảnh của khóa học",
               onChange: onImageChange,
             })}
           />

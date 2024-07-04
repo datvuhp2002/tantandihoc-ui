@@ -122,7 +122,7 @@ const CourseUpdate = () => {
           </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label htmlFor="file" className={cx("btn_changeThumbnail")}>
-              thêm bìa bài viết
+              Thêm bìa khóa học
             </label>
             {thumbnail.img && (
               <Image

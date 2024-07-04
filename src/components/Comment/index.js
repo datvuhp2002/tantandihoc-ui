@@ -61,15 +61,16 @@ const Comment = ({
               </h2>
             </div>
             <div className={cx("content")}>
-              {data.comments.map((item, index) => (
-                <ListComment
-                  isLesson={isLesson}
-                  key={index}
-                  profile={userProfile}
-                  data={item}
-                  onCommentCreated={fetchComments}
-                ></ListComment>
-              ))}
+              {data.comments &&
+                data.comments.map((item, index) => (
+                  <ListComment
+                    isLesson={isLesson}
+                    key={index}
+                    profile={userProfile}
+                    data={item}
+                    onCommentCreated={fetchComments}
+                  ></ListComment>
+                ))}
             </div>
           </div>
         </div>
