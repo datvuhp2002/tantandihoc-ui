@@ -15,6 +15,7 @@ import {
   faBook,
   faDashboard,
   faHome,
+  faIcons,
   faNewspaper,
   faRoad,
   faUser,
@@ -41,6 +42,9 @@ import ProfileLayout from "~/layout/ProfileLayout";
 import PostLayout from "~/layout/PostLayout";
 import SettingLayout from "~/layout/SettingLayout";
 import UserPost from "~/pages/UserPost";
+import Category from "~/pages/ADMIN/Category";
+import CategoryAdd from "~/pages/ADMIN/Category/CategoryAdd";
+import CategoryUpdate from "~/pages/ADMIN/Category/CategoryUpdate";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -160,6 +164,20 @@ const adminRoutes = [
   {
     path: config.routesAdmin.lessonAdd,
     component: LessonAdd,
+  },
+  {
+    name: "Category",
+    path: config.routesAdmin.category,
+    component: Category,
+    icon: <FontAwesomeIcon icon={faIcons} />,
+  },
+  {
+    path: config.routesAdmin.categoryAdd,
+    component: CategoryAdd,
+  },
+  {
+    path: config.routesAdmin.categoryUpdate,
+    component: CategoryUpdate,
   },
 ];
 export { publicRoutes, privateRoutes, adminRoutes };

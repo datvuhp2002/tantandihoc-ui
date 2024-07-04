@@ -39,9 +39,11 @@ const Learning = () => {
 
   const onNavigate = (i) => {
     navigate(`/course/learning/${params.id}?lesson=${i}`);
+    fetchComments(i);
   };
 
   const onSetShowComment = () => {
+    fetchComments();
     setShowComment(!isShowComment);
   };
 
@@ -57,7 +59,6 @@ const Learning = () => {
         console.log(err);
       });
   };
-
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const lesson = searchParams.get("lesson");
@@ -90,9 +91,9 @@ const Learning = () => {
         setCourseReceivedData(res[1].data.data);
         setLessonData(res[2].data);
         const lessonIdArray = res[2].data.data.map((item) => item.id);
-        console.log(lessonIdArray);
         setListLessonId(lessonIdArray);
         setDetailLessonData(res[3].data);
+        console("data", res[3].data);
         setListsComment(res[4].data);
       })
       .catch((err) => {
@@ -118,29 +119,31 @@ const Learning = () => {
           }`
         )}
       >
-        <div className={cx("vid", "w-100")}>
-          {detailLessonData.videoFile && (
-            <video
-              className="w-100 h-100 bg-dark"
-              controls="controls autoplay"
-              controlsList="nodownload"
-            >
-              <source
-                src={`${process.env.REACT_APP_API_URL}/${detailLessonData.videoFile}`}
-                type="video/mp4"
+        {(detailLessonData.videoFile || detailLessonData.videoUrl) && (
+          <div className={cx("vid", "w-100")}>
+            {detailLessonData.videoFile && (
+              <video
+                className="w-100 h-100 bg-dark"
+                controls="controls autoplay"
+                controlsList="nodownload"
+              >
+                <source
+                  src={`${process.env.REACT_APP_API_URL}/${detailLessonData.videoFile}`}
+                  type="video/mp4"
+                />
+              </video>
+            )}
+            {detailLessonData.videoUrl && (
+              <iframe
+                width="100%"
+                height="100%"
+                controls="controls autoplay"
+                src={`https://www.youtube.com/embed/${detailLessonData.videoUrl}?autoplay=1`}
+                allow="fullscreen;"
               />
-            </video>
-          )}
-          {detailLessonData.videoUrl && (
-            <iframe
-              width="100%"
-              height="100%"
-              controls="controls autoplay"
-              src={`https://www.youtube.com/embed/${detailLessonData.videoUrl}?autoplay=1`}
-              allow="fullscreen;"
-            />
-          )}
-        </div>
+            )}
+          </div>
+        )}
         {detailLessonData && (
           <div className={cx("content", "mt-5 container")}>
             <div className={cx("content_top")}>
