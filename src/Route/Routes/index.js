@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
   faDashboard,
+  faGraduationCap,
   faHome,
   faIcons,
   faNewspaper,
@@ -45,6 +46,8 @@ import UserPost from "~/pages/UserPost";
 import Category from "~/pages/ADMIN/Category";
 import CategoryAdd from "~/pages/ADMIN/Category/CategoryAdd";
 import CategoryUpdate from "~/pages/ADMIN/Category/CategoryUpdate";
+import Lesson from "~/pages/ADMIN/Lesson";
+import LessonCreate from "~/pages/ADMIN/Lesson/LessonCreate";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -148,6 +151,20 @@ const adminRoutes = [
     component: CourseReceived,
   },
   {
+    name: "Lesson",
+    path: config.routesAdmin.lesson,
+    component: Lesson,
+    icon: <FontAwesomeIcon icon={faGraduationCap} />,
+  },
+  {
+    path: config.routesAdmin.lessonAdd,
+    component: LessonAdd,
+  },
+  {
+    path: config.routesAdmin.lessonCreate,
+    component: LessonCreate,
+  },
+  {
     name: "Post",
     path: config.routesAdmin.post,
     component: Post,
@@ -161,10 +178,7 @@ const adminRoutes = [
     path: config.routesAdmin.postUpdate,
     component: PostUpdate,
   },
-  {
-    path: config.routesAdmin.lessonAdd,
-    component: LessonAdd,
-  },
+
   {
     name: "Category",
     path: config.routesAdmin.category,

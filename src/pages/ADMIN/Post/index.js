@@ -147,9 +147,10 @@ const Post = () => {
             <ButtonCustom
               type="button"
               to="post-add"
+              btnAdminCreate
               className="btn btn-sm btn-success me-2 fs-4"
             >
-              <i className="fa fa-plus"></i> Add new
+              <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
             {selectedRows.length > 0 && (
               <ButtonCustom

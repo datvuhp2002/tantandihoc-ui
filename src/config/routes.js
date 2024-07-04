@@ -29,6 +29,7 @@ const routesAdmin = {
   postUpdate: "/admin/post/post-update/:id",
   lesson: "/admin/lesson",
   lessonAdd: "/admin/lesson/lesson-add/:id",
+  lessonCreate: "/admin/lesson/lesson-add",
   category: "/admin/categories",
   categoryAdd: "/admin/categories/category-add",
   categoryUpdate: "/admin/categories/category-update/:id",
