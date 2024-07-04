@@ -3,8 +3,7 @@ const routes = {
   login: "/login",
   register: "/register",
   blog: "/blog",
-  thietlapungdung: "/thietlapungdung",
-  Info: "/info",
+  Info: "/info/:username",
   courseDetail: "/course-detail/:id",
   learning: "/course/learning/:id",
   learningParts: "/learning-parts",
@@ -12,6 +11,7 @@ const routes = {
   createPost: "/create-post",
   savedPost: "/saved-posts",
   myPost: "/my-posts",
+  userPost: "/blog/user-posts",
   myCourses: "/my-courses",
   postDetail: "/blog/post-detail/:id",
 };

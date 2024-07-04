@@ -9,6 +9,7 @@ import requestApi from "~/utils/api";
 import Image from "../Image";
 import moment from "moment";
 import CommentInput from "../CommentInput";
+import { Link } from "react-router-dom";
 const cx = classNames.bind(styles);
 const ListComment = ({
   data,
@@ -39,14 +40,6 @@ const ListComment = ({
         `/comment-posts/get-all-reply-comments/${data.post_id}?reply=${data.id}`
       ).then((res) => {
         setReplyData(res.data);
-        console.log(
-          "reply data:::",
-          res.data,
-          "post_id",
-          data.post_id,
-          "reply",
-          data.id
-        );
       });
       if (replyMode || isReply) {
         setIsShowReplyComments(true);
@@ -63,24 +56,26 @@ const ListComment = ({
       className={cx("wrapper", ` ${replyMode ? "px-3 pb-3 mx-3" : "my-4"}`)}
       {..._props}
     >
-      <div className={cx("author", "d-flex align-items-center ")}>
-        <div className={cx("avatar")}>
-          <Image
-            avatar
-            className="w-100"
-            src={`${process.env.REACT_APP_API_URL}/${data.author.avatar}`}
-          />
+      <Link to={`/info/${data.author.username}`}>
+        <div className={cx("author", "d-flex align-items-center ")}>
+          <div className={cx("avatar")}>
+            <Image
+              avatar
+              className="w-100"
+              src={`${process.env.REACT_APP_API_URL}/${data.author.avatar}`}
+            />
+          </div>
+          <span className={cx("username", "ms-2")}>{data.author.fullname}</span>
+          <span
+            className={cx(
+              "time",
+              "d-flex align-items-end justify-content-end ms-2"
+            )}
+          >
+            {moment(data.createdAt).fromNow()}
+          </span>
         </div>
-        <span className={cx("username", "ms-2")}>{data.author.username} </span>
-        <span
-          className={cx(
-            "time",
-            "d-flex align-items-end justify-content-end ms-2"
-          )}
-        >
-          {moment(data.createdAt).fromNow()}
-        </span>
-      </div>
+      </Link>
       <div className={cx("body")}>
         <div className={cx("content")}>
           <p>{data.message}</p>

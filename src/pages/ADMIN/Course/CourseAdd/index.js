@@ -25,6 +25,7 @@ const CourseAdd = () => {
     formState: { errors },
   } = useForm();
   const handleSubmitFormAdd = async (data) => {
+    console.log("data form =>", data);
     let formData = new FormData();
     for (let key in data) {
       if (key == "thumbnail") {
@@ -69,7 +70,19 @@ const CourseAdd = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {}, []);
+  useEffect(() => {
+    dispatch(actions.controlLoading(true));
+    requestApi("/categories", "GET")
+      .then((res) => {
+        console.log("res=>", res.data);
+        setCategories(res.data.data);
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, []);
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
@@ -85,6 +98,28 @@ const CourseAdd = () => {
       </ol>
       <form className=" row d-flex align-item-center justify-content-between mb-5">
         <div className="col-md-7">
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Thể loại bài viết:</label>
+            <select
+              type="text"
+              className="form-control"
+              placeholder="Nội dung bài viết của bạn"
+              {...register("categoryId", {
+                required: "Vui lòng viết nội dung của bài viết",
+              })}
+            >
+              {categories.map((item, index) => {
+                return (
+                  <option key={index} value={item.id}>
+                    {item.name}
+                  </option>
+                );
+              })}
+            </select>
+            {errors.category_id && (
+              <p className="text-danger">{errors.category_id.message}</p>
+            )}
+          </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tên khóa học:</label>
             <input
