@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import requestApi from "~/utils/api";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames/bind";
 import styles from "./PostDetail.module.scss";
 import Image from "~/components/Image";
@@ -122,23 +122,28 @@ const PostDetail = () => {
         </h1>
         <div className={cx("post_info")}>
           {postDetailData.owner && (
-            <div className={cx("author_info")}>
-              <div className={cx("avatar")}>
-                <Image
-                  avatar
-                  src={`${process.env.REACT_APP_API_URL}/${postDetailData.owner.avatar}`}
-                  className="h-100 w-100"
-                />
+            <Link
+              to={`/info/${postDetailData.owner.username}`}
+              className="w-100"
+            >
+              <div className={cx("author_info")}>
+                <div className={cx("avatar")}>
+                  <Image
+                    avatar
+                    src={`${process.env.REACT_APP_API_URL}/${postDetailData.owner.avatar}`}
+                    className="h-100 w-100"
+                  />
+                </div>
+                <div className={cx("detail")}>
+                  <span className={cx("username", "p-0 m-0 ")}>
+                    {postDetailData.owner.username}
+                  </span>
+                  <p className="p-0 m-0 text-dark">
+                    {moment(postDetailData.createdAt).fromNow()}
+                  </p>
+                </div>
               </div>
-              <div className={cx("detail")}>
-                <span className={cx("username", "p-0 m-0")}>
-                  {postDetailData.owner.username}
-                </span>
-                <p className="p-0 m-0">
-                  {moment(postDetailData.createdAt).fromNow()}
-                </p>
-              </div>
-            </div>
+            </Link>
           )}
           <div>
             <div className={cx("actions", "d-flex justify-content-end")}>

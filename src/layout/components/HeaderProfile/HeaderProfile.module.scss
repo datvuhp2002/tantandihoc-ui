@@ -30,6 +30,7 @@
 
 .action {
   flex: 1 1;
+  height: var(--header-height);
   justify-content: flex-end;
 }
 .result {

@@ -26,6 +26,7 @@
 .action {
   flex: 1 1;
   justify-content: flex-end;
+  height: var(--header-height);
 }
 .result {
   background-color: #fff;

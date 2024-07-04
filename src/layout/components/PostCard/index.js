@@ -11,6 +11,7 @@ import Button from "~/components/Button";
 import { Link } from "react-router-dom";
 import requestApi from "~/utils/api";
 import { toast } from "react-toastify";
+import moment from "moment";
 const cx = classNames.bind(styles);
 const PostCard = ({ data, className }) => {
   const [isSavedPost, setIsSavedPost] = useState(false);
@@ -47,14 +48,16 @@ const PostCard = ({ data, className }) => {
     `}
     >
       <div className={cx("header", "d-flex w-100")}>
-        <div className={cx("author", "w-100 d-flex align-items-center")}>
-          <Image
-            className="w-100"
-            post_avatar
-            src={`${process.env.REACT_APP_API_URL}/${data.owner.avatar}`}
-          ></Image>
-          <h3 className="m-0 mx-2">{data.owner.username}</h3>
-        </div>
+        <Link to={`/info/${data.owner.username}`} className="w-100">
+          <div className={cx("author", "w-100 d-flex align-items-center")}>
+            <Image
+              className="w-100"
+              post_avatar
+              src={`${process.env.REACT_APP_API_URL}/${data.owner.avatar}`}
+            ></Image>
+            <h3 className="m-0 mx-2 text-dark">{data.owner.username}</h3>
+          </div>
+        </Link>
         <div className={cx("actions", "d-flex justify-content-end")}>
           <Button
             className="justify-content-end"
@@ -73,15 +76,27 @@ const PostCard = ({ data, className }) => {
       <div
         className={cx("body", "w-100 d-flex justify-content-between mt-3 row")}
       >
-        <div className={cx("info", "col-md-5 col-sm-12")}>
-          <Button
-            blog_navigate
-            to={`/blog/post-detail/${data.id}`}
-            className="justify-content-start"
-          >
-            <strong>{data.title}</strong>
-          </Button>
-          <p className={cx("summary")}>{data.summary}</p>
+        <div
+          className={cx(
+            "info",
+            "col-md-5 col-sm-12 align-items-center justify-content-between d-flex flex-column"
+          )}
+        >
+          <div className="w-100">
+            <Button
+              blog_navigate
+              to={`/blog/post-detail/${data.id}`}
+              className="justify-content-start"
+            >
+              <strong>{data.title}</strong>
+            </Button>
+            <p className={cx("summary")}>{data.summary}</p>
+          </div>
+          <div className="text-start w-100">
+            <span className="opacity-75">
+              {moment(data.createdAt).fromNow()}
+            </span>
+          </div>
         </div>
         <div className={cx("thumbnail", "col-md-6 col-sm-12 mt-2")}>
           <Button

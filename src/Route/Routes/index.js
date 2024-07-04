@@ -40,6 +40,7 @@ import LessonLayout from "~/layout/LessonLayout";
 import ProfileLayout from "~/layout/ProfileLayout";
 import PostLayout from "~/layout/PostLayout";
 import SettingLayout from "~/layout/SettingLayout";
+import UserPost from "~/pages/UserPost";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -83,6 +84,10 @@ const privateRoutes = [
   {
     path: config.routes.myPost,
     component: MyPost,
+  },
+  {
+    path: config.routes.userPost,
+    component: UserPost,
   },
   {
     path: config.routes.myCourses,

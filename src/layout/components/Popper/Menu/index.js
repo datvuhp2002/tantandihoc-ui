@@ -29,7 +29,7 @@ const Menu = ({ children, items }) => {
       placement={"bottom-end"}
       render={renderResult}
     >
-      <div className={cx("user", "h-100 d-flex align-items-center")}>
+      <div className={cx("user", "h-100 d-flex align-items-center p-1")}>
         {children}
       </div>
     </Tippy>

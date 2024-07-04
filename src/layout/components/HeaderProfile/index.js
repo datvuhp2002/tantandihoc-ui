@@ -41,7 +41,7 @@ const HeaderProfile = ({ navigator = "/" }) => {
     navigate("./");
   };
   const Menu_item = [
-    [{ title: "Trang cá nhân", path: "/info" }],
+    [{ title: "Trang cá nhân", path: `/info/${userData.username}` }],
     [{ title: "Khoá học của tôi", path: "/my-courses" }],
     [
       { title: "Bài viết đã lưu", path: "/saved-posts" },

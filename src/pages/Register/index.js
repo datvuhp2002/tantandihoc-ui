@@ -28,10 +28,16 @@ const Register = () => {
     let isValid = true;
     const errors = {};
     if (
+      RegisterFormData.fullname === "" ||
+      RegisterFormData.fullname === undefined
+    ) {
+      errors.fullname = "Hãy nhập họ và tên của bạn";
+    }
+    if (
       RegisterFormData.username === "" ||
       RegisterFormData.username === undefined
     ) {
-      errors.username = "Hãy nhập username của bạn";
+      errors.username = "Hãy nhập tên người dùng của bạn";
     }
     if (RegisterFormData.email === "" || RegisterFormData.email === undefined) {
       errors.email = "Hãy nhập email của bạn";
@@ -110,6 +116,16 @@ const Register = () => {
           </div>
           <div>
             <div className={cx("input-field")}>
+              <Input
+                leftIcon={<FontAwesomeIcon icon={faUser} />}
+                name="fullname"
+                login
+                placeholder="Họ và tên"
+                onChange={onChange}
+              />
+              {formErrors.fullname && (
+                <p style={{ color: "red" }}>{formErrors.fullname}</p>
+              )}
               <Input
                 leftIcon={<FontAwesomeIcon icon={faUser} />}
                 name="username"
