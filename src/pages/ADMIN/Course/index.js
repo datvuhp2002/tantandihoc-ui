@@ -150,10 +150,11 @@ const Course = () => {
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
+              btnAdminCreate
               to="course-add"
-              className="btn btn-sm btn-success me-2 fs-4"
+              className="btn  me-2 fs-4"
             >
-              <i className="fa fa-plus"></i> Add new
+              <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
             {selectedRows.length > 0 && (
               <ButtonCustom

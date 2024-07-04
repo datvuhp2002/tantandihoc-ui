@@ -10,7 +10,7 @@ import moment from "moment";
 
 const Lesson = () => {
   const dispatch = useDispatch();
-  const [users, setUsers] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -20,23 +20,24 @@ const Lesson = () => {
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
-
+  const [courseId, setCourseId] = useState("");
   const columns = [
     {
       name: "ID",
       element: (row) => row.id,
     },
     {
-      name: "Thumbnail",
-      element: (row) => `${process.env.REACT_APP_API_URL}/${row.thumbnail}`,
+      name: "Course",
+      element: (row) => row.ownership_course.name,
     },
     {
-      name: "Name",
-      element: (row) => row.name,
+      name: "Title",
+      element: (row) => row.title,
     },
+
     {
-      name: "Description",
-      element: (row) => row.description,
+      name: "Status",
+      element: (row) => row.status,
     },
 
     {
@@ -53,7 +54,7 @@ const Lesson = () => {
         <>
           <Link
             type="button"
-            to={`course-update/${row.id}`}
+            to={`lesson-update/${row.id}`}
             className="btn btn-sm btn-warning me-1"
           >
             <i className="fa fa-pencil"></i> Edit
@@ -87,7 +88,7 @@ const Lesson = () => {
   const requestDeleteApi = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/courses/${deleteItem}`, "DELETE", [])
+      requestApi(`/lessons/${deleteItem}`, "DELETE", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -101,7 +102,7 @@ const Lesson = () => {
     } else {
       dispatch(actions.controlLoading(true));
       requestApi(
-        `/courses/multiple?ids=${selectedRows.toString()}`,
+        `/lessons/multiple?ids=${selectedRows.toString()}`,
         "DELETE",
         []
       )
@@ -121,11 +122,11 @@ const Lesson = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
-    requestApi(`/courses${query}`, "GET", [])
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${courseId}`;
+    requestApi(`/lessons${query}`, "GET", [])
       .then((response) => {
         console.log("response=> ", response.data);
-        setUsers(response.data.data);
+        setLessons(response.data.data);
         setNumOfPage(response.data.lastPage);
         console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
@@ -140,20 +141,21 @@ const Lesson = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Courses List</h1>
+          <h1 className="mt-4">Lessons List</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Dashboard</Link>
             </li>
-            <li className="breadcrumb-item">Courses</li>
+            <li className="breadcrumb-item">Lessons</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
-              to="course-add"
-              className="btn btn-sm btn-success me-2 fs-4"
+              to="lesson-add"
+              btnAdminCreate
+              className="btn me-2 fs-4"
             >
-              <i className="fa fa-plus"></i> Add new
+              <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
             {selectedRows.length > 0 && (
               <ButtonCustom
@@ -167,7 +169,7 @@ const Lesson = () => {
           </div>
           <DataTable
             name="List Courses"
-            data={users}
+            data={lessons}
             columns={columns}
             numOfPage={numOfPage}
             currentPage={currentPage}

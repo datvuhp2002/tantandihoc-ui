@@ -6,6 +6,7 @@ import DataTable from "~/layout/components/Datatable";
 import requestApi from "~/utils/api";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import ButtonCustom from "~/components/Button";
 
 const User = () => {
   const dispatch = useDispatch();
@@ -136,14 +137,15 @@ const User = () => {
             </li>
             <li className="breadcrumb-item">User</li>
           </ol>
-          <div className="mb-3">
-            <Link
+          <div className="mb-3 d-flex">
+            <ButtonCustom
               type="button"
               to="user-add"
-              className="btn btn-sm btn-success me-2"
+              btnAdminCreate
+              className="btn me-2 fs-4"
             >
-              <i className="fa fa-plus"></i> Add new
-            </Link>
+              <i className="fa fa-plus"></i> Tạo mới
+            </ButtonCustom>
             {selectedRows.length > 0 && (
               <button
                 type="button"

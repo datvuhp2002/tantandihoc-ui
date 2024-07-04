@@ -266,6 +266,16 @@
   &.deleteBtn {
     background-color: red;
   }
+  &.btnAdminCreate {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+    &:hover {
+      color: #fff;
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+  }
 }
 .rounded {
   border-radius: 9999rem;
