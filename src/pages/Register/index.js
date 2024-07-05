@@ -9,7 +9,12 @@ import * as actions from "~/redux/actions";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faLock,
+  faSignature,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
 const Register = () => {
   const navigate = useNavigate();
@@ -91,9 +96,12 @@ const Register = () => {
           console.log("Err", err);
           if (typeof err.response !== "undefined") {
             if (err.response.status !== 201) {
-              toast.error("Email đã tồn tại, thử email khác", {
-                position: "top-right",
-              });
+              toast.error(
+                "Email hoặc Tên người dùng đã tồn tại, hãy thử lại!",
+                {
+                  position: "top-right",
+                }
+              );
             }
           } else {
             toast.error("Server is down, please try again", {
@@ -108,11 +116,9 @@ const Register = () => {
       <div className={cx("container", "d-flex row")}>
         <div className="background col"></div>
         <div className={cx("form-login", "col-md-6")}>
-          <div className={cx("welcome")}>
+          <div className={cx("welcome", "mb-3")}>
             <h1>Xin Chào</h1>
-            <h5 className={cx("", "text-opacity")}>
-              Hãy đăng ký để tạo tài khoản quản lý chi tiêu của bạn
-            </h5>
+            <h5 className={cx("", "text-opacity")}>Đăng ký tài khoản</h5>
           </div>
           <div>
             <div className={cx("input-field")}>
@@ -127,10 +133,10 @@ const Register = () => {
                 <p style={{ color: "red" }}>{formErrors.fullname}</p>
               )}
               <Input
-                leftIcon={<FontAwesomeIcon icon={faUser} />}
+                leftIcon={<FontAwesomeIcon icon={faSignature} />}
                 name="username"
                 login
-                placeholder="Username"
+                placeholder="Tên người dùng"
                 onChange={onChange}
               />
               {formErrors.username && (

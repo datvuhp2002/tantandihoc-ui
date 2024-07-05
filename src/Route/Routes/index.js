@@ -34,7 +34,6 @@ import Post from "~/pages/ADMIN/Post";
 import PostAdd from "~/pages/ADMIN/Post/PostAdd";
 import PostUpdate from "~/pages/ADMIN/Post/PostUpdate";
 import CourseReceived from "~/pages/ADMIN/Course/CourseReceived";
-import LessonAdd from "~/pages/ADMIN/Lesson/LessonAdd";
 import MyCourses from "~/pages/MyCourse";
 import Learning from "~/pages/Learning";
 import LessonLayout from "~/layout/LessonLayout";
@@ -46,8 +45,11 @@ import Category from "~/pages/ADMIN/Category";
 import CategoryAdd from "~/pages/ADMIN/Category/CategoryAdd";
 import CategoryUpdate from "~/pages/ADMIN/Category/CategoryUpdate";
 import Lesson from "~/pages/ADMIN/Lesson";
-import LessonCreate from "~/pages/ADMIN/Lesson/LessonCreate";
 import CoursePage from "~/pages/Course";
+import LessonAddNoVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddNoVideo";
+import LessonAddUploadLocalVid from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddUploadLocalVid";
+import LessonAddYoutubeVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddYoutubeVideo";
+import CourseReceivedAdd from "~/pages/ADMIN/Course/CourseReceived/CourseReceivedAdd";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -151,18 +153,32 @@ const adminRoutes = [
     component: CourseReceived,
   },
   {
+    path: config.routesAdmin.courseReceivedAdd,
+    component: CourseReceivedAdd,
+  },
+  {
+    path: config.routesAdmin.courseReceived,
+    component: CourseReceived,
+  },
+  {
     name: "Lesson",
     path: config.routesAdmin.lesson,
     component: Lesson,
     icon: <FontAwesomeIcon icon={faGraduationCap} />,
   },
   {
-    path: config.routesAdmin.lessonAdd,
-    component: LessonAdd,
+    path: config.routesAdmin.lessonAddUrlVid,
+    component: LessonAddYoutubeVideo,
   },
+
   {
-    path: config.routesAdmin.lessonCreate,
-    component: LessonCreate,
+    path: config.routesAdmin.lessonAddNoVid,
+    component: LessonAddNoVideo,
+  },
+
+  {
+    path: config.routesAdmin.lessonAddUploadVid,
+    component: LessonAddUploadLocalVid,
   },
   {
     name: "Post",

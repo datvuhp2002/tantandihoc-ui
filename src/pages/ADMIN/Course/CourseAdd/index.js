@@ -25,7 +25,6 @@ const CourseAdd = () => {
     formState: { errors },
   } = useForm();
   const handleSubmitFormAdd = async (data) => {
-    console.log("data form =>", data);
     let formData = new FormData();
     for (let key in data) {
       if (key == "thumbnail") {
@@ -48,7 +47,7 @@ const CourseAdd = () => {
         position: "top-right",
         autoClose: 3000,
       });
-      navigation(`/admin/course/course-received/${res.data.id}`);
+      navigation(`/admin/course/course-received-add/${res.data.id}`);
     } catch (err) {
       console.log("err=>", err);
       dispatch(actions.controlLoading(false));

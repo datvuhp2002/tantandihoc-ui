@@ -151,7 +151,7 @@ const Lesson = () => {
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
-              to="lesson-add"
+              to="lesson-add/no-vid"
               btnAdminCreate
               className="btn me-2 fs-4"
             >
