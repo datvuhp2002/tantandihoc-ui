@@ -15,7 +15,7 @@
     background-color: transparent;
     width: 100%;
   }
-  .btn_changeAvatar {
+  .btn_changeThumbnail {
     border-radius: 999rem;
     display: flex;
     flex-direction: row;
@@ -37,11 +37,5 @@
     &:hover {
       background-color: var(--purple-dark);
     }
-  }
-  .thumbail {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 2rem;
   }
 }
