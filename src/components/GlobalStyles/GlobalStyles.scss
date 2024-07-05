@@ -108,3 +108,13 @@ body {
 .ck-content {
   min-height: 40rem;
 }
+.title_no_wrap {
+  color: #292929;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  overflow: hidden;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

@@ -6,7 +6,7 @@ const routes = {
   Info: "/info/:username",
   courseDetail: "/course-detail/:id",
   learning: "/course/learning/:id",
-  learningParts: "/learning-parts",
+  courses: "/courses",
   setting: "setting",
   createPost: "/create-post",
   savedPost: "/saved-posts",

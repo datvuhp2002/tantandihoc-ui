@@ -2,7 +2,6 @@ import config from "~/config";
 import Home from "~/pages/Home";
 import Login from "~/pages/Login";
 import Register from "~/pages/Register";
-import LearningParts from "~/pages/LearningParts";
 import Blog from "~/pages/Blog";
 import ThietLapUngDung from "~/pages/thietlapungdung";
 import Info from "~/pages/Info";
@@ -48,6 +47,7 @@ import CategoryAdd from "~/pages/ADMIN/Category/CategoryAdd";
 import CategoryUpdate from "~/pages/ADMIN/Category/CategoryUpdate";
 import Lesson from "~/pages/ADMIN/Lesson";
 import LessonCreate from "~/pages/ADMIN/Lesson/LessonCreate";
+import CoursePage from "~/pages/Course";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -68,10 +68,10 @@ const privateRoutes = [
     icon: <FontAwesomeIcon icon={faHome} />,
   },
   {
-    path: config.routes.learningParts,
-    component: LearningParts,
-    name: "Lộ trình",
-    icon: <FontAwesomeIcon icon={faRoad} />,
+    path: config.routes.courses,
+    component: CoursePage,
+    name: "Khóa học",
+    icon: <FontAwesomeIcon icon={faBook} />,
   },
   {
     path: config.routes.blog,
