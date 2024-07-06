@@ -50,6 +50,7 @@ import LessonAddNoVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddNoVideo";
 import LessonAddUploadLocalVid from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddUploadLocalVid";
 import LessonAddYoutubeVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddYoutubeVideo";
 import CourseReceivedAdd from "~/pages/ADMIN/Course/CourseReceived/CourseReceivedAdd";
+import LessonUpdate from "~/pages/ADMIN/Lesson/LessonUpdate";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -175,7 +176,11 @@ const adminRoutes = [
     path: config.routesAdmin.lessonAddNoVid,
     component: LessonAddNoVideo,
   },
-
+  //
+  {
+    path: config.routesAdmin.lessonUpdate,
+    component: LessonUpdate,
+  },
   {
     path: config.routesAdmin.lessonAddUploadVid,
     component: LessonAddUploadLocalVid,
