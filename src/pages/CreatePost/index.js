@@ -11,24 +11,46 @@ import Button from "~/components/Button";
 import Image from "~/components/Image";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
+import { Link } from "react-router-dom";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenFancy } from "@fortawesome/free-solid-svg-icons";
+
 const cx = classNames.bind(styles);
-const CreatePost = () => {
+
+const PostAdd = () => {
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
+  const [isWriting, setIsWriting] = useState(false);
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    dispatch(actions.controlLoading(true));
+    requestApi("/categories", "GET")
+      .then((res) => {
+        console.log("res=>", res.data);
+        setCategories(res.data.data);
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, []);
+
   const handleSubmitFormAdd = async (data) => {
     console.log("data form =>", data);
     let formData = new FormData();
     for (let key in data) {
-      if (key == "thumbnail") {
+      if (key === "thumbnail") {
         formData.append(key, data[key][0]);
       } else {
         formData.append(key, data[key]);
@@ -58,6 +80,7 @@ const CreatePost = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -70,134 +93,135 @@ const CreatePost = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
-      .then((res) => {
-        console.log("res=>", res.data);
-        setCategories(res.data.data);
-        dispatch(actions.controlLoading(false));
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(actions.controlLoading(false));
-      });
-  }, []);
+
   function uploadPlugin(editor) {
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       return new CustomUploadAdapter(loader);
     };
   }
+
   return (
-    <div className={cx("wrapper", "row d-flex ")}>
-      <form>
-        <div className={cx("", "col-md-6")}>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tiêu đề:</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Tiêu đề bài viết"
-              {...register("title", {
-                required: "Vui lòng nhập tiêu đề bài viết",
-              })}
-            ></input>
-            {errors.title && (
-              <p className="text-danger">{errors.title.message}</p>
-            )}
+    <div className={cx("wrapper", "row d-flex mb-5")}>
+      <h1 className="mt-4 p-0">Bài viết</h1>
+      <div className="d-flex align-items-center justify-content-end">
+        <Button
+          create
+          disabled={!isWriting}
+          onClick={handleSubmit(handleSubmitFormAdd)}
+          rightIcon={<FontAwesomeIcon icon={faPenFancy} />}
+          className="btn btn-success"
+        >
+          Xuất bản
+        </Button>
+      </div>
+      <form className="p-0 row">
+        <div className="row">
+          <div className={cx("", "col-md-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Thể loại bài viết:</label>
+              <Autocomplete
+                {...register("categoryId", {
+                  required: "Vui lòng chọn thể loại bài viết",
+                })}
+                options={categories}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={!!errors.categoryId}
+                    helperText={
+                      errors.categoryId ? errors.categoryId.message : ""
+                    }
+                    variant="outlined"
+                  />
+                )}
+                onChange={(event, value) => {
+                  setValue("categoryId", value ? value.id : null);
+                }}
+              />
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tiêu đề:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tiêu đề bài viết"
+                {...register("title", {
+                  required: "Vui lòng nhập tiêu đề bài viết",
+                })}
+              ></input>
+              {errors.title && (
+                <p className="text-danger">{errors.title.message}</p>
+              )}
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tóm tắt:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tóm tắt bài viết"
+                {...register("summary", {
+                  required: "Vui lòng viết tóm tắt của bài viết",
+                })}
+              ></input>
+              {errors.summary && (
+                <p className="text-danger">{errors.summary.message}</p>
+              )}
+            </div>
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tóm tắt:</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Tóm tắt bài viết"
-              {...register("summary", {
-                required: "Vui lòng viết tóm tắt của bài viết",
-              })}
-            ></input>
-            {errors.summary && (
-              <p className="text-danger">{errors.summary.message}</p>
-            )}
+          <div className={cx("", "col-md-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label htmlFor="file" className={cx("btn_changeAvatar")}>
+                Thêm bìa hình ảnh
+              </label>
+              {thumbnail.img && (
+                <Image
+                  avatar_profile
+                  src={thumbnail.img}
+                  className={cx("avatar-img", "mt-4")}
+                ></Image>
+              )}
+              <input
+                id="file"
+                type="file"
+                accept="image/*"
+                className="d-none"
+                {...register("thumbnail", {
+                  required: "Vui lòng chọn ảnh bìa cho bài viết",
+                  onChange: onImageChange,
+                })}
+              />
+              {errors.thumbnail && (
+                <p className="text-danger">{errors.thumbnail.message}</p>
+              )}
+            </div>
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Nội dung:</label>
-            <CKEditor
-              editor={Editor}
-              data="<p>Hello from CKEditor&nbsp;5!</p>"
-              onReady={(editor) => {
-                register(`content`, {
-                  required: `Vui lòng viết nội dung cho bài viết của bạn`,
-                });
-              }}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                console.log("data =>", data);
-                setValue("content", data);
-                console.log(event);
-              }}
-              config={{
-                extraPlugins: [uploadPlugin],
-              }}
-            />
+          <div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Nội dung:</label>
+              <CKEditor
+                editor={Editor}
+                data="<p>Nội dung viết ở đây</p>"
+                onReady={(editor) => {
+                  register(`content`, {
+                    required: `Vui lòng viết nội dung cho bài viết của bạn`,
+                  });
+                }}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  setValue("content", data);
+                  setIsWriting(true);
+                }}
+                config={{
+                  extraPlugins: [uploadPlugin],
+                }}
+              />
+            </div>
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeAvatar")}>
-              thêm bìa hình ảnh
-            </label>
-            {thumbnail.img && (
-              <Image
-                avatar_profile
-                rounded
-                src={thumbnail.img}
-                className={cx("avatar-img")}
-              ></Image>
-            )}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              className="d-none"
-              {...register("thumbnail", {
-                required: "Vui lòng viết thêm ảnh của bài viết",
-                onChange: onImageChange,
-              })}
-            />
-            {errors.thumbnail && (
-              <p className="text-danger">{errors.thumbnail.message}</p>
-            )}
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung bài viết của bạn"
-              {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
-              })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
-            )}
-          </div>
-          <Button
-            onClick={handleSubmit(handleSubmitFormAdd)}
-            className="btn btn-success"
-          >
-            Submit
-          </Button>
         </div>
       </form>
     </div>
   );
 };
-export default CreatePost;
+
+export default PostAdd;

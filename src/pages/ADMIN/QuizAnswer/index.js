@@ -50,7 +50,7 @@ const QuizAnswer = () => {
         <>
           <Link
             type="button"
-            to={`category-update/${row.id}`}
+            to={`/admin/quiz/quiz-answer/update/${row.id}`}
             className="btn btn-sm btn-warning me-1 p-3"
           >
             <i className="fa fa-pencil"></i> Edit
