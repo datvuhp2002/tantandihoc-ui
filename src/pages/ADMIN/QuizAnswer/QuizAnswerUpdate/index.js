@@ -102,7 +102,7 @@ const QuizAnswerUpdate = () => {
           <div className="d-flex align-items-end justify-content-end">
             <Button
               onClick={handleSubmit(handleSubmitFormUpdate)}
-              rightIcon={<FontAwesomeIcon icon={faSquarePlus} />}
+              update
               className="btn"
             >
               Cập nhật

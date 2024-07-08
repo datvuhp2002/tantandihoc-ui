@@ -46,30 +46,26 @@ const Quiz = () => {
     {
       name: "Actions",
       element: (row) => (
-        <>
-          <Link
+        <div className="d-flex align-items-center justify-content-end">
+          <ButtonCustom
+            view
             type="button"
             to={`quiz-answer/${row.id}`}
             className="btn btn-sm btn-primary me-1 p-3"
           >
             <span>view</span>
-          </Link>
-          <Link
-            type="button"
-            to={`quiz-update/${row.id}`}
-            className="btn btn-sm btn-warning me-1 p-3"
-          >
+          </ButtonCustom>
+          <ButtonCustom update type="button" to={`quiz-update/${row.id}`}>
             <i className="fa fa-pencil"></i> Edit
-          </Link>
-          <Button
+          </ButtonCustom>
+          <ButtonCustom
             type="button"
-            className="btn btn-sm btn-danger me-1 p-3"
+            remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>
-            <span className="">Delete</span>
-          </Button>
-        </>
+            <i className="fa fa-trash "></i> Delete
+          </ButtonCustom>
+        </div>
       ),
     },
   ];
@@ -184,14 +180,16 @@ const Quiz = () => {
           />
         </div>
       </main>
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="sm">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure want to delete?</Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => setShowModal(false)}>Close</Button>
-          <Button className="btn-danger" onClick={requestDeleteApi}>
+          <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
+            Close
+          </Button>
+          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
             Delete
           </Button>
         </Modal.Footer>

@@ -167,7 +167,7 @@ const QuizAdd = () => {
           <div className="d-flex align-items-end justify-content-end">
             <Button
               onClick={handleSubmit(handleSubmitFormAdd)}
-              rightIcon={<FontAwesomeIcon icon={faSquarePlus} />}
+              create
               className="btn"
             >
               Tạo

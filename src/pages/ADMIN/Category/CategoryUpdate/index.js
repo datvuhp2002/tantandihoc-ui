@@ -107,8 +107,8 @@ const CategoryUpdate = () => {
           </div>
           <div className="d-flex align-items-end justify-content-end">
             <Button
+              update
               onClick={handleSubmit(handleSubmitFormUpdate)}
-              rightIcon={<FontAwesomeIcon icon={faWrench} />}
               className="btn"
             >
               Chỉnh sửa

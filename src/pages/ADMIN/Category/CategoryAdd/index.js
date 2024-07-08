@@ -90,8 +90,8 @@ const CategoryAdd = () => {
           <div className="d-flex align-items-end justify-content-end">
             <Button
               onClick={handleSubmit(handleSubmitFormAdd)}
-              rightIcon={<FontAwesomeIcon icon={faSquarePlus} />}
               className="btn"
+              create
             >
               Tạo
             </Button>

@@ -21,12 +21,12 @@ const UserUpdate = () => {
     setValue,
     formState: { errors },
   } = useForm();
-  const handleSubmitFormAdd = async (data) => {
-    dispatch(actions.controlLoading(true));
+  const [userId, setUserId] = useState();
+  const handleSubmitFormUpdate = async (data) => {
     try {
-      const res = await requestApi("/users", "POST", data);
+      const res = await requestApi(`/users/${userId}`, "PUT", data);
       dispatch(actions.controlLoading(false));
-      toast.success("Tạo người dùng thành công", {
+      toast.success("Cập nhật người dùng thành công", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -42,7 +42,9 @@ const UserUpdate = () => {
   useEffect(() => {
     requestApi(`/users/${params.id}`, "GET")
       .then((res) => {
-        console.log(res.data);
+        setUserId(res.data.id);
+        setValue("fullname", res.data.fullname);
+        setValue("roles", res.data.roles);
         setValue("username", res.data.username);
         setValue("email", res.data.email);
       })
@@ -50,13 +52,27 @@ const UserUpdate = () => {
   }, []);
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <form>
-        <div className={cx("", "col-md-6")}>
+      <form className="row">
+        <div className={cx("", "col-md-6 col-12")}>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Họ tên người dùng:</label>
+            <input
+              type="text"
+              className="form-control p-3 fs-5"
+              placeholder="Họ tên người dùng..."
+              {...register("fullname", {
+                required: "Vui lòng nhập họ tên người dùng",
+              })}
+            ></input>
+            {errors.fullname && (
+              <p className="text-danger">{errors.fullname.message}</p>
+            )}
+          </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Username người dùng:</label>
             <input
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Username..."
               {...register("username", {
                 required: "Vui lòng nhập username",
@@ -70,7 +86,7 @@ const UserUpdate = () => {
             <label className="form-label">Email</label>
             <input
               type="email"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Email..."
               {...register("email", {
                 required: "Vui lòng viết tóm tắt của bài viết",
@@ -80,13 +96,13 @@ const UserUpdate = () => {
               <p className="text-danger">{errors.email.message}</p>
             )}
           </div>
-          {/* <div className={cx("", "mb-3 mt-3")}>
+          <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Chức vụ người dùng:</label>
             <select
               type="text"
-              className="form-control"
+              className="form-control p-3 fs-5"
               placeholder="Chức vụ"
-              {...register("role", {
+              {...register("roles", {
                 required: "Vui lòng viết nội dung của bài viết",
               })}
             >
@@ -98,13 +114,12 @@ const UserUpdate = () => {
             {errors.role && (
               <p className="text-danger">{errors.role.message}</p>
             )}
-          </div> */}
-          <Button
-            onClick={handleSubmit(handleSubmitFormAdd)}
-            className="btn btn-success"
-          >
-            Cập nhật
-          </Button>
+          </div>
+          <div className="d-flex align-items-center justify-content-end">
+            <Button onClick={handleSubmit(handleSubmitFormUpdate)} update>
+              Cập nhật
+            </Button>
+          </div>
         </div>
       </form>
     </div>

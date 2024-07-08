@@ -155,15 +155,17 @@ const CourseReceived = () => {
           </div>
         </div>
       </form>
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="sm">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn có chắc là muốn hủy tạo?</Modal.Body>
+        <Modal.Body>Are you sure want to delete?</Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => setShowModal(false)}>Đóng</Button>
-          <Button className="btn-danger" onClick={requestDeleteApi}>
-            Hủy tạo
+          <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
+            Close
+          </Button>
+          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
