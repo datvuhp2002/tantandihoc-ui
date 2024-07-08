@@ -20,6 +20,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import LessonCard from "~/layout/components/LessonCard";
 import Comment from "~/components/Comment";
+import { toast } from "react-toastify";
+
 const cx = classNames.bind(styles);
 
 const Learning = () => {
@@ -36,7 +38,34 @@ const Learning = () => {
   const [listsComment, setListsComment] = useState({});
   const [isShowComment, setShowComment] = useState(false);
   const [listLessonId, setListLessonId] = useState([]);
-
+  const [quiz, setQuiz] = useState();
+  const [isQuiz, setIsQuiz] = useState(false);
+  const [quizData, setQuizData] = useState({});
+  const [answer, setAnswer] = useState();
+  const [showBorder, setShowBorder] = useState(false);
+  const [isAnswer, setIsAnswer] = useState(false);
+  const onUpdateUserProgress = async (quiz_id, score) => {
+    await requestApi(`/user-progress/${params.id}?lesson_id=${lesson}`, "PUT", {
+      quiz_id: Number(quiz_id),
+      score: Number(score),
+    });
+  };
+  const onSubmitQuiz = async () => {
+    if (answer == "true") {
+      toast.success("Câu trả lời chính xác!!!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      await onUpdateUserProgress(quiz, 10);
+    } else {
+      toast.warning("Câu trả chưa chính xác!!!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      await onUpdateUserProgress(quiz, 0);
+    }
+    setShowBorder(true);
+  };
   const onNavigate = (i) => {
     navigate(`/course/learning/${params.id}?lesson=${i}`);
     fetchComments(i);
@@ -59,10 +88,32 @@ const Learning = () => {
         console.log(err);
       });
   };
+  const fetchQuiz = async (quiz_id) => {
+    await requestApi(`/quiz/${quiz_id}`, "GET")
+      .then((res) => {
+        console.log(res.data);
+        setQuizData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const onChangeAnswer = (e) => {
+    setAnswer(e.target.value);
+    setIsAnswer(true);
+  };
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const lesson = searchParams.get("lesson");
+    const quiz = searchParams.get("quiz");
     setLesson(lesson);
+    if (quiz) {
+      setQuiz(quiz);
+      setIsQuiz(true);
+      fetchQuiz(quiz);
+    } else {
+      setIsQuiz(false);
+    }
     const promiseCourseData = requestApi(`/courses/${params.id}`, "GET");
     const promiseCourseReceivedData = requestApi(
       `/course-received/${params.id}?get_all=true&sort=asc`,
@@ -111,64 +162,141 @@ const Learning = () => {
 
   return (
     <div className={cx("wrapper", `d-flex`)}>
-      <div
-        className={cx(
-          "course",
-          `${!showLesson ? "w-100" : ""} ${
-            isShowComment ? "overflow-hidden" : ""
-          }`
-        )}
-      >
-        {(detailLessonData.videoFile || detailLessonData.videoUrl) && (
-          <div className={cx("vid", "w-100")}>
-            {detailLessonData.videoFile && (
-              <video
-                className="w-100 h-100 bg-dark"
-                controls="controls autoplay"
-                controlsList="nodownload"
-              >
-                <source
-                  src={`${process.env.REACT_APP_API_URL}/${detailLessonData.videoFile}`}
-                  type="video/mp4"
+      {!isQuiz ? (
+        <div
+          className={cx(
+            "course",
+            `${!showLesson ? "w-100" : ""} ${
+              isShowComment ? "overflow-hidden" : ""
+            }`
+          )}
+        >
+          {(detailLessonData.videoFile || detailLessonData.videoUrl) && (
+            <div className={cx("vid", "w-100")}>
+              {detailLessonData.videoFile && (
+                <video
+                  className="w-100 h-100 bg-dark"
+                  controls="controls autoplay"
+                  controlsList="nodownload"
+                >
+                  <source
+                    src={`${process.env.REACT_APP_API_URL}/${detailLessonData.videoFile}`}
+                    type="video/mp4"
+                  />
+                </video>
+              )}
+              {detailLessonData.videoUrl && (
+                <iframe
+                  width="100%"
+                  height="100%"
+                  controls="controls autoplay"
+                  src={`https://www.youtube.com/embed/${detailLessonData.videoUrl}?autoplay=1`}
+                  allow="fullscreen;"
                 />
-              </video>
-            )}
-            {detailLessonData.videoUrl && (
-              <iframe
-                width="100%"
-                height="100%"
-                controls="controls autoplay"
-                src={`https://www.youtube.com/embed/${detailLessonData.videoUrl}?autoplay=1`}
-                allow="fullscreen;"
+              )}
+            </div>
+          )}
+          {detailLessonData && (
+            <div className={cx("content", "mt-5 container")}>
+              <div className={cx("content_top")}>
+                <h1>{detailLessonData.title}</h1>
+                <p>Cập nhật {moment(detailLessonData.updatedAt).fromNow()}</p>
+              </div>
+              <CKEditor
+                editor={Editor}
+                className="border border-0 p-0"
+                data={detailLessonData.content}
+                disabled={true}
+                onInit={(editor) => {
+                  editor.ui.view.editable.element.parentElement.insertBefore(
+                    editor.ui.view.toolbar.element,
+                    editor.ui.view.editable.element
+                  );
+                }}
+                config={{
+                  style: { padding: "0" },
+                  toolbar: [],
+                  removePlugins: ["Heading", "Link"],
+                  isReadOnly: true,
+                }}
               />
-            )}
-          </div>
-        )}
-        {detailLessonData && (
+              {/* Comment */}
+              <div
+                className={cx(
+                  `${showLesson ? "comment-inside" : "comment-full"}`
+                )}
+              >
+                <Button
+                  showCommentButton
+                  onClick={onSetShowComment}
+                  rounded
+                  leftIcon={<FontAwesomeIcon icon={faComments} />}
+                  className="text-secondary"
+                >
+                  Hỏi đáp
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div
+          className={cx(
+            "course",
+            `${!showLesson ? "w-100" : ""} ${
+              isShowComment ? "overflow-hidden" : ""
+            }`
+          )}
+        >
           <div className={cx("content", "mt-5 container")}>
             <div className={cx("content_top")}>
-              <h1>{detailLessonData.title}</h1>
-              <p>Cập nhật {moment(detailLessonData.updatedAt).fromNow()}</p>
+              <h1>{quizData.title}</h1>
+              <p>Đã tạo {moment(quizData.createdAt).fromNow()}</p>
             </div>
-            <CKEditor
-              editor={Editor}
-              className="border border-0 p-0"
-              data={detailLessonData.content}
-              disabled={true}
-              onInit={(editor) => {
-                editor.ui.view.editable.element.parentElement.insertBefore(
-                  editor.ui.view.toolbar.element,
-                  editor.ui.view.editable.element
-                );
-              }}
-              config={{
-                style: { padding: "0" },
-                toolbar: [],
-                removePlugins: ["Heading", "Link"],
-                isReadOnly: true,
-              }}
-            />
-            {/* Comment */}
+            <div className={cx("content_body")}>
+              <div className={cx("question")}>
+                <span>{quizData.question}</span>
+              </div>
+              <div className={cx("answer")}>
+                <select
+                  multiple
+                  className={cx("select_answer", "mt-3")}
+                  onChange={(e) => {
+                    onChangeAnswer(e);
+                  }}
+                >
+                  {quizData.QuizAnswer &&
+                    quizData.QuizAnswer.map((item, index) => (
+                      <option
+                        key={index}
+                        value={item.correct}
+                        className={cx(
+                          "option_answer",
+                          `${
+                            showBorder
+                              ? item.correct
+                                ? "border-success"
+                                : "border-danger"
+                              : ""
+                          }`
+                        )}
+                      >
+                        {item.answer}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              <div
+                className={cx(
+                  "footer",
+                  "d-flex align-items-center justify-content-end"
+                )}
+              >
+                <Button rounded onClick={onSubmitQuiz} disabled={!isAnswer}>
+                  Trả lời
+                </Button>
+              </div>
+            </div>
             <div
               className={cx(
                 `${showLesson ? "comment-inside" : "comment-full"}`
@@ -176,7 +304,7 @@ const Learning = () => {
             >
               <Button
                 showCommentButton
-                onClick={onSetShowComment}
+                onClick={() => onSetShowComment()}
                 rounded
                 leftIcon={<FontAwesomeIcon icon={faComments} />}
                 className="text-secondary"
@@ -185,8 +313,8 @@ const Learning = () => {
               </Button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
       {showLesson && (
         <div className={cx("info", "pt-2")}>
           <header className="p-3 pt-4">

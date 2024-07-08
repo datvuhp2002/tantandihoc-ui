@@ -37,5 +37,11 @@ const routesAdmin = {
   category: "/admin/categories",
   categoryAdd: "/admin/categories/category-add",
   categoryUpdate: "/admin/categories/category-update/:id",
+  quiz: "/admin/quiz",
+  quizAdd: "/admin/quiz/quiz-add",
+  quizUpdate: "/admin/quiz/quiz-update/:id",
+  quizAnswer: "/admin/quiz/quiz-answer/:id",
+  quizAnswerAdd: "/admin/quiz/quiz-answer/add/:id",
+  quizAnswerUpdate: "/admin/quiz/quiz-answer/update/:id",
 };
 export { routes, routesAdmin };

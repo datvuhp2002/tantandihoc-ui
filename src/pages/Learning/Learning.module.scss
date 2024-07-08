@@ -66,4 +66,47 @@
     margin-top: 50px;
     border-left: 1px solid #e7e7e7;
   }
+  .question {
+    background-color: rgb(241, 249, 254);
+    font-size: 1.4rem;
+    color: var(--text-color);
+    padding: 2rem;
+    text-align: left;
+    white-space: pre-wrap;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: break-word;
+    line-height: 1.5;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+  .select_answer {
+    height: auto;
+    border-radius: 0;
+    padding: 0;
+    border: none;
+    &:focus-visible {
+      outline: none;
+    }
+    .option_answer {
+      padding: 2rem;
+      font-size: 1.6rem;
+      line-height: 1.4;
+      border-radius: 8px;
+      box-shadow: 8px 0 8px #89acc00a;
+      background-color: #f6f7f9;
+      -webkit-user-select: none;
+      user-select: none;
+      border: 2px solid transparent;
+      transition: ease 0.2s;
+      + .option_answer {
+        margin-top: 1rem;
+      }
+    }
+  }
 }

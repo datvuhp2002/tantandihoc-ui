@@ -5,16 +5,13 @@ import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import moment from "moment";
 
-const Category = () => {
+const QuizAnswer = () => {
   const dispatch = useDispatch();
-  const [categories, setCategories] = useState([]);
-  const [numOfPage, setNumOfPage] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [searchString, setSearchString] = useState("");
+  const params = useParams();
+  const [quizAnswer, setQuizAnswer] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteItem, setDeleteItem] = useState(null);
   const [deleteType, setDeleteType] = useState("single");
@@ -27,12 +24,16 @@ const Category = () => {
       element: (row) => row.id,
     },
     {
-      name: "Name",
-      element: (row) => row.name,
+      name: "Quiz",
+      element: (row) => row.ownership_quiz.question,
     },
     {
-      name: "Description",
-      element: (row) => row.description,
+      name: "Answer",
+      element: (row) => row.answer,
+    },
+    {
+      name: "Correct",
+      element: (row) => (row.correct ? "Đúng" : "Sai"),
     },
 
     {
@@ -50,17 +51,17 @@ const Category = () => {
           <Link
             type="button"
             to={`category-update/${row.id}`}
-            className="btn btn-sm btn-warning me-1"
+            className="btn btn-sm btn-warning me-1 p-3"
           >
             <i className="fa fa-pencil"></i> Edit
           </Link>
           <Button
             type="button"
-            className="btn btn-sm btn-danger me-1 "
+            className="btn btn-sm btn-danger me-1 p-3"
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i>
+            <span className="">Delete</span>
           </Button>
         </>
       ),
@@ -83,7 +84,7 @@ const Category = () => {
   const requestDeleteApi = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/categories/${deleteItem}`, "DELETE", [])
+      requestApi(`/quizAnswer/${deleteItem}`, "DELETE", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -97,7 +98,7 @@ const Category = () => {
     } else {
       dispatch(actions.controlLoading(true));
       requestApi(
-        `/categories/multiple?ids=${selectedRows.toString()}`,
+        `/quizAnswer/multiple?ids=${selectedRows.toString()}`,
         "DELETE",
         []
       )
@@ -117,11 +118,10 @@ const Category = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
-    requestApi(`/categories${query}`, "GET", [])
+    requestApi(`/quiz-answer/getAllAnswerInQuiz/${params.id}`, "GET")
       .then((response) => {
-        setCategories(response.data.data);
-        setNumOfPage(response.data.lastPage);
+        console.log(response.data);
+        setQuizAnswer(response.data);
         console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
       })
@@ -129,23 +129,26 @@ const Category = () => {
         console.log(err);
         dispatch(actions.controlLoading(false));
       });
-  }, [currentPage, itemsPerPage, searchString, refresh]);
+  }, [refresh]);
 
   return (
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Categories List</h1>
+          <h1 className="mt-4">Quiz Answer List</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Dashboard</Link>
             </li>
-            <li className="breadcrumb-item">Categories</li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/quiz">Quiz</Link>
+            </li>
+            <li className="breadcrumb-item">Quiz Answer</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
-              to="category-add"
+              to={`/admin/quiz/quiz-answer/add/${params.id}`}
               btnAdminCreate
               className="btn  me-2 fs-4"
             >
@@ -163,18 +166,13 @@ const Category = () => {
           </div>
           <DataTable
             name="List Courses"
-            data={categories}
+            data={quizAnswer}
             columns={columns}
-            numOfPage={numOfPage}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            onChangeItemsPerPage={setItemsPerPage}
             onKeySearch={(keyword) => {
-              console.log("keyword in categories list comp=> ", keyword);
-              setSearchString(keyword);
+              console.log("keyword in quizAnswer list comp=> ", keyword);
             }}
             onSelectedRows={(rows) => {
-              console.log("selected rows in categories list=> ", rows);
+              console.log("selected rows in quizAnswer list=> ", rows);
               setSelectedRows(rows);
             }}
           />
@@ -196,4 +194,4 @@ const Category = () => {
   );
 };
 
-export default Category;
+export default QuizAnswer;

@@ -13,6 +13,8 @@ import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { Autocomplete } from "@mui/material";
 import TextField from "@mui/material/TextField";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
@@ -62,6 +64,7 @@ const LessonUpdate = () => {
             : ""
         );
         setValue("videoUrl", lessonData.videoUrl);
+        setVideoId(lessonData.videoUrl);
       })
       .catch((err) => {
         console.log(err.message);
@@ -70,23 +73,49 @@ const LessonUpdate = () => {
 
   const handleSubmitForm = async (data) => {
     const { course_id, ...NewData } = data;
+    if (videoId == false) {
+      toast.error("Url không hợp lệ vui lòng thử lại!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+    NewData.videoUrl = videoId;
+    if (!videoId && NewData.videoUrl) {
+      toast.error("Url không hợp lệ vui lòng thử lại!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+    let formData = new FormData();
+    if (NewData.videoFile && NewData.videoFile.length > 0) {
+      for (let key in NewData) {
+        if (key === "videoFile") {
+          formData.append(key, NewData[key][0]);
+        } else {
+          formData.append(key, NewData[key]);
+        }
+      }
+    } else {
+      // Nếu không có file video thì chỉ thêm các dữ liệu khác vào formData
+      for (let key in NewData) {
+        if (key !== "videoFile") {
+          formData.append(key, NewData[key]);
+        }
+      }
+    }
+    NewData.videoUrl = data.videoUrl; // Gán toàn bộ URL cho videoUrl
     if (NewData.videoFile && NewData.videoUrl) {
       toast.warning(
-        "Nếu có cả 2 vid cả video URL và Video được upload lên, thì website sẽ ưu tiên lấy video được upload",
+        "Nếu có cả 2 video URL và Video được upload lên, thì website sẽ ưu tiên lấy video được upload",
         {
           position: "top-right",
           autoClose: 3000,
         }
       );
     }
-    let formData = new FormData();
-    for (let key in NewData) {
-      if (key === "videoFile") {
-        formData.append(key, NewData[key][0]);
-      } else {
-        formData.append(key, NewData[key]);
-      }
-    }
+
     dispatch(actions.controlLoading(true));
     try {
       const res = await requestApi(
@@ -98,6 +127,30 @@ const LessonUpdate = () => {
       );
       dispatch(actions.controlLoading(false));
       toast.success("Cập nhật bài học thành công", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } catch (err) {
+      dispatch(actions.controlLoading(false));
+      toast.error(err.response.data.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const handleDeleteVid = async () => {
+    dispatch(actions.controlLoading(true));
+    try {
+      const res = await requestApi(
+        `/lessons/${params.id}`,
+        "PUT",
+        { videoFile: "" },
+        "json",
+        "multipart/form-data"
+      );
+      dispatch(actions.controlLoading(false));
+      toast.success("Xoá video thành công", {
         position: "top-right",
         autoClose: 3000,
       });
@@ -139,6 +192,7 @@ const LessonUpdate = () => {
     const videoId = youtubeParser(videoUrl);
     setVideoId(videoId);
   }, [videoUrl]);
+
   return (
     <div className={cx("wrapper", "row d-flex")}>
       <h1 className="mt-4 p-0">Lesson Update</h1>
@@ -220,9 +274,21 @@ const LessonUpdate = () => {
             <div
               className={cx("mb-3 mt-3 d-flex flex-column align-items-center")}
             >
-              <label htmlFor="file" className={cx("btn_changeAvatar", "mb-3")}>
-                Thêm video
-              </label>
+              <div className="d-flex align-items-center mb-3">
+                <label htmlFor="file" className={cx("btn_changeAvatar")}>
+                  Thêm video
+                </label>
+                {videoFile.video && (
+                  <Button
+                    onClick={handleDeleteVid}
+                    className="btn"
+                    rounded
+                    rightIcon={<FontAwesomeIcon icon={faTrash} />}
+                  >
+                    Xoá video
+                  </Button>
+                )}
+              </div>
               {videoFile.video && (
                 <div className={cx("video-thumbnail")}>
                   <video
