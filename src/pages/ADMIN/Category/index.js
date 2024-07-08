@@ -46,23 +46,19 @@ const Category = () => {
     {
       name: "Actions",
       element: (row) => (
-        <>
-          <Link
-            type="button"
-            to={`category-update/${row.id}`}
-            className="btn btn-sm btn-warning me-1"
-          >
+        <div className="d-flex align-items-center justify-content-end">
+          <ButtonCustom type="button" to={`category-update/${row.id}`} update>
             <i className="fa fa-pencil"></i> Edit
-          </Link>
-          <Button
+          </ButtonCustom>
+          <ButtonCustom
+            remove
             type="button"
-            className="btn btn-sm btn-danger me-1 "
             onClick={() => handleDelete(row.id)}
           >
             <i className="fa fa-trash "></i>{" "}
             <span className="fs-4">Delete</span>
-          </Button>
-        </>
+          </ButtonCustom>
+        </div>
       ),
     },
   ];
@@ -180,14 +176,16 @@ const Category = () => {
           />
         </div>
       </main>
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="sm">
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmation</Modal.Title>
         </Modal.Header>
         <Modal.Body>Are you sure want to delete?</Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => setShowModal(false)}>Close</Button>
-          <Button className="btn-danger" onClick={requestDeleteApi}>
+          <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
+            Close
+          </Button>
+          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
             Delete
           </Button>
         </Modal.Footer>

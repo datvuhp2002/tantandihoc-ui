@@ -100,7 +100,8 @@ const CourseReceivedAdd = () => {
           <div className="d-flex align-items-center">
             <Btn
               onClick={handleDelete}
-              className="btn btn-danger"
+              className="btn"
+              remove
               leftIcon={<FontAwesomeIcon icon={faTrash} />}
             >
               Hủy tạo
@@ -108,15 +109,8 @@ const CourseReceivedAdd = () => {
           </div>
           <div className="d-flex align-items-center ms-2">
             <Btn
-              className="btn "
-              leftIcon={<FontAwesomeIcon icon={faPencilAlt} />}
-            >
-              Nháp
-            </Btn>
-          </div>
-          <div className="d-flex align-items-center ms-2">
-            <Btn
               className="btn"
+              create
               rightIcon={<FontAwesomeIcon icon={faArrowRight} />}
               onClick={() =>
                 navigator(
@@ -141,7 +135,11 @@ const CourseReceivedAdd = () => {
             ></input>
           </div>
           <div className="d-flex justify-content-end">
-            <Btn onClick={handleSubmit(handleSubmitFormAdd)} className="btn">
+            <Btn
+              onClick={handleSubmit(handleSubmitFormAdd)}
+              className="btn"
+              create
+            >
               Tạo
             </Btn>
           </div>

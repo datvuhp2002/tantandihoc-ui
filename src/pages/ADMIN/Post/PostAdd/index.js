@@ -111,10 +111,7 @@ const PostAdd = () => {
           <li className="breadcrumb-item">Posts Add</li>
         </ol>
 
-        <Button
-          onClick={handleSubmit(handleSubmitFormAdd)}
-          className="btn btn-success"
-        >
+        <Button onClick={handleSubmit(handleSubmitFormAdd)} create rounded>
           Xuất bản
         </Button>
       </div>

@@ -100,8 +100,8 @@ const QuizAnswerAdd = () => {
           </div>
           <div className="d-flex align-items-end justify-content-end">
             <Button
+              create
               onClick={handleSubmit(handleSubmitFormAdd)}
-              rightIcon={<FontAwesomeIcon icon={faSquarePlus} />}
               className="btn"
             >
               Tạo

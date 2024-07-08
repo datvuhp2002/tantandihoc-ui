@@ -12,7 +12,11 @@ import Image from "~/components/Image";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
 const cx = classNames.bind(styles);
+
 const CourseAdd = () => {
   const dispatch = useDispatch();
   const navigation = useNavigate();
@@ -24,6 +28,21 @@ const CourseAdd = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    dispatch(actions.controlLoading(true));
+    requestApi("/categories", "GET")
+      .then((res) => {
+        console.log("res=>", res.data);
+        setCategories(res.data.data);
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, []);
+
   const handleSubmitFormAdd = async (data) => {
     let formData = new FormData();
     for (let key in data) {
@@ -57,6 +76,7 @@ const CourseAdd = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -69,19 +89,6 @@ const CourseAdd = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
-      .then((res) => {
-        console.log("res=>", res.data);
-        setCategories(res.data.data);
-        dispatch(actions.controlLoading(false));
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(actions.controlLoading(false));
-      });
-  }, []);
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
@@ -99,24 +106,25 @@ const CourseAdd = () => {
         <div className="col-md-7">
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Thể loại khóa học:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung khóa học của bạn"
-              {...register("categoryId", {
-                required: "Vui lòng viết nội dung của khóa học",
-              })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
+            <Autocomplete
+              options={categories}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={!!errors.categoryId}
+                  helperText={
+                    errors.categoryId ? errors.categoryId.message : ""
+                  }
+                  variant="outlined"
+                />
+              )}
+              onChange={(event, value) => {
+                setValue("categoryId", value ? value.id : null);
+              }}
+            />
+            {errors.categoryId && (
+              <p className="text-danger">{errors.categoryId.message}</p>
             )}
           </div>
           <div className={cx("", "mb-3 mt-3")}>
@@ -178,6 +186,7 @@ const CourseAdd = () => {
           onClick={handleSubmit(handleSubmitFormAdd)}
           rightIcon={<FontAwesomeIcon icon={faArrowRight} />}
           className="btn"
+          create
         >
           Tiếp tục
         </Button>
@@ -185,4 +194,5 @@ const CourseAdd = () => {
     </div>
   );
 };
+
 export default CourseAdd;

@@ -43,8 +43,6 @@ const PostUpdate = () => {
         const postData = postRes.data;
         console.log(postData);
         setValue("categoryId", postData.categoryId);
-        console.log(categoriesRes.data.data);
-        console.log(postData.categoryId);
         setValue("title", postData.title);
         setValue("summary", postData.summary);
         setContentValue(postData.content);
@@ -134,65 +132,94 @@ const PostUpdate = () => {
         <li className="breadcrumb-item">Posts Update</li>
       </ol>
       <form className="p-0 row">
-        <div className={cx("", "col-6")}>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
-            {postData.categoryId && (
-              <Autocomplete
-                {...register("categoryId", {
-                  required: "Vui lòng chọn thể loại bài viết",
+        <div className="col-12 row">
+          <div className={cx("", "col-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Thể loại bài viết:</label>
+              {postData.categoryId && (
+                <Autocomplete
+                  {...register("categoryId", {
+                    required: "Vui lòng chọn thể loại bài viết",
+                  })}
+                  options={categories}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!errors.categoryId}
+                      helperText={
+                        errors.categoryId ? errors.categoryId.message : ""
+                      }
+                      variant="outlined"
+                    />
+                  )}
+                  defaultValue={
+                    categories.find(
+                      (category) => category.id === postData.categoryId
+                    ) || null
+                  }
+                  onChange={(event, value) => {
+                    setValue("categoryId", value ? value.id : null);
+                  }}
+                />
+              )}
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tiêu đề:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tiêu đề bài viết"
+                {...register("title", {
+                  required: "Vui lòng nhập tiêu đề bài viết",
                 })}
-                options={categories}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={!!errors.categoryId}
-                    helperText={
-                      errors.categoryId ? errors.categoryId.message : ""
-                    }
-                    variant="outlined"
-                  />
-                )}
-                defaultValue={
-                  categories.find(
-                    (category) => category.id === postData.categoryId
-                  ) || null
-                }
-                onChange={(event, value) => {
-                  setValue("categoryId", value ? value.id : null);
-                }}
+              ></input>
+              {errors.title && (
+                <p className="text-danger">{errors.title.message}</p>
+              )}
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tóm tắt:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tóm tắt bài viết"
+                {...register("summary", {
+                  required: "Vui lòng viết tóm tắt của bài viết",
+                })}
+              ></input>
+              {errors.summary && (
+                <p className="text-danger">{errors.summary.message}</p>
+              )}
+            </div>
+          </div>
+          <div className={cx("", "col-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label htmlFor="file" className={cx("btn_changeAvatar")}>
+                Thêm bìa hình ảnh
+              </label>
+              {thumbnail.img && (
+                <Image
+                  src={thumbnail.img}
+                  className={cx("avatar-img", "mt-3")}
+                ></Image>
+              )}
+              <input
+                id="file"
+                type="file"
+                accept="image/*"
+                className="d-none"
+                {...register("thumbnail", {
+                  onChange: onImageChange,
+                })}
               />
-            )}
+              {errors.thumbnail && (
+                <p className="text-danger">{errors.thumbnail.message}</p>
+              )}
+            </div>
           </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tiêu đề:</label>
-            <input
-              type="text"
-              className="form-control p-3 fs-5"
-              placeholder="Tiêu đề bài viết"
-              {...register("title", {
-                required: "Vui lòng nhập tiêu đề bài viết",
-              })}
-            ></input>
-            {errors.title && (
-              <p className="text-danger">{errors.title.message}</p>
-            )}
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tóm tắt:</label>
-            <input
-              type="text"
-              className="form-control p-3 fs-5"
-              placeholder="Tóm tắt bài viết"
-              {...register("summary", {
-                required: "Vui lòng viết tóm tắt của bài viết",
-              })}
-            ></input>
-            {errors.summary && (
-              <p className="text-danger">{errors.summary.message}</p>
-            )}
-          </div>
+        </div>
+        <div className="col-12 mt-4">
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Nội dung:</label>
             <CKEditor
@@ -212,40 +239,13 @@ const PostUpdate = () => {
               }}
             />
           </div>
-
-          <Button
-            onClick={handleSubmit(handleSubmitFormUpdate)}
-            className="btn btn-success"
-          >
-            Submit
-          </Button>
-        </div>
-        <div className={cx("", "col-6")}>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeAvatar")}>
-              Thêm bìa hình ảnh
-            </label>
-            {thumbnail.img && (
-              <Image
-                src={thumbnail.img}
-                className={cx("avatar-img", "mt-3")}
-              ></Image>
-            )}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              className="d-none"
-              {...register("thumbnail", {
-                onChange: onImageChange,
-              })}
-            />
-            {errors.thumbnail && (
-              <p className="text-danger">{errors.thumbnail.message}</p>
-            )}
-          </div>
         </div>
       </form>
+      <div className="d-flex align-items-center justify-content-end">
+        <Button onClick={handleSubmit(handleSubmitFormUpdate)} rounded update>
+          Submit
+        </Button>
+      </div>
     </div>
   );
 };

@@ -10,11 +10,16 @@ import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Image from "~/components/Image";
 import { Link, useParams } from "react-router-dom";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
 const cx = classNames.bind(styles);
+
 const CourseUpdate = () => {
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const param = useParams();
   const {
     register,
@@ -22,6 +27,44 @@ const CourseUpdate = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      dispatch(actions.controlLoading(true));
+      try {
+        const [categoriesRes, courseRes] = await Promise.all([
+          requestApi("/categories", "GET"),
+          requestApi(`/courses/${param.id}`, "GET"),
+        ]);
+        setCategories(categoriesRes.data.data);
+        const courseData = courseRes.data;
+        console.log(courseData);
+        setValue("name", courseData.name);
+        setValue("description", courseData.description);
+        setValue("categoryId", courseData.categoryId);
+        setThumbnail({
+          img: `${process.env.REACT_APP_API_URL}/${courseData.thumbnail}`,
+        });
+
+        // Find and set the selected category
+        const category = categoriesRes.data.data.find(
+          (cat) => cat.id === courseData.categoryId
+        );
+        setSelectedCategory(category);
+
+        dispatch(actions.controlLoading(false));
+      } catch (err) {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    };
+    fetchCourseData();
+  }, [param.id, dispatch, setValue]);
+
   const handleSubmitFormUpdate = async (data) => {
     let formData = new FormData();
     for (let key in data) {
@@ -35,7 +78,7 @@ const CourseUpdate = () => {
     }
     dispatch(actions.controlLoading(true));
     try {
-      const res = await requestApi(
+      await requestApi(
         `/courses/${param.id}`,
         "PUT",
         formData,
@@ -56,6 +99,7 @@ const CourseUpdate = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -68,15 +112,6 @@ const CourseUpdate = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {
-    requestApi(`/courses/${param.id}`, "GET").then((res) => {
-      setValue("name", res.data.name);
-      setValue("description", res.data.description);
-      setThumbnail({
-        img: res.data.thumbnail,
-      });
-    });
-  }, []);
 
   return (
     <div className={cx("wrapper", "row d-flex")}>
@@ -90,13 +125,13 @@ const CourseUpdate = () => {
         </li>
         <li className="breadcrumb-item">Courses Update</li>
       </ol>
-      <form>
+      <form className="row">
         <div className={cx("", "col-md-6")}>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tên khóa học:</label>
             <input
               type="text"
-              className="form-control p-3"
+              className="form-control p-3 fs-5"
               placeholder="Tên khóa học"
               {...register("name", {
                 required: "Vui lòng nhập tên khóa học",
@@ -110,7 +145,7 @@ const CourseUpdate = () => {
             <label className="form-label">Miêu tả khóa học:</label>
             <input
               type="text"
-              className="form-control p-3 "
+              className="form-control p-3 fs-5"
               placeholder="Miêu tả khóa học"
               {...register("description", {
                 required: "Vui lòng viết miêu tả của khóa học",
@@ -121,15 +156,35 @@ const CourseUpdate = () => {
             )}
           </div>
           <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeThumbnail")}>
+            <label className="form-label">Thể loại khóa học:</label>
+            <Autocomplete
+              options={categories}
+              getOptionLabel={(option) => option.name}
+              value={selectedCategory}
+              onChange={(event, value) => {
+                setSelectedCategory(value);
+                setValue("categoryId", value ? value.id : null);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={!!errors.categoryId}
+                  helperText={
+                    errors.categoryId ? errors.categoryId.message : ""
+                  }
+                  variant="outlined"
+                />
+              )}
+            />
+          </div>
+        </div>
+        <div className={cx("", "col-md-6")}>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label htmlFor="file" className={cx("btn_changeThumbnail", "mb-3")}>
               Thêm bìa khóa học
             </label>
             {thumbnail.img && (
-              <Image
-                avatar_profile
-                rounded
-                src={`${process.env.REACT_APP_API_URL}/${thumbnail.img}`}
-              ></Image>
+              <Image avatar_profile src={thumbnail.img}></Image>
             )}
             <input
               id="file"
@@ -144,9 +199,12 @@ const CourseUpdate = () => {
               <p className="text-danger">{errors.thumbnail.message}</p>
             )}
           </div>
+        </div>
+        <div className="d-flex align-items-center justify-content-end">
           <Button
             onClick={handleSubmit(handleSubmitFormUpdate)}
             className="btn"
+            update
           >
             Cập nhật
           </Button>
@@ -155,4 +213,5 @@ const CourseUpdate = () => {
     </div>
   );
 };
+
 export default CourseUpdate;
