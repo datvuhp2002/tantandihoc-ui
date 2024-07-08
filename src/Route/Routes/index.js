@@ -12,6 +12,7 @@ import CreatePost from "~/pages/CreatePost";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
+  faCircleQuestion,
   faDashboard,
   faGraduationCap,
   faHome,
@@ -50,6 +51,13 @@ import LessonAddNoVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddNoVideo";
 import LessonAddUploadLocalVid from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddUploadLocalVid";
 import LessonAddYoutubeVideo from "~/pages/ADMIN/Lesson/LessonAdd/LessonAddYoutubeVideo";
 import CourseReceivedAdd from "~/pages/ADMIN/Course/CourseReceived/CourseReceivedAdd";
+import LessonUpdate from "~/pages/ADMIN/Lesson/LessonUpdate";
+import Quiz from "~/pages/ADMIN/Quiz";
+import QuizAnswer from "~/pages/ADMIN/QuizAnswer";
+import QuizAdd from "~/pages/ADMIN/Quiz/QuizAdd";
+import QuizUpdate from "~/pages/ADMIN/Quiz/QuizUpdate";
+import QuizAnswerAdd from "~/pages/ADMIN/QuizAnswer/QuizAnswerAdd";
+import QuizAnswerUpdate from "~/pages/ADMIN/QuizAnswer/QuizAnswerUpdate";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -175,7 +183,11 @@ const adminRoutes = [
     path: config.routesAdmin.lessonAddNoVid,
     component: LessonAddNoVideo,
   },
-
+  //
+  {
+    path: config.routesAdmin.lessonUpdate,
+    component: LessonUpdate,
+  },
   {
     path: config.routesAdmin.lessonAddUploadVid,
     component: LessonAddUploadLocalVid,
@@ -208,6 +220,33 @@ const adminRoutes = [
   {
     path: config.routesAdmin.categoryUpdate,
     component: CategoryUpdate,
+  },
+
+  {
+    name: "Quiz",
+    path: config.routesAdmin.quiz,
+    component: Quiz,
+    icon: <FontAwesomeIcon icon={faCircleQuestion} />,
+  },
+  {
+    path: config.routesAdmin.quizAdd,
+    component: QuizAdd,
+  },
+  {
+    path: config.routesAdmin.quizUpdate,
+    component: QuizUpdate,
+  },
+  {
+    path: config.routesAdmin.quizAnswer,
+    component: QuizAnswer,
+  },
+  {
+    path: config.routesAdmin.quizAnswerAdd,
+    component: QuizAnswerAdd,
+  },
+  {
+    path: config.routesAdmin.quizAnswerUpdate,
+    component: QuizAnswerUpdate,
   },
 ];
 export { publicRoutes, privateRoutes, adminRoutes };

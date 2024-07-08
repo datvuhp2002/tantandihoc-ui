@@ -7,6 +7,7 @@ import requestApi from "~/utils/api";
 import * as actions from "~/redux/actions";
 import CardPost from "~/layout/components/CardPost";
 import Button from "~/components/Button";
+import CodeEditor from "~/components/CodeEditor";
 const cx = classNames.bind(styles);
 const Home = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const Home = () => {
   }, []);
   return (
     <div className={cx("wrapper")}>
+      <div data-pym-src="https://www.jdoodle.com/embed/v0/2IhG?stdin=1&arg=0"></div>
       <div className="mb-5">
         <div className={cx("", "d-flex row mt-5")}>
           <div className="d-flex align-items-center justify-content-between">

@@ -11,10 +11,13 @@ import Button from "~/components/Button";
 import Image from "~/components/Image";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
 import { Link } from "react-router-dom";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
 const cx = classNames.bind(styles);
+
 const PostAdd = () => {
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
@@ -25,11 +28,26 @@ const PostAdd = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    dispatch(actions.controlLoading(true));
+    requestApi("/categories", "GET")
+      .then((res) => {
+        console.log("res=>", res.data);
+        setCategories(res.data.data);
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, []);
+
   const handleSubmitFormAdd = async (data) => {
     console.log("data form =>", data);
     let formData = new FormData();
     for (let key in data) {
-      if (key == "thumbnail") {
+      if (key === "thumbnail") {
         formData.append(key, data[key][0]);
       } else {
         formData.append(key, data[key]);
@@ -59,6 +77,7 @@ const PostAdd = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -71,24 +90,13 @@ const PostAdd = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
-      .then((res) => {
-        console.log("res=>", res.data);
-        setCategories(res.data.data);
-        dispatch(actions.controlLoading(false));
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(actions.controlLoading(false));
-      });
-  }, []);
+
   function uploadPlugin(editor) {
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       return new CustomUploadAdapter(loader);
     };
   }
+
   return (
     <div className={cx("wrapper", "row d-flex ")}>
       <h1 className="mt-4 p-0">Posts Add</h1>
@@ -105,25 +113,26 @@ const PostAdd = () => {
         <div className={cx("", "col-md-6")}>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Thể loại bài viết:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung bài viết của bạn"
+            <Autocomplete
               {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
+                required: "Vui lòng chọn thể loại bài viết",
               })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
-            )}
+              options={categories}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  error={!!errors.categoryId}
+                  helperText={
+                    errors.categoryId ? errors.categoryId.message : ""
+                  }
+                  variant="outlined"
+                />
+              )}
+              onChange={(event, value) => {
+                setValue("categoryId", value ? value.id : null);
+              }}
+            />
           </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tiêu đề:</label>
@@ -176,7 +185,7 @@ const PostAdd = () => {
           </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label htmlFor="file" className={cx("btn_changeAvatar")}>
-              thêm bìa hình ảnh
+              Thêm bìa hình ảnh
             </label>
             {thumbnail.img && (
               <Image
@@ -192,7 +201,7 @@ const PostAdd = () => {
               accept="image/*"
               className="d-none"
               {...register("thumbnail", {
-                required: "Vui lòng viết thêm ảnh của bài viết",
+                required: "Vui lòng chọn ảnh bìa cho bài viết",
                 onChange: onImageChange,
               })}
             />
@@ -212,4 +221,5 @@ const PostAdd = () => {
     </div>
   );
 };
+
 export default PostAdd;

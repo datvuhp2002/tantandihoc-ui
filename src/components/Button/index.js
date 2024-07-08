@@ -53,7 +53,6 @@ export default function Button({
 }) {
   let Comp = "button";
   let _props = { onClick, ...passProps };
-  // remove event listener when btn is disable
   if (disabled) {
     Object.keys(_props).forEach((key) => {
       if (key.startsWith("on") && _props[key] === "function") {

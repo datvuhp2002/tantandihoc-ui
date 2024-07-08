@@ -11,12 +11,15 @@ import Button from "~/components/Button";
 import Image from "~/components/Image";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-// import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
 import { Link, useParams } from "react-router-dom";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+
 const cx = classNames.bind(styles);
+
 const PostUpdate = () => {
-  const param = useParams();
+  const { id } = useParams();
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
@@ -27,6 +30,43 @@ const PostUpdate = () => {
     setValue,
     formState: { errors },
   } = useForm();
+  const [postData, setPostData] = useState({});
+  useEffect(() => {
+    const fetchPostData = async () => {
+      dispatch(actions.controlLoading(true));
+      try {
+        const [categoriesRes, postRes] = await Promise.all([
+          requestApi("/categories", "GET"),
+          requestApi(`/posts/${id}`, "GET"),
+        ]);
+        setCategories(categoriesRes.data.data);
+        const postData = postRes.data;
+        console.log(postData);
+        setValue("categoryId", postData.categoryId);
+        console.log(categoriesRes.data.data);
+        console.log(postData.categoryId);
+        setValue("title", postData.title);
+        setValue("summary", postData.summary);
+        setContentValue(postData.content);
+        setThumbnail({
+          img: `${process.env.REACT_APP_API_URL}/${postData.thumbnail}`,
+        });
+        console.log(`${process.env.REACT_APP_API_URL}/${postData.thumbnail}`);
+        setPostData(postData);
+        dispatch(actions.controlLoading(false));
+      } catch (err) {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    };
+
+    fetchPostData();
+  }, [id, dispatch, setValue]);
+
   const handleSubmitFormUpdate = async (data) => {
     let formData = new FormData();
     for (let key in data) {
@@ -41,7 +81,7 @@ const PostUpdate = () => {
     dispatch(actions.controlLoading(true));
     try {
       const res = await requestApi(
-        `/posts/${param.id}`,
+        `/posts/${id}`,
         "PUT",
         formData,
         "json",
@@ -61,6 +101,7 @@ const PostUpdate = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -73,36 +114,16 @@ const PostUpdate = () => {
       reader.readAsDataURL(file);
     }
   };
-  useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    const categories = requestApi("/categories", "GET");
-    const posts = requestApi(`/posts/${param.id}`, "GET");
-    Promise.all([categories, posts])
-      .then((res) => {
-        setCategories(res[0].data.data);
-        console.log(res[1].data);
-        setValue("categoryId", res[1].data.categoryId);
-        setValue("title", res[1].data.title);
-        setValue("summary", res[1].data.summary);
-        setContentValue(res[1].data.content);
-        setThumbnail({
-          img: `${process.env.REACT_APP_API_URL}/${res[1].data.thumbnail}`,
-        });
-        dispatch(actions.controlLoading(false));
-      })
-      .catch((err) => {
-        console.error(err);
-        dispatch(actions.controlLoading(false));
-      });
-  }, []);
+
   function uploadPlugin(editor) {
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       return new CustomUploadAdapter(loader);
     };
   }
+
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Posts Add</h1>
+      <h1 className="mt-4 p-0">Posts Update</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
           <Link to="/admin/dashboard">Dashboard</Link>
@@ -112,28 +133,36 @@ const PostUpdate = () => {
         </li>
         <li className="breadcrumb-item">Posts Update</li>
       </ol>
-      <form className="p-0">
-        <div className={cx("", "col-md-6")}>
+      <form className="p-0 row">
+        <div className={cx("", "col-6")}>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Thể loại bài viết:</label>
-            <select
-              type="text"
-              className="form-control"
-              placeholder="Nội dung bài viết của bạn"
-              {...register("categoryId", {
-                required: "Vui lòng viết nội dung của bài viết",
-              })}
-            >
-              {categories.map((item, index) => {
-                return (
-                  <option key={index} value={item.id}>
-                    {item.name}
-                  </option>
-                );
-              })}
-            </select>
-            {errors.category_id && (
-              <p className="text-danger">{errors.category_id.message}</p>
+            {postData.categoryId && (
+              <Autocomplete
+                {...register("categoryId", {
+                  required: "Vui lòng chọn thể loại bài viết",
+                })}
+                options={categories}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={!!errors.categoryId}
+                    helperText={
+                      errors.categoryId ? errors.categoryId.message : ""
+                    }
+                    variant="outlined"
+                  />
+                )}
+                defaultValue={
+                  categories.find(
+                    (category) => category.id === postData.categoryId
+                  ) || null
+                }
+                onChange={(event, value) => {
+                  setValue("categoryId", value ? value.id : null);
+                }}
+              />
             )}
           </div>
           <div className={cx("", "mb-3 mt-3")}>
@@ -183,16 +212,23 @@ const PostUpdate = () => {
               }}
             />
           </div>
+
+          <Button
+            onClick={handleSubmit(handleSubmitFormUpdate)}
+            className="btn btn-success"
+          >
+            Submit
+          </Button>
+        </div>
+        <div className={cx("", "col-6")}>
           <div className={cx("", "mb-3 mt-3")}>
             <label htmlFor="file" className={cx("btn_changeAvatar")}>
-              thêm bìa hình ảnh
+              Thêm bìa hình ảnh
             </label>
             {thumbnail.img && (
               <Image
-                avatar_profile
-                rounded
                 src={thumbnail.img}
-                className={cx("avatar-img")}
+                className={cx("avatar-img", "mt-3")}
               ></Image>
             )}
             <input
@@ -208,16 +244,10 @@ const PostUpdate = () => {
               <p className="text-danger">{errors.thumbnail.message}</p>
             )}
           </div>
-
-          <Button
-            onClick={handleSubmit(handleSubmitFormUpdate)}
-            className="btn btn-success"
-          >
-            Submit
-          </Button>
         </div>
       </form>
     </div>
   );
 };
+
 export default PostUpdate;
