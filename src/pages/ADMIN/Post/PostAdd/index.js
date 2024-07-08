@@ -98,124 +98,131 @@ const PostAdd = () => {
   }
 
   return (
-    <div className={cx("wrapper", "row d-flex ")}>
+    <div className={cx("wrapper", "row d-flex mb-5")}>
       <h1 className="mt-4 p-0">Posts Add</h1>
-      <ol className="breadcrumb mb-4">
-        <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
-        </li>
-        <li className="breadcrumb-item">
-          <Link to="/admin/post">Posts</Link>
-        </li>
-        <li className="breadcrumb-item">Posts Add</li>
-      </ol>
-      <form className="p-0">
-        <div className={cx("", "col-md-6")}>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Thể loại bài viết:</label>
-            <Autocomplete
-              {...register("categoryId", {
-                required: "Vui lòng chọn thể loại bài viết",
-              })}
-              options={categories}
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  error={!!errors.categoryId}
-                  helperText={
-                    errors.categoryId ? errors.categoryId.message : ""
-                  }
-                  variant="outlined"
-                />
-              )}
-              onChange={(event, value) => {
-                setValue("categoryId", value ? value.id : null);
-              }}
-            />
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tiêu đề:</label>
-            <input
-              type="text"
-              className="form-control p-3 fs-5"
-              placeholder="Tiêu đề bài viết"
-              {...register("title", {
-                required: "Vui lòng nhập tiêu đề bài viết",
-              })}
-            ></input>
-            {errors.title && (
-              <p className="text-danger">{errors.title.message}</p>
-            )}
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tóm tắt:</label>
-            <input
-              type="text"
-              className="form-control p-3 fs-5"
-              placeholder="Tóm tắt bài viết"
-              {...register("summary", {
-                required: "Vui lòng viết tóm tắt của bài viết",
-              })}
-            ></input>
-            {errors.summary && (
-              <p className="text-danger">{errors.summary.message}</p>
-            )}
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Nội dung:</label>
-            <CKEditor
-              editor={Editor}
-              data="<p>Hello from CKEditor&nbsp;5!</p>"
-              onReady={(editor) => {
-                register(`content`, {
-                  required: `Vui lòng viết nội dung cho bài viết của bạn`,
-                });
-              }}
-              onChange={(event, editor) => {
-                const data = editor.getData();
-                console.log("data =>", data);
-                setValue("content", data);
-                console.log(event);
-              }}
-              config={{
-                extraPlugins: [uploadPlugin],
-              }}
-            />
-          </div>
-          <div className={cx("", "mb-3 mt-3")}>
-            <label htmlFor="file" className={cx("btn_changeAvatar")}>
-              Thêm bìa hình ảnh
-            </label>
-            {thumbnail.img && (
-              <Image
-                avatar_profile
-                rounded
-                src={thumbnail.img}
-                className={cx("avatar-img")}
-              ></Image>
-            )}
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              className="d-none"
-              {...register("thumbnail", {
-                required: "Vui lòng chọn ảnh bìa cho bài viết",
-                onChange: onImageChange,
-              })}
-            />
-            {errors.thumbnail && (
-              <p className="text-danger">{errors.thumbnail.message}</p>
-            )}
-          </div>
+      <div className="d-flex align-items-center justify-content-between">
+        <ol className="breadcrumb mb-4">
+          <li className="breadcrumb-item">
+            <Link to="/admin/dashboard">Dashboard</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link to="/admin/post">Posts</Link>
+          </li>
+          <li className="breadcrumb-item">Posts Add</li>
+        </ol>
 
-          <Button
-            onClick={handleSubmit(handleSubmitFormAdd)}
-            className="btn btn-success"
-          >
-            Submit
-          </Button>
+        <Button
+          onClick={handleSubmit(handleSubmitFormAdd)}
+          className="btn btn-success"
+        >
+          Xuất bản
+        </Button>
+      </div>
+      <form className="p-0 row">
+        <div className="row">
+          <div className={cx("", "col-md-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Thể loại bài viết:</label>
+              <Autocomplete
+                {...register("categoryId", {
+                  required: "Vui lòng chọn thể loại bài viết",
+                })}
+                options={categories}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    error={!!errors.categoryId}
+                    helperText={
+                      errors.categoryId ? errors.categoryId.message : ""
+                    }
+                    variant="outlined"
+                  />
+                )}
+                onChange={(event, value) => {
+                  setValue("categoryId", value ? value.id : null);
+                }}
+              />
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tiêu đề:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tiêu đề bài viết"
+                {...register("title", {
+                  required: "Vui lòng nhập tiêu đề bài viết",
+                })}
+              ></input>
+              {errors.title && (
+                <p className="text-danger">{errors.title.message}</p>
+              )}
+            </div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Tóm tắt:</label>
+              <input
+                type="text"
+                className="form-control p-3 fs-5"
+                placeholder="Tóm tắt bài viết"
+                {...register("summary", {
+                  required: "Vui lòng viết tóm tắt của bài viết",
+                })}
+              ></input>
+              {errors.summary && (
+                <p className="text-danger">{errors.summary.message}</p>
+              )}
+            </div>
+          </div>
+          <div className={cx("", "col-md-6")}>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label htmlFor="file" className={cx("btn_changeAvatar")}>
+                Thêm bìa hình ảnh
+              </label>
+              {thumbnail.img && (
+                <Image
+                  avatar_profile
+                  src={thumbnail.img}
+                  className={cx("avatar-img", "mt-4")}
+                ></Image>
+              )}
+              <input
+                id="file"
+                type="file"
+                accept="image/*"
+                className="d-none"
+                {...register("thumbnail", {
+                  required: "Vui lòng chọn ảnh bìa cho bài viết",
+                  onChange: onImageChange,
+                })}
+              />
+              {errors.thumbnail && (
+                <p className="text-danger">{errors.thumbnail.message}</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className={cx("", "mb-3 mt-3")}>
+              <label className="form-label">Nội dung:</label>
+              <CKEditor
+                editor={Editor}
+                data="<p>Nội dung viết ở đây</p>"
+                onReady={(editor) => {
+                  register(`content`, {
+                    required: `Vui lòng viết nội dung cho bài viết của bạn`,
+                  });
+                }}
+                onChange={(event, editor) => {
+                  const data = editor.getData();
+                  console.log("data =>", data);
+                  setValue("content", data);
+                  console.log(event);
+                }}
+                config={{
+                  extraPlugins: [uploadPlugin],
+                }}
+              />
+            </div>
+          </div>
         </div>
       </form>
     </div>

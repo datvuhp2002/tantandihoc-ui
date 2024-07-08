@@ -39,7 +39,7 @@ const QuizAnswerAdd = () => {
     await requestApi("/quiz-answer", "POST", data)
       .then((res) => {
         dispatch(actions.controlLoading(false));
-        toast.success("Thêm thể loại thành công", {
+        toast.success("Thêm câu trả lời thành công", {
           position: "top-right",
           autoClose: 3000,
         });

@@ -199,6 +199,16 @@
   &.navLink {
     height: 100%;
   }
+  &.create {
+    color: #fff;
+    background-color: #28a745;
+    border-color: #28a745;
+    &:hover {
+      color: #fff;
+      background-color: #218838;
+      border-color: #1e7e34;
+    }
+  }
   &.add_blog_icon {
     display: flex;
     align-items: center;
@@ -263,9 +273,7 @@
   + .wrapper:not(.sidebar) {
     margin-left: 0.5rem;
   }
-  &.deleteBtn {
-    background-color: red;
-  }
+
   &.btnAdminCreate {
     color: #fff;
     background-color: #28a745;
