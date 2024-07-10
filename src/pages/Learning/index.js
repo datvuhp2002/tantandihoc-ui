@@ -289,10 +289,15 @@ const Learning = () => {
               <div
                 className={cx(
                   "footer",
-                  "d-flex align-items-center justify-content-end"
+                  "d-flex align-items-center justify-content-end mt-2"
                 )}
               >
-                <Button rounded onClick={onSubmitQuiz} disabled={!isAnswer}>
+                <Button
+                  create
+                  rounded
+                  onClick={onSubmitQuiz}
+                  disabled={!isAnswer}
+                >
                   Trả lời
                 </Button>
               </div>

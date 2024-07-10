@@ -18,6 +18,7 @@ import {
   faHome,
   faIcons,
   faNewspaper,
+  faPercent,
   faRoad,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
@@ -58,6 +59,12 @@ import QuizAdd from "~/pages/ADMIN/Quiz/QuizAdd";
 import QuizUpdate from "~/pages/ADMIN/Quiz/QuizUpdate";
 import QuizAnswerAdd from "~/pages/ADMIN/QuizAnswer/QuizAnswerAdd";
 import QuizAnswerUpdate from "~/pages/ADMIN/QuizAnswer/QuizAnswerUpdate";
+import Discount from "~/pages/ADMIN/Discount";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
+import DiscountAdd from "~/pages/ADMIN/Discount/DiscountAdd";
+import DiscountUpdate from "~/pages/ADMIN/Discount/DiscountUpdate";
+import PaymentError from "~/layout/PaymentError";
+import PaymentSuccess from "~/layout/PaymentSuccess";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -88,6 +95,14 @@ const privateRoutes = [
     component: Blog,
     name: "Bài viết",
     icon: <FontAwesomeIcon icon={faNewspaper} />,
+  },
+  {
+    path: config.routes.paymentSuccess,
+    component: PaymentSuccess,
+  },
+  {
+    path: config.routes.paymentError,
+    component: PaymentError,
   },
   {
     path: config.routes.Info,
@@ -127,6 +142,20 @@ const adminRoutes = [
     path: config.routesAdmin.dashboard,
     component: Dashboard,
     icon: <FontAwesomeIcon icon={faDashboard} />,
+  },
+  {
+    name: "Discount",
+    path: config.routesAdmin.discount,
+    component: Discount,
+    icon: <FontAwesomeIcon icon={faPercent} />,
+  },
+  {
+    path: config.routesAdmin.discountAdd,
+    component: DiscountAdd,
+  },
+  {
+    path: config.routesAdmin.discountUpdate,
+    component: DiscountUpdate,
   },
   {
     name: "User",

@@ -7,10 +7,10 @@ import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import calPrice from "~/utils/calPrice";
-const Course = () => {
+
+const Discount = () => {
   const dispatch = useDispatch();
-  const [users, setUsers] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -27,24 +27,24 @@ const Course = () => {
       element: (row) => row.id,
     },
     {
-      name: "Thumbnail",
-      element: (row) => `${process.env.REACT_APP_API_URL}/${row.thumbnail}`,
-    },
-    {
       name: "Name",
       element: (row) => row.name,
     },
     {
-      name: "Description",
-      element: (row) => row.description,
+      name: "Type",
+      element: (row) => row.type,
     },
     {
-      name: "Price",
-      element: (row) => row.price,
+      name: "value",
+      element: (row) => row.value,
     },
     {
-      name: "Final Price",
-      element: (row) => calPrice(row.price, row.ownership_discount),
+      name: "Ngày bắt đầu",
+      element: (row) => moment(row.start_date).format("DD/MM/YYYY"),
+    },
+    {
+      name: "Ngày kết thúc",
+      element: (row) => moment(row.end_date).format("DD/MM/YYYY"),
     },
     {
       name: "Ngày tạo",
@@ -58,7 +58,10 @@ const Course = () => {
       name: "Actions",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
-          <ButtonCustom type="button" to={`course-update/${row.id}`} update>
+          <ButtonCustom type="button" to={`/admin/course`} view>
+            View
+          </ButtonCustom>
+          <ButtonCustom type="button" to={`discount-update/${row.id}`} update>
             <i className="fa fa-pencil"></i> Edit
           </ButtonCustom>
           <ButtonCustom
@@ -73,24 +76,21 @@ const Course = () => {
       ),
     },
   ];
-
   const handleDelete = (id) => {
     console.log("single delete with id => ", id);
     setShowModal(true);
     setDeleteItem(id);
     setDeleteType("single");
   };
-
   const handleMultiDelete = () => {
     console.log("multi delete => ", selectedRows);
     setShowModal(true);
     setDeleteType("multi");
   };
-
   const requestDeleteApi = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/courses/${deleteItem}`, "DELETE", [])
+      requestApi(`/discount/${deleteItem}`, "DELETE", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -104,7 +104,7 @@ const Course = () => {
     } else {
       dispatch(actions.controlLoading(true));
       requestApi(
-        `/courses/multiple?ids=${selectedRows.toString()}`,
+        `/discount/multiple?ids=${selectedRows.toString()}`,
         "DELETE",
         []
       )
@@ -125,10 +125,9 @@ const Course = () => {
   useEffect(() => {
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
-    requestApi(`/courses${query}`, "GET", [])
+    requestApi(`/discount${query}`, "GET", [])
       .then((response) => {
-        console.log("response=> ", response.data);
-        setUsers(response.data.data);
+        setCategories(response.data.data);
         setNumOfPage(response.data.lastPage);
         console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
@@ -143,18 +142,18 @@ const Course = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Courses List</h1>
+          <h1 className="mt-4">Discount List</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Dashboard</Link>
             </li>
-            <li className="breadcrumb-item">Courses</li>
+            <li className="breadcrumb-item">Discount</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
+              to="discount-add"
               btnAdminCreate
-              to="course-add"
               className="btn  me-2 fs-4"
             >
               <i className="fa fa-plus"></i> Tạo mới
@@ -171,18 +170,18 @@ const Course = () => {
           </div>
           <DataTable
             name="List Courses"
-            data={users}
+            data={categories}
             columns={columns}
             numOfPage={numOfPage}
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onChangeItemsPerPage={setItemsPerPage}
             onKeySearch={(keyword) => {
-              console.log("keyword in courses list comp=> ", keyword);
+              console.log("keyword in categories list comp=> ", keyword);
               setSearchString(keyword);
             }}
             onSelectedRows={(rows) => {
-              console.log("selected rows in courses list=> ", rows);
+              console.log("selected rows in categories list=> ", rows);
               setSelectedRows(rows);
             }}
           />
@@ -206,4 +205,4 @@ const Course = () => {
   );
 };
 
-export default Course;
+export default Discount;

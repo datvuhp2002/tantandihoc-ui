@@ -16,6 +16,7 @@ export default function Input({
   onChange,
   register,
   error,
+  NotRounded,
   keyName,
   ...passProps
 }) {
@@ -27,6 +28,7 @@ export default function Input({
   const classes = cx("wrapper", {
     login,
     error,
+    NotRounded,
     file,
     transaction_information,
     [className]: className,

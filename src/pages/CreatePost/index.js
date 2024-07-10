@@ -34,7 +34,7 @@ const PostAdd = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
+    requestApi("/categories?items_per_page=All", "GET")
       .then((res) => {
         console.log("res=>", res.data);
         setCategories(res.data.data);

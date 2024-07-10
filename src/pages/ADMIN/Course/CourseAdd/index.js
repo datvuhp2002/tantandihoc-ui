@@ -22,6 +22,7 @@ const CourseAdd = () => {
   const navigation = useNavigate();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
+  const [discount, setDiscount] = useState([]);
   const {
     register,
     handleSubmit,
@@ -31,10 +32,18 @@ const CourseAdd = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    requestApi("/categories", "GET")
+    requestApi("/categories?items_per_page=All", "GET")
       .then((res) => {
-        console.log("res=>", res.data);
         setCategories(res.data.data);
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+    requestApi("/discount?items_per_page=All", "GET")
+      .then((res) => {
+        setDiscount(res.data.data);
         dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
@@ -44,6 +53,11 @@ const CourseAdd = () => {
   }, []);
 
   const handleSubmitFormAdd = async (data) => {
+    if (data.discount_id === null) {
+      delete data.discount_id;
+    }
+    data.price = Number(data.price);
+    console.log(data);
     let formData = new FormData();
     for (let key in data) {
       if (key == "thumbnail") {
@@ -128,6 +142,19 @@ const CourseAdd = () => {
             )}
           </div>
           <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Mã giảm giá:</label>
+            <Autocomplete
+              options={discount}
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" />
+              )}
+              onChange={(event, value) => {
+                setValue("discount_id", value ? value.id : null);
+              }}
+            />
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Tên khóa học:</label>
             <input
               type="text"
@@ -153,6 +180,20 @@ const CourseAdd = () => {
             ></input>
             {errors.description && (
               <p className="text-danger">{errors.description.message}</p>
+            )}
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Giá khóa học:</label>
+            <input
+              type="text"
+              className="form-control p-3 fs-5"
+              placeholder="Giá khóa học..."
+              {...register("price", {
+                required: "Vui lòng thêm giá của khóa học",
+              })}
+            ></input>
+            {errors.price && (
+              <p className="text-danger">{errors.price.message}</p>
             )}
           </div>
         </div>

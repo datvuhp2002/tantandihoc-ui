@@ -1,5 +1,7 @@
 const routes = {
   home: "/",
+  paymentError: "/payment-error",
+  paymentSuccess: "/payment-success",
   login: "/login",
   register: "/register",
   blog: "/blog",
@@ -17,6 +19,9 @@ const routes = {
 };
 const routesAdmin = {
   dashboard: "/admin/dashboard",
+  discount: "/admin/discount",
+  discountAdd: "/admin/discount/discount-add",
+  discountUpdate: "/admin/discount/discount-update",
   user: "/admin/user",
   userAdd: "/admin/user/user-add",
   userUpdate: "/admin/user/user-update/:id",
