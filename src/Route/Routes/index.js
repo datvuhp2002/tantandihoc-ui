@@ -65,6 +65,7 @@ import DiscountAdd from "~/pages/ADMIN/Discount/DiscountAdd";
 import DiscountUpdate from "~/pages/ADMIN/Discount/DiscountUpdate";
 import PaymentError from "~/layout/PaymentError";
 import PaymentSuccess from "~/layout/PaymentSuccess";
+import CourseView from "~/pages/ADMIN/Course/CourseView";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -138,27 +139,13 @@ const privateRoutes = [
 ];
 const adminRoutes = [
   {
-    name: "Dashboard",
+    name: "Bảng tin",
     path: config.routesAdmin.dashboard,
     component: Dashboard,
     icon: <FontAwesomeIcon icon={faDashboard} />,
   },
   {
-    name: "Discount",
-    path: config.routesAdmin.discount,
-    component: Discount,
-    icon: <FontAwesomeIcon icon={faPercent} />,
-  },
-  {
-    path: config.routesAdmin.discountAdd,
-    component: DiscountAdd,
-  },
-  {
-    path: config.routesAdmin.discountUpdate,
-    component: DiscountUpdate,
-  },
-  {
-    name: "User",
+    name: "Người dùng",
     path: config.routesAdmin.user,
     component: User,
     icon: <FontAwesomeIcon icon={faUser} />,
@@ -172,7 +159,22 @@ const adminRoutes = [
     component: UserUpdate,
   },
   {
-    name: "Course",
+    name: "Giảm giá",
+    path: config.routesAdmin.discount,
+    component: Discount,
+    icon: <FontAwesomeIcon icon={faPercent} />,
+  },
+  {
+    path: config.routesAdmin.discountAdd,
+    component: DiscountAdd,
+  },
+  {
+    path: config.routesAdmin.discountUpdate,
+    component: DiscountUpdate,
+  },
+
+  {
+    name: "Khóa học",
     path: config.routesAdmin.course,
     component: Course,
     icon: <FontAwesomeIcon icon={faBook} />,
@@ -186,8 +188,8 @@ const adminRoutes = [
     component: CourseUpdate,
   },
   {
-    path: config.routesAdmin.courseReceived,
-    component: CourseReceived,
+    path: config.routesAdmin.courseView,
+    component: CourseView,
   },
   {
     path: config.routesAdmin.courseReceivedAdd,
@@ -198,7 +200,7 @@ const adminRoutes = [
     component: CourseReceived,
   },
   {
-    name: "Lesson",
+    name: "Bài học",
     path: config.routesAdmin.lesson,
     component: Lesson,
     icon: <FontAwesomeIcon icon={faGraduationCap} />,
@@ -222,37 +224,7 @@ const adminRoutes = [
     component: LessonAddUploadLocalVid,
   },
   {
-    name: "Post",
-    path: config.routesAdmin.post,
-    component: Post,
-    icon: <FontAwesomeIcon icon={faNewspaper} />,
-  },
-  {
-    path: config.routesAdmin.postAdd,
-    component: PostAdd,
-  },
-  {
-    path: config.routesAdmin.postUpdate,
-    component: PostUpdate,
-  },
-
-  {
-    name: "Category",
-    path: config.routesAdmin.category,
-    component: Category,
-    icon: <FontAwesomeIcon icon={faIcons} />,
-  },
-  {
-    path: config.routesAdmin.categoryAdd,
-    component: CategoryAdd,
-  },
-  {
-    path: config.routesAdmin.categoryUpdate,
-    component: CategoryUpdate,
-  },
-
-  {
-    name: "Quiz",
+    name: "Bài tập",
     path: config.routesAdmin.quiz,
     component: Quiz,
     icon: <FontAwesomeIcon icon={faCircleQuestion} />,
@@ -276,6 +248,34 @@ const adminRoutes = [
   {
     path: config.routesAdmin.quizAnswerUpdate,
     component: QuizAnswerUpdate,
+  },
+  {
+    name: "Bài viết",
+    path: config.routesAdmin.post,
+    component: Post,
+    icon: <FontAwesomeIcon icon={faNewspaper} />,
+  },
+  {
+    path: config.routesAdmin.postAdd,
+    component: PostAdd,
+  },
+  {
+    path: config.routesAdmin.postUpdate,
+    component: PostUpdate,
+  },
+  {
+    name: "Thể loại",
+    path: config.routesAdmin.category,
+    component: Category,
+    icon: <FontAwesomeIcon icon={faIcons} />,
+  },
+  {
+    path: config.routesAdmin.categoryAdd,
+    component: CategoryAdd,
+  },
+  {
+    path: config.routesAdmin.categoryUpdate,
+    component: CategoryUpdate,
   },
 ];
 export { publicRoutes, privateRoutes, adminRoutes };

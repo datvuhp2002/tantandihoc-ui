@@ -8,10 +8,10 @@ import requestApi from "~/utils/api";
 import { Link, useParams } from "react-router-dom";
 import moment from "moment";
 
-const CourseReceived = () => {
+const LessonFromCourse = () => {
   const dispatch = useDispatch();
   const params = useParams();
-  const [data, setData] = useState([]);
+  const [lessons, setLessons] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -28,9 +28,19 @@ const CourseReceived = () => {
       element: (row) => row.id,
     },
     {
-      name: "Tên",
-      element: (row) => row.name,
+      name: "Course",
+      element: (row) => row.ownership_course.name,
     },
+    {
+      name: "Title",
+      element: (row) => row.title,
+    },
+
+    {
+      name: "Status",
+      element: (row) => row.status,
+    },
+
     {
       name: "Ngày tạo",
       element: (row) => moment(row.createdAt).format("DD/MM/YYYY"),
@@ -43,16 +53,19 @@ const CourseReceived = () => {
       name: "Actions",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
-          <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Edit
+          <ButtonCustom
+            type="button"
+            update
+            to={`/admin/lesson/lesson-update/${row.id}`}
+          >
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             type="button"
             remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -109,12 +122,12 @@ const CourseReceived = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${courseId}&sort=decs`;
-    requestApi(`/course-received/${params.id}${query}`, "GET", [])
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${courseId}`;
+    requestApi(`/lessons${query}`, "GET", [])
       .then((response) => {
-        setData(response.data.data);
+        setLessons(response.data.data);
         setNumOfPage(response.data.lastPage);
-        console.log(response.data);
+        console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
@@ -129,7 +142,7 @@ const CourseReceived = () => {
         <div className="mb-3 d-flex">
           <ButtonCustom
             type="button"
-            to={`/admin/course/course-received-add/${params.id}`}
+            to={`/admin/lesson/lesson-add/no-vid?course_id=${params.id}`}
             btnAdminCreate
             className="btn me-2 fs-4"
           >
@@ -146,8 +159,8 @@ const CourseReceived = () => {
           )}
         </div>
         <DataTable
-          name="List Courses"
-          data={data}
+          name="Danh sách bài học"
+          data={lessons}
           columns={columns}
           numOfPage={numOfPage}
           currentPage={currentPage}
@@ -165,15 +178,15 @@ const CourseReceived = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc là muốn xóa bài học này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>
@@ -181,4 +194,4 @@ const CourseReceived = () => {
   );
 };
 
-export default CourseReceived;
+export default LessonFromCourse;

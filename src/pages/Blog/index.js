@@ -103,13 +103,15 @@ const Blog = () => {
       ) : (
         <p>No posts available</p>
       )}
-      <div className="row mt-3">
-        <div className="col-sm-12 col-md-7">
-          <ul className="pagination justify-content-end">
-            {renderPagination()}
-          </ul>
+      {numOfPage > 1 && (
+        <div className="row mt-3">
+          <div className="col-sm-12 col-md-7">
+            <ul className="pagination justify-content-end">
+              {renderPagination()}
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

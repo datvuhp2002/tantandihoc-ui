@@ -8,9 +8,6 @@ const Sidebar = () => {
   return (
     <div className={cx("wrapper")}>
       <div className={cx("sidebar", "d-flex flex-column align-items-center ")}>
-        <h2>
-          <strong>Menu</strong>
-        </h2>
         {adminRoutes.map((item, index) =>
           item.name ? (
             <Button

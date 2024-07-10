@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 import calPrice from "~/utils/calPrice";
+import formatPrice from "~/utils/formatPrice";
 
 const cx = classNames.bind(styles);
 
@@ -96,7 +97,18 @@ const CourseDetail = () => {
         .catch((err) => console.log(err));
     });
   };
-
+  const renderPrice = () => {
+    if (finalPrice === 0 || typeof finalPrice !== "number") return "Miễn phí";
+    if (finalPrice === courseData.price) return formatPrice(finalPrice);
+    return (
+      <span>
+        <span className="text-decoration-line-through">
+          {formatPrice(courseData.price)}
+        </span>{" "}
+        - {formatPrice(finalPrice)}
+      </span>
+    );
+  };
   useEffect(() => {
     const calculateFinalPrice = () => {
       if (courseData.price === 0) {
@@ -214,18 +226,7 @@ const CourseDetail = () => {
                 src={`${process.env.REACT_APP_API_URL}/${courseData.thumbnail}`}
               />
             )}
-            <h1 className={cx("course-money", "mt-3")}>
-              {finalPrice === 0 ? (
-                "Miễn phí"
-              ) : (
-                <span>
-                  <span className="text-decoration-line-through">
-                    {courseData.price}
-                  </span>{" "}
-                  - {finalPrice}
-                </span>
-              )}
-            </h1>
+            <h1 className={cx("course-money", "mt-3")}>{renderPrice()}</h1>
             {isRegisterCourseData ? (
               <Button onClick={onNavigate} rounded>
                 Tiếp tục học

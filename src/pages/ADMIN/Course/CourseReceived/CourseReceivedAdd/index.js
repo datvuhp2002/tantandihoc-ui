@@ -10,7 +10,7 @@ import { Button, Modal } from "react-bootstrap";
 import Input from "~/components/Input";
 import Btn from "~/components/Button";
 import Image from "~/components/Image";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
@@ -23,8 +23,6 @@ const CourseReceivedAdd = () => {
   const [showModal, setShowModal] = useState(false);
   const navigator = useNavigate();
   const params = useParams();
-  const [thumbnail, setThumbnail] = useState("");
-  const [categories, setCategories] = useState([]);
   const {
     register,
     handleSubmit,
@@ -51,28 +49,7 @@ const CourseReceivedAdd = () => {
       });
     }
   };
-  const handleDelete = async () => {
-    setShowModal(true);
-  };
-  const requestDeleteApi = async () => {
-    console.log("delete");
-    try {
-      await requestApi(`/courses/${params.id}`, "DELETE");
-      dispatch(actions.controlLoading(false));
-      toast.success("Hủy thành công", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      navigator("/admin/course");
-    } catch (err) {
-      console.log("err=>", err);
-      dispatch(actions.controlLoading(false));
-      toast.error(err.response.data.message, {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-  };
+
   useEffect(() => {}, []);
 
   return (
@@ -87,7 +64,9 @@ const CourseReceivedAdd = () => {
             <li className="breadcrumb-item">
               <Link to="/admin/course">Courses</Link>
             </li>
-            <li className="breadcrumb-item">Courses Add</li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/course/course-add">Course Add</Link>
+            </li>
             <li className="breadcrumb-item">Course Received</li>
           </ol>
         </div>
@@ -97,16 +76,6 @@ const CourseReceivedAdd = () => {
             "col-md-6 align-item-center justify-content-center d-flex"
           )}
         >
-          <div className="d-flex align-items-center">
-            <Btn
-              onClick={handleDelete}
-              className="btn"
-              remove
-              leftIcon={<FontAwesomeIcon icon={faTrash} />}
-            >
-              Hủy tạo
-            </Btn>
-          </div>
           <div className="d-flex align-items-center ms-2">
             <Btn
               className="btn"
@@ -145,18 +114,6 @@ const CourseReceivedAdd = () => {
           </div>
         </div>
       </form>
-      <Modal show={showModal} onHide={() => setShowModal(false)} size="sm">
-        <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Bạn có chắc là muốn hủy tạo?</Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => setShowModal(false)}>Đóng</Button>
-          <Button className="btn-danger" onClick={requestDeleteApi}>
-            Hủy tạo
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </div>
   );
 };
