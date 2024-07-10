@@ -14,7 +14,10 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import calPrice from "~/utils/calPrice";
+
 const cx = classNames.bind(styles);
+
 const CourseDetail = () => {
   const params = useParams();
   const dispatch = useDispatch();
@@ -24,6 +27,8 @@ const CourseDetail = () => {
   const [lessonData, setLessonData] = useState({});
   const [isRegisterCourseData, setIsRegisterCourseData] = useState(false);
   const [userProgress, setUserProgress] = useState({});
+  const [finalPrice, setFinalPrice] = useState(0);
+
   const getUserProgress = async () => {
     await requestApi(`/user-progress/detail/${params.id}`, "GET")
       .then((res) => {
@@ -33,9 +38,11 @@ const CourseDetail = () => {
         console.log(err.message);
       });
   };
+
   const onNavigate = () => {
     navigate(`/course/learning/${params.id}?lesson=${userProgress.lesson_id}`);
   };
+
   const OnRegisterCourse = async () => {
     if (lessonData.data.length > 0) {
       await requestApi("/user-progress", "POST", {
@@ -64,42 +71,92 @@ const CourseDetail = () => {
       });
     }
   };
+  const OnBuyCourse = async () => {
+    const formatData = {
+      name: `Mua khóa học ${courseData.name}`,
+      amount: finalPrice,
+      course_id: params.id,
+    };
+    const transactionResponse = await requestApi(
+      "/transaction",
+      "POST",
+      formatData
+    ).then(async (res) => {
+      const order = {
+        amount: formatData.amount,
+        description: `mã khóa học ${courseData.id}`,
+        orderCode: res.data.id,
+        returnUrl: `http://localhost:3000/payment-success`,
+        cancelUrl: `http://localhost:3000/payment-error`,
+      };
+      await requestApi("/payos/create-payment-link", "POST", order)
+        .then((res) => {
+          window.open(res.data.paymentLink, "_blank");
+        })
+        .catch((err) => console.log(err));
+    });
+  };
+
   useEffect(() => {
-    const promiseCourseData = requestApi(`/courses/${params.id}`, "GET");
-    const promiseCourseReceivedData = requestApi(
-      `/course-received/${params.id}?get_all=true&sort=asc`,
-      "GET"
-    );
-    const promiseLessonData = requestApi(
-      `/lessons/all-lesson?get_all=All&course_id=${params.id}`,
-      "GET"
-    );
-    const isRegisterCourse = requestApi(`/user-progress/${params.id}`, "GET");
-    dispatch(actions.controlLoading(true));
-    Promise.all([
-      promiseCourseData,
-      promiseCourseReceivedData,
-      promiseLessonData,
-      isRegisterCourse,
-    ])
-      .then((res) => {
-        dispatch(actions.controlLoading(false));
-        setCourseData(res[0].data);
-        setCourseReceivedData(res[1].data.data);
-        setLessonData(res[2].data);
-        console.log(res[2].data);
-        setIsRegisterCourseData(res[3].data);
-        if (res[3].data == true) {
+    const calculateFinalPrice = () => {
+      if (courseData.price === 0) {
+        setFinalPrice(0);
+      } else {
+        const calculatedFinalPrice = calPrice(
+          courseData.price,
+          courseData.ownership_discount
+        );
+        setFinalPrice(calculatedFinalPrice);
+      }
+    };
+
+    calculateFinalPrice();
+  }, [courseData]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      dispatch(actions.controlLoading(true));
+      try {
+        const [
+          courseResponse,
+          courseReceivedResponse,
+          lessonResponse,
+          isRegisterCourseResponse,
+        ] = await Promise.all([
+          requestApi(`/courses/${params.id}`, "GET"),
+          requestApi(
+            `/course-received/${params.id}?get_all=true&sort=asc`,
+            "GET"
+          ),
+          requestApi(
+            `/lessons/all-lesson?get_all=All&course_id=${params.id}`,
+            "GET"
+          ),
+          requestApi(`/user-progress/${params.id}`, "GET"),
+        ]);
+
+        setCourseData(courseResponse.data);
+        setCourseReceivedData(courseReceivedResponse.data.data);
+        setLessonData(lessonResponse.data);
+        console.log(lessonResponse.data);
+        setIsRegisterCourseData(isRegisterCourseResponse.data);
+
+        if (isRegisterCourseResponse.data === true) {
           getUserProgress();
         }
-      })
-      .catch((err) => {
+      } catch (error) {
+        console.error(error);
+      } finally {
         dispatch(actions.controlLoading(false));
-      });
-  }, []);
+      }
+    };
+
+    fetchData();
+  }, [dispatch, params.id]);
+
   return (
     <div className={cx("wrapper", "")}>
-      {courseData !== null && (
+      {courseData && (
         <div className={cx("content", "d-flex row")}>
           <div className={cx("info", "col-8")}>
             <div className="mb-5">
@@ -109,14 +166,12 @@ const CourseDetail = () => {
             <div>
               <h2>Bạn sẽ học được gì?</h2>
               <ul className="d-flex flex-wrap align-content-start">
-                {courseReceivedData.map((item, index) => {
-                  return (
-                    <li key={index} className="col-6 my-2">
-                      <FontAwesomeIcon className=" me-2 fs-2" icon={faCheck} />
-                      <span>{item.name}</span>
-                    </li>
-                  );
-                })}
+                {courseReceivedData.map((item, index) => (
+                  <li key={index} className="col-6 my-2">
+                    <FontAwesomeIcon className="me-2 fs-2" icon={faCheck} />
+                    <span>{item.name}</span>
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
@@ -129,23 +184,21 @@ const CourseDetail = () => {
               </div>
               <ul className="d-flex flex-column align-content-start">
                 {lessonData.data &&
-                  lessonData.data.map((item, index) => {
-                    return (
-                      <li key={index} className="my-3">
-                        <Button
-                          lesson
-                          leftIcon={
-                            <FontAwesomeIcon className="me-2" icon={faMinus} />
-                          }
-                        >
-                          <span>
-                            <strong className="me-2 fs-3">{index + 1}.</strong>
-                            {item.title}
-                          </span>
-                        </Button>
-                      </li>
-                    );
-                  })}
+                  lessonData.data.map((item, index) => (
+                    <li key={index} className="my-3">
+                      <Button
+                        lesson
+                        leftIcon={
+                          <FontAwesomeIcon className="me-2" icon={faMinus} />
+                        }
+                      >
+                        <span>
+                          <strong className="me-2 fs-3">{index + 1}.</strong>
+                          {item.title}
+                        </span>
+                      </Button>
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>
@@ -155,27 +208,35 @@ const CourseDetail = () => {
               "col-4 d-flex flex-column align-items-center justify-content-center h-100"
             )}
           >
-            {courseData.thumbnail !== undefined ? (
+            {courseData.thumbnail && (
               <Image
                 courseImg
                 src={`${process.env.REACT_APP_API_URL}/${courseData.thumbnail}`}
-              ></Image>
-            ) : (
-              <div></div>
+              />
             )}
-            <h1 className={cx("course-money")}>Miễn phí</h1>
+            <h1 className={cx("course-money", "mt-3")}>
+              {finalPrice === 0 ? (
+                "Miễn phí"
+              ) : (
+                <span>
+                  <span className="text-decoration-line-through">
+                    {courseData.price}
+                  </span>{" "}
+                  - {finalPrice}
+                </span>
+              )}
+            </h1>
             {isRegisterCourseData ? (
-              <Button onClick={() => onNavigate()} rounded>
+              <Button onClick={onNavigate} rounded>
                 Tiếp tục học
               </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  OnRegisterCourse();
-                }}
-                rounded
-              >
+            ) : finalPrice === "Miễn phí" || finalPrice === 0 ? (
+              <Button onClick={OnRegisterCourse} rounded>
                 Đăng ký học
+              </Button>
+            ) : (
+              <Button onClick={OnBuyCourse} rounded>
+                Mua khóa học
               </Button>
             )}
           </div>

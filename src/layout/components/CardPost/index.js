@@ -21,7 +21,7 @@ import { LinearProgress } from "@mui/material";
 import moment from "moment";
 const cx = classNames.bind(styles);
 
-const CardPost = ({ data, className, isUserCourses = false }) => {
+const CardPost = ({ data, className }) => {
   const classes = cx("wrapper", {
     [className]: className,
   });
@@ -30,9 +30,7 @@ const CardPost = ({ data, className, isUserCourses = false }) => {
     navigate(`/blog/post-detail/${data.id}`);
   };
 
-  useEffect(() => {
-    console.log(data);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <div className={classes}>
@@ -68,7 +66,11 @@ const CardPost = ({ data, className, isUserCourses = false }) => {
             className={cx("author_info", "d-flex align-items-center w-100")}
           >
             <div className={cx("author_avatar")}>
-              <Image avatar src={`${data.owner.thumbnail}`} className="w-100" />
+              <Image
+                avatar
+                src={`${process.env.REACT_APP_API_URL}/${data.owner.avatar}`}
+                className="w-100"
+              />
             </div>
             <div className={cx("author_name", "ms-2")}>
               {data.owner.username}

@@ -1,12 +1,21 @@
 .wrapper {
-  color: var(--text-color);
-  .information {
-    font-size: 1.4rem;
-    box-shadow: rgb(0 0 0/12%) 0px 2px 12px;
-    padding: 12px 24px;
-    border-radius: 1rem;
+  display: flex;
+  .manager {
+    .slide {
+      padding: 2rem 4rem;
+      border: none;
+      .active {
+        border: none;
+      }
+    }
   }
-  .btn_changeAvatar {
+  .add_manager {
+  }
+  .card {
+    background-color: transparent;
+    width: 100%;
+  }
+  .btn_changeThumbnail {
     border-radius: 999rem;
     display: flex;
     flex-direction: row;
@@ -28,16 +37,5 @@
     &:hover {
       background-color: var(--purple-dark);
     }
-  }
-  h1 {
-    margin-bottom: 1.5rem;
-  }
-  svg {
-    path {
-      color: var(--primary-color);
-    }
-  }
-  .course-money {
-    color: var(--primary-color);
   }
 }

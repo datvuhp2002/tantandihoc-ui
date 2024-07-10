@@ -12,6 +12,7 @@
   &:focus-within {
     border: 1.5px solid #444;
   }
+
   .Icon {
     display: inline-block;
     text-align: center;
@@ -44,6 +45,9 @@
   }
   &.file {
     display: none !important;
+  }
+  &.NotRounded {
+    border-radius: 0;
   }
 }
 .transaction_information {

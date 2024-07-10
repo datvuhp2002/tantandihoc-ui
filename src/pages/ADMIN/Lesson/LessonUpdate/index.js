@@ -63,7 +63,12 @@ const LessonUpdate = () => {
               }
             : ""
         );
-        setValue("videoUrl", lessonData.videoUrl);
+        if (lessonData.videoUrl !== null) {
+          setValue(
+            "videoUrl",
+            `https://www.youtube.com/embed/${lessonData.videoUrl}`
+          );
+        }
         setVideoId(lessonData.videoUrl);
       })
       .catch((err) => {

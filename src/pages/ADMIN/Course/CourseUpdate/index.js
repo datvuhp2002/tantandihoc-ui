@@ -42,6 +42,7 @@ const CourseUpdate = () => {
         setValue("name", courseData.name);
         setValue("description", courseData.description);
         setValue("categoryId", courseData.categoryId);
+        setValue("price", courseData.price);
         setThumbnail({
           img: `${process.env.REACT_APP_API_URL}/${courseData.thumbnail}`,
         });
@@ -176,6 +177,20 @@ const CourseUpdate = () => {
                 />
               )}
             />
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Giá khóa học:</label>
+            <input
+              type="text"
+              className="form-control p-3 fs-5"
+              placeholder="Giá khóa học..."
+              {...register("price", {
+                required: "Vui lòng thêm giá của khóa học",
+              })}
+            ></input>
+            {errors.price && (
+              <p className="text-danger">{errors.price.message}</p>
+            )}
           </div>
         </div>
         <div className={cx("", "col-md-6")}>

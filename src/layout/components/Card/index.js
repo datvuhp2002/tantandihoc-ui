@@ -18,8 +18,8 @@ import Button from "~/components/Button";
 import requestApi from "~/utils/api";
 import { useNavigate } from "react-router-dom";
 import { LinearProgress } from "@mui/material";
+import calPrice from "~/utils/calPrice";
 const cx = classNames.bind(styles);
-
 const Card = ({ data, className, isUserCourses = false }) => {
   const classes = cx("wrapper", {
     [className]: className,
@@ -52,11 +52,18 @@ const Card = ({ data, className, isUserCourses = false }) => {
       console.log(err.message);
     }
   };
-
+  const calculatorPrice = () => {
+    if (data.price == 0) return "Miễn phí";
+    return (
+      <span>
+        <span className="text-decoration-line-through">{data.price}</span> -{" "}
+        {calPrice(data.price, data.ownership_discount)}
+      </span>
+    );
+  };
   const onNavigate = async () => {
     navigate(`/course/learning/${data.id}?lesson=${userProgress.lesson_id}`);
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -137,7 +144,7 @@ const Card = ({ data, className, isUserCourses = false }) => {
           </div>
           <div className="d-flex">
             <FontAwesomeIcon icon={faCommentDollar} className="me-2" />
-            <span className="col-4 p-0 w-100">Miễn phí</span>
+            <span className="col-4 p-0 w-100">{calculatorPrice()}</span>
           </div>
           <div className="d-flex">
             <FontAwesomeIcon icon={faPlayCircle} className="me-2" />
