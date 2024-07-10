@@ -33,7 +33,6 @@ const PostCard = ({ data, className }) => {
     });
   };
   useEffect(() => {
-    console.log(data.owner.avatar);
     requestApi(`/saved-post/${data.id}`, "GET")
       .then((res) => {
         setIsSavedPost(res.data);

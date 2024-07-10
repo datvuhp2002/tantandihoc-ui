@@ -19,6 +19,7 @@ import requestApi from "~/utils/api";
 import { useNavigate } from "react-router-dom";
 import { LinearProgress } from "@mui/material";
 import calPrice from "~/utils/calPrice";
+import formatPrice from "~/utils/formatPrice";
 const cx = classNames.bind(styles);
 const Card = ({ data, className, isUserCourses = false }) => {
   const classes = cx("wrapper", {
@@ -53,11 +54,22 @@ const Card = ({ data, className, isUserCourses = false }) => {
     }
   };
   const calculatorPrice = () => {
-    if (data.price == 0) return "Miễn phí";
+    if (data.price === 0) return "Miễn phí";
+    if (!data.ownership_discount)
+      return (
+        <span>
+          <span>{formatPrice(data.price)}</span>
+        </span>
+      );
+    const finalPrice = calPrice(data.price, data.ownership_discount);
+    if (finalPrice === "Miễn phí") return "Miễn phí";
+    if (finalPrice === data.price) return formatPrice(finalPrice);
     return (
       <span>
-        <span className="text-decoration-line-through">{data.price}</span> -{" "}
-        {calPrice(data.price, data.ownership_discount)}
+        <span className="text-decoration-line-through">
+          {formatPrice(data.price)}
+        </span>{" "}
+        - {formatPrice(finalPrice)}
       </span>
     );
   };
@@ -119,7 +131,6 @@ const Card = ({ data, className, isUserCourses = false }) => {
             Xem khóa học
           </Button>
         )}
-
         <Image
           courseImgDashboard
           src={`${process.env.REACT_APP_API_URL}/${data.thumbnail}`}

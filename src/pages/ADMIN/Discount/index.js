@@ -27,15 +27,15 @@ const Discount = () => {
       element: (row) => row.id,
     },
     {
-      name: "Name",
+      name: "Tên",
       element: (row) => row.name,
     },
     {
-      name: "Type",
+      name: "Thể loại",
       element: (row) => row.type,
     },
     {
-      name: "value",
+      name: "Giá trị",
       element: (row) => row.value,
     },
     {
@@ -58,7 +58,11 @@ const Discount = () => {
       name: "Actions",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
-          <ButtonCustom type="button" to={`/admin/course`} view>
+          <ButtonCustom
+            type="button"
+            to={`/admin/course?discount=${row.id}`}
+            view
+          >
             View
           </ButtonCustom>
           <ButtonCustom type="button" to={`discount-update/${row.id}`} update>
@@ -83,7 +87,6 @@ const Discount = () => {
     setDeleteType("single");
   };
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
     setShowModal(true);
     setDeleteType("multi");
   };
@@ -103,11 +106,9 @@ const Discount = () => {
         });
     } else {
       dispatch(actions.controlLoading(true));
-      requestApi(
-        `/discount/multiple?ids=${selectedRows.toString()}`,
-        "DELETE",
-        []
-      )
+      requestApi(`/discount`, "DELETE", {
+        ids: selectedRows,
+      })
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());

@@ -8,31 +8,42 @@ import { toast } from "react-toastify";
 import * as actions from "~/redux/actions";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
-import Image from "~/components/Image";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faWrench } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 const cx = classNames.bind(styles);
+
 const DiscountUpdate = () => {
   const dispatch = useDispatch();
-  const params = useParams();
   const navigation = useNavigate();
-  const [thumbnail, setThumbnail] = useState("");
+  const params = useParams();
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm();
-  const handleSubmitFormUpdate = async (data) => {
+  const startDate = watch("start_date");
+  const endDate = watch("end_date");
+
+  const handleSubmitFormAdd = async (data) => {
+    const formatData = {
+      value: Number(data.value),
+      name: data.name,
+      type: data.type,
+      start_date: new Date(data.start_date).toISOString(),
+      end_date: new Date(data.end_date).toISOString(),
+    };
     dispatch(actions.controlLoading(true));
-    await requestApi(`/categories/${params.id}`, "PUT", data)
+    await requestApi(`/discount/${params.id}`, "PUT", formatData)
       .then((res) => {
         dispatch(actions.controlLoading(false));
-        toast.success("Cập nhật thành công", {
+        toast.success("Cập nhật mã giảm thành công", {
           position: "top-right",
           autoClose: 3000,
         });
+        navigation("/admin/discount");
       })
       .catch((err) => {
         console.log("err=>", err);
@@ -45,45 +56,53 @@ const DiscountUpdate = () => {
   };
 
   useEffect(() => {
-    dispatch(actions.controlLoading(true));
     requestApi(`/discount/${params.id}`, "GET")
       .then((res) => {
-        dispatch(actions.controlLoading(false));
-        setValue("name", res.data.name);
-        setValue("description", res.data.description);
+        const discountData = res.data;
+        setValue("value", discountData.value);
+        setValue("name", discountData.name);
+        setValue("type", discountData.type);
+        setValue("start_date", formatDateTimeLocal(discountData.start_date));
+        setValue("end_date", formatDateTimeLocal(discountData.end_date));
       })
       .catch((err) => {
-        console.log("err=>", err);
-        dispatch(actions.controlLoading(false));
-        toast.error(err.response.data.message, {
-          position: "top-right",
-          autoClose: 3000,
-        });
+        console.log(err);
       });
-  }, []);
+  }, [params.id, setValue]);
+
+  const formatDateTimeLocal = (date) => {
+    const d = new Date(date);
+    const pad = (n) => (n < 10 ? `0${n}` : n);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+      d.getDate()
+    )}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Categories Update</h1>
+      <h1 className="mt-4 p-0">Discount Update</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
           <Link to="/admin/dashboard">Dashboard</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/categories">Categories</Link>
+          <Link to="/admin/discount">Discount</Link>
         </li>
-        <li className="breadcrumb-item">Category Update</li>
+        <li className="breadcrumb-item">Discount Update</li>
       </ol>
-      <form className="d-flex align-item-center justify-content-between mb-5">
-        <div className="col-12 col-md-7">
+      <form
+        className="row d-flex align-item-center justify-content-between mb-5"
+        onSubmit={handleSubmit(handleSubmitFormAdd)}
+      >
+        <div className="col-md-7">
           <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Tên thể loại:</label>
+            <label className="form-label">Tên mã giảm giá:</label>
             <input
               type="text"
               className="form-control p-3 fs-5"
-              placeholder="Tên thể loại..."
+              placeholder="Tên mã giảm giá..."
               {...register("name", {
-                required: "Vui lòng nhập tên thể loại",
+                required: "Vui lòng nhập tên mã giảm giá",
               })}
             ></input>
             {errors.name && (
@@ -91,26 +110,69 @@ const DiscountUpdate = () => {
             )}
           </div>
           <div className={cx("", "mb-3 mt-3")}>
-            <label className="form-label">Miêu tả thể loại:</label>
+            <label htmlFor="type">Loại giảm giá</label>
+            <select
+              id="type"
+              className="form-control"
+              {...register("type", {
+                required: "Vui lòng chọn loại giảm giá",
+              })}
+            >
+              <option value="percentage">Phần trăm</option>
+              <option value="fixed">Giá trị</option>
+            </select>
+            {errors.type && (
+              <p className="text-danger">{errors.type.message}</p>
+            )}
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Giá trị:</label>
             <input
               type="text"
               className="form-control p-3 fs-5"
-              placeholder="Miêu tả thể loại..."
-              {...register("description", {
-                required: "Vui lòng viết miêu tả của thể loại",
+              placeholder="Giá trị giảm giá..."
+              {...register("value", {
+                required: "Vui lòng nhập giá trị giảm giá",
               })}
             ></input>
-            {errors.description && (
-              <p className="text-danger">{errors.description.message}</p>
+            {errors.value && (
+              <p className="text-danger">{errors.value.message}</p>
+            )}
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label htmlFor="start_date">Ngày bắt đầu</label>
+            <input
+              className="w-100 p-2"
+              type="datetime-local"
+              id="start_date"
+              {...register("start_date", {
+                required: "Vui lòng nhập ngày bắt đầu giảm giá",
+              })}
+            />
+            {errors.start_date && (
+              <p className="text-danger">{errors.start_date.message}</p>
+            )}
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label htmlFor="end_date">Ngày kết thúc</label>
+            <input
+              className="w-100 p-2"
+              type="datetime-local"
+              id="end_date"
+              {...register("end_date", {
+                required: "Vui lòng nhập ngày kết thúc giảm giá",
+                validate: (value) =>
+                  new Date(value) >= new Date(startDate) ||
+                  "Ngày kết thúc phải sau ngày bắt đầu",
+              })}
+            />
+            {errors.end_date && (
+              <p className="text-danger">{errors.end_date.message}</p>
             )}
           </div>
           <div className="d-flex align-items-end justify-content-end">
-            <Button
-              update
-              onClick={handleSubmit(handleSubmitFormUpdate)}
-              className="btn"
-            >
-              Chỉnh sửa
+            <Button type="submit" className="btn" update>
+              Lưu
             </Button>
           </div>
         </div>
@@ -118,4 +180,5 @@ const DiscountUpdate = () => {
     </div>
   );
 };
+
 export default DiscountUpdate;

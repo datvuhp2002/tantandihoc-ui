@@ -20,6 +20,8 @@ const CourseUpdate = () => {
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [discount, setDiscount] = useState([]);
   const param = useParams();
   const {
     register,
@@ -32,13 +34,14 @@ const CourseUpdate = () => {
     const fetchCourseData = async () => {
       dispatch(actions.controlLoading(true));
       try {
-        const [categoriesRes, courseRes] = await Promise.all([
+        const [categoriesRes, courseRes, discountRes] = await Promise.all([
           requestApi("/categories", "GET"),
           requestApi(`/courses/${param.id}`, "GET"),
+          requestApi("/discount?items_per_page=All", "GET"),
         ]);
         setCategories(categoriesRes.data.data);
+        setDiscount(discountRes.data.data);
         const courseData = courseRes.data;
-        console.log(courseData);
         setValue("name", courseData.name);
         setValue("description", courseData.description);
         setValue("categoryId", courseData.categoryId);
@@ -52,7 +55,10 @@ const CourseUpdate = () => {
           (cat) => cat.id === courseData.categoryId
         );
         setSelectedCategory(category);
-
+        const discount = discountRes.data.data.find(
+          (dis) => dis.id === courseData.discount_id
+        );
+        setSelectedDiscount(discount);
         dispatch(actions.controlLoading(false));
       } catch (err) {
         console.error(err);
@@ -67,6 +73,7 @@ const CourseUpdate = () => {
   }, [param.id, dispatch, setValue]);
 
   const handleSubmitFormUpdate = async (data) => {
+    if (data.discount === null) delete data.discount;
     let formData = new FormData();
     for (let key in data) {
       if (key === "thumbnail") {
@@ -116,15 +123,15 @@ const CourseUpdate = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex")}>
-      <h1 className="mt-4 p-0">Courses Update</h1>
+      <h1 className="mt-4 p-0">Cập nhật khóa học</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/course">Courses</Link>
+          <Link to="/admin/course">Khóa học</Link>
         </li>
-        <li className="breadcrumb-item">Courses Update</li>
+        <li className="breadcrumb-item">Cập nhật khóa học</li>
       </ol>
       <form className="row">
         <div className={cx("", "col-md-6")}>
@@ -141,6 +148,21 @@ const CourseUpdate = () => {
             {errors.name && (
               <p className="text-danger">{errors.name.message}</p>
             )}
+          </div>
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Mã giảm giá:</label>
+            <Autocomplete
+              options={discount}
+              getOptionLabel={(option) => option.name}
+              value={selectedDiscount}
+              onChange={(event, value) => {
+                setSelectedDiscount(value);
+                setValue("discount_id", value ? value.id : null);
+              }}
+              renderInput={(params) => (
+                <TextField {...params} variant="outlined" />
+              )}
+            />
           </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Miêu tả khóa học:</label>

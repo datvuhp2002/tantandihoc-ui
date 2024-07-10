@@ -1,0 +1,45 @@
+.wrapper {
+  color: var(--text-color);
+  .information {
+    font-size: 1.4rem;
+    box-shadow: rgb(0 0 0/12%) 0px 2px 12px;
+    padding: 12px 24px;
+    border-radius: 1rem;
+  }
+  .btn_changeAvatar {
+    border-radius: 999rem;
+    display: flex;
+    flex-direction: row;
+    font-family: "Roboto", sans-serif;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    min-width: 100px;
+    padding: 1rem 1.4rem;
+    font-weight: 700;
+    font-size: 1.6rem;
+    background-color: var(--purple-light);
+    color: var(--white);
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      background-color: var(--purple-dark);
+    }
+  }
+  h1 {
+    margin-bottom: 1.5rem;
+  }
+  .actions {
+    svg {
+      path {
+        color: var(--primary-color);
+      }
+    }
+  }
+  .course-money {
+    color: var(--primary-color);
+  }
+}

@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
 import LiveSearch from "../LiveSearch";
 import Image from "~/components/Image";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { useNavigate, useLocation } from "react-router-dom";
 
-const DataTable = (props) => {
+const DatatableCourse = (props) => {
   const {
     name,
+    categories,
     data,
+    selectedCategory,
+    setSelectedCategory,
+    discount,
+    selectedDiscount,
+    setSelectedDiscount,
     columns,
     currentPage,
     numOfPage,
@@ -15,6 +24,8 @@ const DataTable = (props) => {
     onSelectedRows,
   } = props;
   const [selectedRows, setSelectedRows] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const renderHeaders = () => {
     return columns.map((col, index) => <th key={index}>{col.name}</th>);
@@ -112,6 +123,26 @@ const DataTable = (props) => {
     onChangeItemsPerPage(target.value);
   };
 
+  const updateQueryCategoryParams = (category) => {
+    const params = new URLSearchParams(location.search);
+    if (category) {
+      params.set("category", category.id);
+    } else {
+      params.delete("category");
+    }
+    navigate({ search: params.toString() });
+  };
+  const updateQueryDiscountParams = (discount) => {
+    const params = new URLSearchParams(location.search);
+    if (discount) {
+      params.set("discount", discount.id);
+      setSelectedDiscount(discount);
+    } else {
+      params.delete("discount");
+    }
+    navigate({ search: params.toString() });
+  };
+
   return (
     <div className="card mb-4">
       <div className="card-header">
@@ -120,8 +151,8 @@ const DataTable = (props) => {
       </div>
       <div className="card-body">
         <div className="row mb-3">
-          <div className="col-sm-12 col-md-6">
-            <label className="d-inline-flex">
+          <div className="col-sm-12 col-md-6 d-flex algin-items-center">
+            <div>
               <select
                 name="example_length"
                 className="form-select form-select-sm ms-1 me-1"
@@ -133,9 +164,40 @@ const DataTable = (props) => {
                 <option value="20">25</option>
                 <option value="20">30</option>
               </select>
-            </label>
+            </div>
+            <div className="ms-3 w-50">
+              <Autocomplete
+                options={categories}
+                getOptionLabel={(option) => option.name}
+                value={selectedCategory}
+                onChange={(event, value) => {
+                  setSelectedCategory(value);
+                  updateQueryCategoryParams(value);
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" label="Thể loại" />
+                )}
+              />
+            </div>
+            <div className="ms-3 w-50">
+              <Autocomplete
+                options={discount}
+                getOptionLabel={(option) => option.name}
+                value={selectedDiscount}
+                onChange={(event, value) => {
+                  setSelectedDiscount(value);
+                  updateQueryDiscountParams(value);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Mã giảm giá"
+                  />
+                )}
+              />
+            </div>
           </div>
-
           <div className="col-sm-12 col-md-6">
             <label className="d-inline-flex float-end align-items-center ">
               <p className="p-0 me-2 d-flex align-item-center m-0">Search:</p>
@@ -187,4 +249,4 @@ const DataTable = (props) => {
   );
 };
 
-export default DataTable;
+export default DatatableCourse;

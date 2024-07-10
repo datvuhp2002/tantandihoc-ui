@@ -5,13 +5,18 @@ import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
 import calPrice from "~/utils/calPrice";
+import formatPrice from "~/utils/formatPrice";
+import DataTableCourse from "~/layout/components/DatatableCourse";
 const Course = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [users, setUsers] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
+  const [discount, setDiscount] = useState();
+  const [category, setCategory] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchString, setSearchString] = useState("");
@@ -20,6 +25,10 @@ const Course = () => {
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [discountData, setDiscountData] = useState([]);
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
 
   const columns = [
     {
@@ -31,20 +40,21 @@ const Course = () => {
       element: (row) => `${process.env.REACT_APP_API_URL}/${row.thumbnail}`,
     },
     {
-      name: "Name",
+      name: "Tên",
       element: (row) => row.name,
     },
     {
-      name: "Description",
+      name: "Miêu tả",
       element: (row) => row.description,
     },
     {
-      name: "Price",
-      element: (row) => row.price,
+      name: "Giá khóa học",
+      element: (row) => formatPrice(row.price),
     },
     {
-      name: "Final Price",
-      element: (row) => calPrice(row.price, row.ownership_discount),
+      name: "Giá cuối",
+      element: (row) =>
+        formatPrice(calPrice(row.price, row.ownership_discount)),
     },
     {
       name: "Ngày tạo",
@@ -55,19 +65,21 @@ const Course = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
+          <ButtonCustom type="button" to={`view/${row.id}`} view>
+            Xem
+          </ButtonCustom>
           <ButtonCustom type="button" to={`course-update/${row.id}`} update>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             remove
             type="button"
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -123,8 +135,13 @@ const Course = () => {
   };
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const discount = searchParams.get("discount");
+    const category = searchParams.get("category");
+    setDiscount(discount);
+    setCategory(category);
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&discount=${discount}&category=${category}`;
     requestApi(`/courses${query}`, "GET", [])
       .then((response) => {
         console.log("response=> ", response.data);
@@ -137,18 +154,49 @@ const Course = () => {
         console.log(err);
         dispatch(actions.controlLoading(false));
       });
-  }, [currentPage, itemsPerPage, searchString, refresh]);
-
+    requestApi("/categories?items_per_page=All", "GET")
+      .then((res) => {
+        setCategories(res.data.data);
+        if (category) {
+          setSelectedCategory(
+            res.data.data.find((item) => String(item.id) === category)
+          );
+        } else {
+          setSelectedCategory(null);
+        }
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+    requestApi("/discount?items_per_page=All", "GET")
+      .then((res) => {
+        setDiscountData(res.data.data);
+        if (discount) {
+          setSelectedDiscount(
+            res.data.data.find((item) => String(item.id) === discount)
+          );
+        } else {
+          setSelectedDiscount(null);
+        }
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, [location.search, currentPage, itemsPerPage, searchString, refresh]);
   return (
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Courses List</h1>
+          <h1 className="mt-4">Danh sách khóa học</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Courses</li>
+            <li className="breadcrumb-item">Khóa học</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -162,16 +210,23 @@ const Course = () => {
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
-                className="btn btn-sm btn-danger"
+                remove
+                className="btn"
                 onClick={handleMultiDelete}
               >
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Xóa
               </ButtonCustom>
             )}
           </div>
-          <DataTable
+          <DataTableCourse
             name="List Courses"
             data={users}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            discount={discountData}
+            selectedDiscount={selectedDiscount}
+            setSelectedDiscount={setSelectedDiscount}
             columns={columns}
             numOfPage={numOfPage}
             currentPage={currentPage}

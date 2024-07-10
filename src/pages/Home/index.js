@@ -73,29 +73,6 @@ const Home = () => {
         <div className={cx("", "d-flex row mt-5")}>
           <div className="d-flex align-items-center justify-content-between">
             <h2 className="fs-2">
-              <strong>Khóa học miễn phí</strong>
-            </h2>
-            <Button more to="/courses" className="fs-4">
-              Xem thêm
-            </Button>
-          </div>
-          <div className={cx("group-corse", "row mt-2")}>
-            {coursesFreeData && coursesFreeData.length > 0 ? (
-              coursesFreeData.map((item, index) => {
-                return (
-                  <div key={index} className="col-3 mb-4">
-                    <Card data={item} />
-                  </div>
-                );
-              })
-            ) : (
-              <p>Không có khóa học nào.</p>
-            )}
-          </div>
-        </div>
-        <div className={cx("", "d-flex row mt-5")}>
-          <div className="d-flex align-items-center justify-content-between">
-            <h2 className="fs-2">
               <strong>Bài viết gần đây</strong>
             </h2>
             <Button more to="/blog" className="fs-4">
