@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "./CreatePost.module.scss";
+import styles from "./PostUpdate.module.scss";
 import classNames from "classnames/bind";
 import requestApi from "~/utils/api";
 import { useDispatch } from "react-redux";
@@ -12,45 +12,71 @@ import Image from "~/components/Image";
 import Editor from "ckeditor5-custom-build/build/ckeditor";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import CustomUploadAdapter from "~/helpers/CustomUploadAdapter";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenFancy } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
-const PostAdd = () => {
+const EditPost = () => {
+  const { id } = useParams();
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
-  const [isWriting, setIsWriting] = useState(false);
+  const [contentValue, setContentValue] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState();
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-
+  const [postData, setPostData] = useState({});
   useEffect(() => {
-    dispatch(actions.controlLoading(true));
-    requestApi("/categories?items_per_page=All", "GET")
-      .then((res) => {
-        console.log("res=>", res.data);
-        setCategories(res.data.data);
+    const fetchPostData = async () => {
+      dispatch(actions.controlLoading(true));
+      try {
+        const [categoriesRes, postRes] = await Promise.all([
+          requestApi("/categories", "GET"),
+          requestApi(`/posts/${id}`, "GET"),
+        ]);
+        setCategories(categoriesRes.data.data);
+        const postData = postRes.data;
+        setValue("categoryId", postData.categoryId);
+        setValue("title", postData.title);
+        setValue("summary", postData.summary);
+        setContentValue(postData.content);
+        setThumbnail({
+          img: `${process.env.REACT_APP_API_URL}/${postData.thumbnail}`,
+        });
+        console.log(`${process.env.REACT_APP_API_URL}/${postData.thumbnail}`);
+        setPostData(postData);
+        categoriesRes.data.data.map((category) => {
+          if (category.id === postData.categoryId) {
+            setSelectedCategory(category);
+          }
+        });
         dispatch(actions.controlLoading(false));
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
         dispatch(actions.controlLoading(false));
-      });
-  }, []);
-  const handleSubmitFormAdd = async (data) => {
-    console.log("data form =>", data);
+        toast.error(err.response.data.message, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    };
+
+    fetchPostData();
+  }, [id, dispatch, setValue]);
+
+  const handleSubmitFormUpdate = async (data) => {
     let formData = new FormData();
     for (let key in data) {
       if (key === "thumbnail") {
-        formData.append(key, data[key][0]);
+        if (data[key] && data[key].length > 0) {
+          formData.append(key, data[key][0]);
+        }
       } else {
         formData.append(key, data[key]);
       }
@@ -58,21 +84,17 @@ const PostAdd = () => {
     dispatch(actions.controlLoading(true));
     try {
       const res = await requestApi(
-        "/posts",
-        "POST",
+        `/posts/${id}`,
+        "PUT",
         formData,
         "json",
         "multipart/form-data"
       );
-      console.log("res=>", res);
       dispatch(actions.controlLoading(false));
-      toast.success(
-        "Thêm bài viết thành công, hãy đợi để bài viết được duyệt",
-        {
-          position: "top-right",
-          autoClose: 3000,
-        }
-      );
+      toast.success("Cập nhật bài viết thành công", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } catch (err) {
       console.log("err=>", err);
       dispatch(actions.controlLoading(false));
@@ -82,6 +104,7 @@ const PostAdd = () => {
       });
     }
   };
+
   const onImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -102,44 +125,46 @@ const PostAdd = () => {
   }
 
   return (
-    <div className={cx("wrapper", "row d-flex mb-5")}>
-      <h1 className="mt-4 p-0">Bài viết</h1>
-      <div className="d-flex align-items-center justify-content-end">
-        <Button
-          create
-          disabled={!isWriting}
-          onClick={handleSubmit(handleSubmitFormAdd)}
-          rightIcon={<FontAwesomeIcon icon={faPenFancy} />}
-          className="btn btn-success"
-        >
-          Xuất bản
-        </Button>
-      </div>
+    <div className={cx("wrapper", "row d-flex ")}>
+      <h1 className="mt-4 p-0">Cập nhật bài viết</h1>
+      <ol className="breadcrumb mb-4">
+        <li className="breadcrumb-item">
+          <Link to="/admin/dashboard">Bảng tin</Link>
+        </li>
+        <li className="breadcrumb-item">
+          <Link to="/admin/post">Bài viết</Link>
+        </li>
+        <li className="breadcrumb-item">Cập nhật bài viết</li>
+      </ol>
       <form className="p-0 row">
-        <div className="row">
-          <div className={cx("", "col-md-6")}>
+        <div className="col-12 row">
+          <div className={cx("", "col-6")}>
             <div className={cx("", "mb-3 mt-3")}>
               <label className="form-label">Thể loại bài viết:</label>
-              <Autocomplete
-                {...register("categoryId", {
-                  required: "Vui lòng chọn thể loại bài viết",
-                })}
-                options={categories}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={!!errors.categoryId}
-                    helperText={
-                      errors.categoryId ? errors.categoryId.message : ""
-                    }
-                    variant="outlined"
-                  />
-                )}
-                onChange={(event, value) => {
-                  setValue("categoryId", value ? value.id : null);
-                }}
-              />
+              {postData.categoryId && (
+                <Autocomplete
+                  {...register("categoryId", {
+                    required: "Vui lòng chọn thể loại bài viết",
+                  })}
+                  options={categories}
+                  getOptionLabel={(option) => option.name}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      error={!!errors.categoryId}
+                      helperText={
+                        errors.categoryId ? errors.categoryId.message : ""
+                      }
+                      variant="outlined"
+                    />
+                  )}
+                  value={selectedCategory}
+                  onChange={(event, value) => {
+                    setValue("categoryId", value ? value.id : null);
+                    setSelectedCategory(value);
+                  }}
+                />
+              )}
             </div>
             <div className={cx("", "mb-3 mt-3")}>
               <label className="form-label">Tiêu đề:</label>
@@ -170,16 +195,15 @@ const PostAdd = () => {
               )}
             </div>
           </div>
-          <div className={cx("", "col-md-6")}>
+          <div className={cx("", "col-6")}>
             <div className={cx("", "mb-3 mt-3")}>
               <label htmlFor="file" className={cx("btn_changeAvatar")}>
                 Thêm bìa hình ảnh
               </label>
               {thumbnail.img && (
                 <Image
-                  avatar_profile
                   src={thumbnail.img}
-                  className={cx("avatar-img", "mt-4")}
+                  className={cx("avatar-img", "mt-3")}
                 ></Image>
               )}
               <input
@@ -188,7 +212,6 @@ const PostAdd = () => {
                 accept="image/*"
                 className="d-none"
                 {...register("thumbnail", {
-                  required: "Vui lòng chọn ảnh bìa cho bài viết",
                   onChange: onImageChange,
                 })}
               />
@@ -197,32 +220,36 @@ const PostAdd = () => {
               )}
             </div>
           </div>
-          <div>
-            <div className={cx("", "mb-3 mt-3")}>
-              <label className="form-label">Nội dung:</label>
-              <CKEditor
-                editor={Editor}
-                data="<p>Nội dung viết ở đây</p>"
-                onReady={(editor) => {
-                  register(`content`, {
-                    required: `Vui lòng viết nội dung cho bài viết của bạn`,
-                  });
-                }}
-                onChange={(event, editor) => {
-                  const data = editor.getData();
-                  setValue("content", data);
-                  setIsWriting(true);
-                }}
-                config={{
-                  extraPlugins: [uploadPlugin],
-                }}
-              />
-            </div>
+        </div>
+        <div className="col-12 mt-4">
+          <div className={cx("", "mb-3 mt-3")}>
+            <label className="form-label">Nội dung:</label>
+            <CKEditor
+              editor={Editor}
+              data={contentValue}
+              onReady={(editor) => {
+                register(`content`, {
+                  required: `Vui lòng viết nội dung cho bài viết của bạn`,
+                });
+              }}
+              onChange={(event, editor) => {
+                const data = editor.getData();
+                setValue("content", data);
+              }}
+              config={{
+                extraPlugins: [uploadPlugin],
+              }}
+            />
           </div>
         </div>
       </form>
+      <div className="d-flex align-items-center justify-content-end">
+        <Button onClick={handleSubmit(handleSubmitFormUpdate)} rounded update>
+          Cập nhật
+        </Button>
+      </div>
     </div>
   );
 };
 
-export default PostAdd;
+export default EditPost;

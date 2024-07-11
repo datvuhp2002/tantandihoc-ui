@@ -28,9 +28,16 @@ const MyPost = () => {
         <div className={cx("", "d-flex row mt-5 col-8")}>
           <h1 className="p-0">Bài viết của bạn</h1>
           <div className={cx("group-post")}>
-            <h2>
+            <Button toActive="/my-posts" more className="fs-2 p-3">
               <strong>Bài viết ({listPostSaved.total})</strong>
-            </h2>
+            </Button>
+
+            <Button toActive="/my-posts-published" more className="fs-2 p-3">
+              <strong>Đã xuất bản </strong>
+            </Button>
+            <Button toActive="/my-posts-unpublished" more className="fs-2 p-3">
+              <strong>Đang đợi duyệt</strong>
+            </Button>
           </div>
           {listPostSaved.data &&
             listPostSaved.data.map((item) => (
