@@ -3,7 +3,6 @@ import Home from "~/pages/Home";
 import Login from "~/pages/Login";
 import Register from "~/pages/Register";
 import Blog from "~/pages/Blog";
-import ThietLapUngDung from "~/pages/thietlapungdung";
 import Info from "~/pages/Info";
 import Setting from "~/pages/Setting";
 import FooterOnly from "~/layout/FooterOnly";
@@ -69,6 +68,9 @@ import PaymentSuccess from "~/layout/PaymentSuccess";
 import CourseView from "~/pages/ADMIN/Course/CourseView";
 import CourseReceivedUpdate from "~/pages/ADMIN/Course/CourseReceived/CourseReceivedUpdate";
 import Transaction from "~/pages/ADMIN/Transaction";
+import MyPostPublished from "~/pages/MyPostPublished";
+import MyPostUnPublished from "~/pages/MyPostUnPublished";
+import EditPost from "~/pages/EditPost";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -120,6 +122,18 @@ const privateRoutes = [
   {
     path: config.routes.myPost,
     component: MyPost,
+  },
+  {
+    path: config.routes.myPostPublished,
+    component: MyPostPublished,
+  },
+  {
+    path: config.routes.myPostUnpublished,
+    component: MyPostUnPublished,
+  },
+  {
+    path: config.routes.updatePost,
+    component: EditPost,
   },
   {
     path: config.routes.userPost,

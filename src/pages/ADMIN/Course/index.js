@@ -136,9 +136,9 @@ const Course = () => {
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
+    const category = searchParams.get("category");
     const discount = searchParams.get("discount");
     setDiscount(discount);
-    const category = searchParams.get("category");
     setCategory(category);
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&discount=${discount}&category=${category}`;

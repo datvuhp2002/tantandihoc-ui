@@ -1,40 +1,37 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Blog.module.scss";
 import classNames from "classnames/bind";
-import SlideCard from "~/layout/components/SlideCard";
-import Input from "~/components/Input";
-import Button from "~/components/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button as BTN, Modal } from "react-bootstrap";
-import {
-  faBuildingColumns,
-  faCartShopping,
-  faEye,
-  faPencil,
-  faPhone,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import Card from "~/layout/components/Card";
-import dayjs from "dayjs";
+import PostCard from "~/layout/components/PostCard";
 import * as actions from "~/redux/actions";
 import requestApi from "~/utils/api";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import moment from "moment";
-import "~/helpers/vi";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import PostCard from "~/layout/components/PostCard";
-import { faComments } from "@fortawesome/fontawesome-free-regular";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { useLocation, useNavigate } from "react-router-dom";
+
 const cx = classNames.bind(styles);
 
 const Blog = () => {
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [numOfPage, setNumOfPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [postData, setPostData] = useState({});
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const dispatch = useDispatch();
+  const updateQueryCategoryParams = (category) => {
+    const params = new URLSearchParams(location.search);
+    if (category) {
+      params.set("category", category.id);
+    } else {
+      params.delete("category");
+    }
+    navigate({ search: params.toString() });
+  };
+
   const renderPagination = () => {
     const pagination = [];
     const nextPage = currentPage + 1 > numOfPage ? null : currentPage + 1;
@@ -73,21 +70,37 @@ const Blog = () => {
     );
     return pagination;
   };
+
   useEffect(() => {
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&isPublished=true`;
+    const searchParams = new URLSearchParams(location.search);
+    const category = searchParams.get("category");
     dispatch(actions.controlLoading(true));
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&isPublished=true&category_id=${category}`;
     requestApi(`/posts${query}`, "GET")
       .then((res) => {
         setPostData(res.data);
         setNumOfPage(res.data.lastPage);
+        dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
         console.log(err);
-      })
-      .finally(() => {
         dispatch(actions.controlLoading(false));
       });
-  }, [currentPage, itemsPerPage, dispatch]);
+    requestApi("/categories?items_per_page=All", "GET")
+      .then((res) => {
+        setCategories(res.data.data);
+        if (category) {
+          setSelectedCategory(
+            res.data.data.find((item) => String(item.id) === category)
+          );
+        } else {
+          setSelectedCategory(null);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [location.search, currentPage, itemsPerPage, dispatch]);
 
   return (
     <div className={cx("wrapper", "row d-flex")}>
@@ -96,12 +109,28 @@ const Blog = () => {
           <strong>Bài viết mới nhất</strong>
         </h2>
       </div>
+      <div className="d-flex mb-4">
+        <div className="w-50 me-3">
+          <Autocomplete
+            options={categories}
+            getOptionLabel={(option) => option.name}
+            value={selectedCategory}
+            onChange={(event, value) => {
+              setSelectedCategory(value);
+              updateQueryCategoryParams(value);
+            }}
+            renderInput={(params) => (
+              <TextField {...params} variant="outlined" label="Thể loại" />
+            )}
+          />
+        </div>
+      </div>
       {postData.data && postData.data.length > 0 ? (
         postData.data.map((item, index) => {
           return <PostCard key={index} data={item} />;
         })
       ) : (
-        <p>No posts available</p>
+        <p>Không có bài viết nào.</p>
       )}
       {numOfPage > 1 && (
         <div className="row mt-3">

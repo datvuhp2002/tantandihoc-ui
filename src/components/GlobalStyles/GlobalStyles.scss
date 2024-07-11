@@ -15,7 +15,7 @@
   --header-image-size: 8rem;
   --header-height: 7rem;
   --profile-image-size: 39rem;
-  --active-background-color: #e8ebed;
+  --active-background-color: #dff1fac2;
   --active-color: #1a1a1a;
   --text-hover: #fff;
   --divider-color: #dee3e9;
@@ -63,7 +63,8 @@ body {
 .active {
   // border-bottom: 0.2rem solid var(--purple-light);
   background-color: var(--active-background-color) !important;
-  color: var(--active-color) !important;
+  color: #000 !important;
+  opacity: 1 !important;
 }
 
 .ck-read-only {
