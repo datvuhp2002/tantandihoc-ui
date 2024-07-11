@@ -11,7 +11,6 @@ const AdminLayout = ({ children }) => {
       <Header isPublicRoute={false} navigator="/admin/dashboard" />
       <Sidebar />
       <div className={cx("body")}>{children}</div>
-      <Footer />
     </div>
   );
 };

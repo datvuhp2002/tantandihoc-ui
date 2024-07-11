@@ -21,7 +21,8 @@ const Quiz = () => {
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
-
+  const [hasLesson, setHasLesson] = useState(false);
+  const [lesson, setLesson] = useState();
   const columns = [
     {
       name: "ID",
@@ -118,6 +119,12 @@ const Quiz = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const lesson = searchParams.get("lesson");
+    if (lesson) {
+      setHasLesson(true);
+      setLesson(lesson);
+    } else {
+      setHasLesson(false);
+    }
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&lesson_id=${lesson}`;
     requestApi(`/quiz${query}`, "GET", [])
@@ -148,7 +155,7 @@ const Quiz = () => {
           <div className="mb-3 d-flex">
             <ButtonCustom
               type="button"
-              to="quiz-add"
+              to={!hasLesson ? "quiz-add" : `quiz-add?lesson_id=${lesson}`}
               btnAdminCreate
               className="btn  me-2 fs-4"
             >

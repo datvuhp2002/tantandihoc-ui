@@ -12,6 +12,7 @@ import CreatePost from "~/pages/CreatePost";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBook,
+  faCashRegister,
   faCircleQuestion,
   faDashboard,
   faGraduationCap,
@@ -66,6 +67,8 @@ import DiscountUpdate from "~/pages/ADMIN/Discount/DiscountUpdate";
 import PaymentError from "~/layout/PaymentError";
 import PaymentSuccess from "~/layout/PaymentSuccess";
 import CourseView from "~/pages/ADMIN/Course/CourseView";
+import CourseReceivedUpdate from "~/pages/ADMIN/Course/CourseReceived/CourseReceivedUpdate";
+import Transaction from "~/pages/ADMIN/Transaction";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -145,6 +148,12 @@ const adminRoutes = [
     icon: <FontAwesomeIcon icon={faDashboard} />,
   },
   {
+    name: "Giao dịch",
+    path: config.routesAdmin.transaction,
+    component: Transaction,
+    icon: <FontAwesomeIcon icon={faCashRegister} />,
+  },
+  {
     name: "Người dùng",
     path: config.routesAdmin.user,
     component: User,
@@ -198,6 +207,10 @@ const adminRoutes = [
   {
     path: config.routesAdmin.courseReceived,
     component: CourseReceived,
+  },
+  {
+    path: config.routesAdmin.courseReceivedUpdate,
+    component: CourseReceivedUpdate,
   },
   {
     name: "Bài học",

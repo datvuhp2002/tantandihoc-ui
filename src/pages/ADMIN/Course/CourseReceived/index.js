@@ -43,7 +43,11 @@ const CourseReceived = () => {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
-          <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
+          <ButtonCustom
+            type="button"
+            update
+            to={`/admin/course/course-received-update/${row.id}`}
+          >
             <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom

@@ -31,7 +31,7 @@ const ViewCourseInfo = () => {
   const [isRegisterCourseData, setIsRegisterCourseData] = useState(false);
   const [userProgress, setUserProgress] = useState({});
   const [finalPrice, setFinalPrice] = useState(0);
-
+  const [totalUser, setTotalUser] = useState(0);
   const getUserProgress = async () => {
     await requestApi(`/user-progress/detail/${params.id}`, "GET")
       .then((res) => {
@@ -78,16 +78,22 @@ const ViewCourseInfo = () => {
     const fetchData = async () => {
       dispatch(actions.controlLoading(true));
       try {
-        const [courseResponse, courseReceivedResponse] = await Promise.all([
-          requestApi(`/courses/${params.id}`, "GET"),
-          requestApi(
-            `/course-received/${params.id}?get_all=true&sort=asc`,
-            "GET"
-          ),
-          requestApi(`/user-progress/${params.id}`, "GET"),
-        ]);
+        const [courseResponse, courseReceivedResponse, totalUserRegisteredRes] =
+          await Promise.all([
+            requestApi(`/courses/${params.id}`, "GET"),
+            requestApi(
+              `/course-received/${params.id}?get_all=true&sort=asc`,
+              "GET"
+            ),
+            requestApi(
+              `/user-progress/get-total-user-register-course/${params.id}`,
+              "GET"
+            ),
+          ]);
         setCourseData(courseResponse.data);
         setCourseReceivedData(courseReceivedResponse.data.data);
+        setTotalUser(totalUserRegisteredRes.data);
+        console.log(totalUserRegisteredRes.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -106,6 +112,7 @@ const ViewCourseInfo = () => {
               <h1 className="my-2">{courseData.name}</h1>
               <p>{courseData.description}</p>
             </div>
+
             <div>
               <h1>Khóa học mang lại</h1>
               <CourseReceived />
@@ -128,6 +135,11 @@ const ViewCourseInfo = () => {
               />
             )}
             <h1 className={cx("course-money", "mt-3")}>{renderPrice()}</h1>
+            <div className="mb-5">
+              <h2 className="my-2">
+                <span>Số người học: {totalUser}</span>
+              </h2>
+            </div>
           </div>
         </div>
       )}
