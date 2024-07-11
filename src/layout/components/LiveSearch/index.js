@@ -22,7 +22,7 @@ const LiveSearch = ({ onKeySearch }) => {
       onChange={onTyping}
       value={keyword}
       className="form-control form-control-sm ms-1 p-3 fs-5"
-      placeholder="Searching..."
+      placeholder="Tìm kiếm..."
     />
   );
 };

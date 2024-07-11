@@ -47,15 +47,15 @@ const CategoryAdd = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Categories Add</h1>
+      <h1 className="mt-4 p-0">Thêm thể loại</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/categories">Categories</Link>
+          <Link to="/admin/categories">Thể loại</Link>
         </li>
-        <li className="breadcrumb-item">Category Add</li>
+        <li className="breadcrumb-item">Thêm thể loại</li>
       </ol>
       <form className=" row d-flex align-item-center justify-content-between mb-5">
         <div className="col-md-7">

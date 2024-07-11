@@ -150,11 +150,12 @@ const LessonFromCourse = () => {
           </ButtonCustom>
           {selectedRows.length > 0 && (
             <ButtonCustom
+              remove
               type="button"
-              className="btn btn-sm btn-danger"
+              className="btn "
               onClick={handleMultiDelete}
             >
-              <i className="fa fa-trash"></i> Delete
+              <i className="fa fa-trash"></i> Xóa
             </ButtonCustom>
           )}
         </div>

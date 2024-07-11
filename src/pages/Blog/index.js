@@ -74,7 +74,7 @@ const Blog = () => {
     return pagination;
   };
   useEffect(() => {
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}`;
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&isPublished=true`;
     dispatch(actions.controlLoading(true));
     requestApi(`/posts${query}`, "GET")
       .then((res) => {

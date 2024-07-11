@@ -27,7 +27,7 @@ const User = () => {
       element: (row) => row.id,
     },
     {
-      name: "Username",
+      name: "Tên người dùng",
       element: (row) => row.username,
     },
     {
@@ -43,14 +43,14 @@ const User = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
-        <div className="d-flex align-items-center justify-content-end">
+        <div className="d-flex align-items-center justify-content-start">
           <ButtonCustom type="button" to={`user-update/${row.id}`} update>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom remove onClick={() => handleDelete(row.id)}>
-            <i className="fa fa-trash"></i> Delete
+            <i className="fa fa-trash"></i> Xóa
           </ButtonCustom>
         </div>
       ),
@@ -122,12 +122,12 @@ const User = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Users List</h1>
+          <h1 className="mt-4">Danh sách người dùng</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">User</li>
+            <li className="breadcrumb-item">Người dùng</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -139,17 +139,18 @@ const User = () => {
               <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
             {selectedRows.length > 0 && (
-              <button
+              <ButtonCustom
                 type="button"
-                className="btn btn-sm btn-danger"
+                remove
+                className="btn"
                 onClick={handleMultiDelete}
               >
-                <i className="fa fa-trash"></i> Delete
-              </button>
+                <i className="fa fa-trash"></i> Xóa
+              </ButtonCustom>
             )}
           </div>
           <DataTable
-            name="List Users"
+            name="Danh sách người dùng"
             data={users}
             columns={columns}
             numOfPage={numOfPage}
@@ -169,15 +170,15 @@ const User = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc chắn muốn xóa người dùng này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

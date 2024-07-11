@@ -24,6 +24,7 @@ const PostUpdate = () => {
   const [thumbnail, setThumbnail] = useState("");
   const [categories, setCategories] = useState([]);
   const [contentValue, setContentValue] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState();
   const {
     register,
     handleSubmit,
@@ -41,7 +42,6 @@ const PostUpdate = () => {
         ]);
         setCategories(categoriesRes.data.data);
         const postData = postRes.data;
-        console.log(postData);
         setValue("categoryId", postData.categoryId);
         setValue("title", postData.title);
         setValue("summary", postData.summary);
@@ -51,6 +51,11 @@ const PostUpdate = () => {
         });
         console.log(`${process.env.REACT_APP_API_URL}/${postData.thumbnail}`);
         setPostData(postData);
+        categoriesRes.data.data.map((category) => {
+          if (category.id === postData.categoryId) {
+            setSelectedCategory(category);
+          }
+        });
         dispatch(actions.controlLoading(false));
       } catch (err) {
         console.error(err);
@@ -121,15 +126,15 @@ const PostUpdate = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Posts Update</h1>
+      <h1 className="mt-4 p-0">Cập nhật bài viết</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/post">Posts</Link>
+          <Link to="/admin/post">Bài viết</Link>
         </li>
-        <li className="breadcrumb-item">Posts Update</li>
+        <li className="breadcrumb-item">Cập nhật bài viết</li>
       </ol>
       <form className="p-0 row">
         <div className="col-12 row">
@@ -153,13 +158,10 @@ const PostUpdate = () => {
                       variant="outlined"
                     />
                   )}
-                  defaultValue={
-                    categories.find(
-                      (category) => category.id === postData.categoryId
-                    ) || null
-                  }
+                  value={selectedCategory}
                   onChange={(event, value) => {
                     setValue("categoryId", value ? value.id : null);
+                    setSelectedCategory(value);
                   }}
                 />
               )}
@@ -243,7 +245,7 @@ const PostUpdate = () => {
       </form>
       <div className="d-flex align-items-center justify-content-end">
         <Button onClick={handleSubmit(handleSubmitFormUpdate)} rounded update>
-          Submit
+          Cập nhật
         </Button>
       </div>
     </div>

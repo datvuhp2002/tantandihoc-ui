@@ -27,16 +27,16 @@ const Lesson = () => {
       element: (row) => row.id,
     },
     {
-      name: "Course",
+      name: "Khóa học",
       element: (row) => row.ownership_course.name,
     },
     {
-      name: "Title",
+      name: "Tiêu đề",
       element: (row) => row.title,
     },
 
     {
-      name: "Status",
+      name: "Trạng thái",
       element: (row) => row.status,
     },
 
@@ -49,19 +49,18 @@ const Lesson = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
           <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             type="button"
             remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -69,7 +68,6 @@ const Lesson = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
     setShowModal(true);
     setDeleteItem(id);
     setDeleteType("single");
@@ -137,12 +135,12 @@ const Lesson = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Lessons List</h1>
+          <h1 className="mt-4">Danh sách bài học</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Lessons</li>
+            <li className="breadcrumb-item">Danh sách bài học</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -164,7 +162,7 @@ const Lesson = () => {
             )}
           </div>
           <DataTable
-            name="List Courses"
+            name="Danh sách bài học"
             data={lessons}
             columns={columns}
             numOfPage={numOfPage}
@@ -172,11 +170,9 @@ const Lesson = () => {
             onPageChange={setCurrentPage}
             onChangeItemsPerPage={setItemsPerPage}
             onKeySearch={(keyword) => {
-              console.log("keyword in courses list comp=> ", keyword);
               setSearchString(keyword);
             }}
             onSelectedRows={(rows) => {
-              console.log("selected rows in courses list=> ", rows);
               setSelectedRows(rows);
             }}
           />
@@ -184,15 +180,15 @@ const Lesson = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc muốn xóa bài học này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

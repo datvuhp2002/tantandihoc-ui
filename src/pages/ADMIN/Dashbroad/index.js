@@ -23,9 +23,9 @@ const Dashboard = () => {
 
   return (
     <div className=" px-4">
-      <h1 className="mt-4">Dashboard</h1>
+      <h1 className="mt-4">Bảng tin</h1>
       <ol className="breadcrumb mb-4">
-        <li className="breadcrumb-item">Dashboard</li>
+        <li className="breadcrumb-item">Bảng tin</li>
       </ol>
       <div className="row">
         <div className="col-4">

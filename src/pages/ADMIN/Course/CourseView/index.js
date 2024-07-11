@@ -23,7 +23,7 @@ const CourseView = () => {
               <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to="/admin/courses">Khóa học</Link>
+              <Link to="/admin/course">Khóa học</Link>
             </li>
             <li className="breadcrumb-item">Thông tin khóa học</li>
           </ol>

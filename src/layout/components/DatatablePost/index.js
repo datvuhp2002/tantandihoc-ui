@@ -5,16 +5,15 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const DatatableCourse = (props) => {
+const DatatablePost = (props) => {
   const {
     name,
     categories,
     data,
     selectedCategory,
     setSelectedCategory,
-    discount,
-    selectedDiscount,
-    setSelectedDiscount,
+    selectedPublished,
+    setSelectedPublished,
     columns,
     currentPage,
     numOfPage,
@@ -119,8 +118,18 @@ const DatatableCourse = (props) => {
 
   const onChangeOption = (event) => {
     const target = event.target;
-    console.log("change item per page to=> ", target.value);
     onChangeItemsPerPage(target.value);
+  };
+
+  const onChangeIsPublished = (e) => {
+    const target = e.target.value;
+    const params = new URLSearchParams(location.search);
+    if (target === "all") {
+      params.delete("isPublished");
+    } else {
+      params.set("isPublished", target);
+    }
+    navigate({ search: params.toString() });
   };
 
   const updateQueryCategoryParams = (category) => {
@@ -129,16 +138,6 @@ const DatatableCourse = (props) => {
       params.set("category", category.id);
     } else {
       params.delete("category");
-    }
-    navigate({ search: params.toString() });
-  };
-  const updateQueryDiscountParams = (discount) => {
-    const params = new URLSearchParams(location.search);
-    if (discount) {
-      params.set("discount", discount.id);
-      setSelectedDiscount(discount);
-    } else {
-      params.delete("discount");
     }
     navigate({ search: params.toString() });
   };
@@ -161,8 +160,8 @@ const DatatableCourse = (props) => {
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
-                <option value="20">25</option>
-                <option value="20">30</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
               </select>
             </div>
             <div className="ms-3 w-50">
@@ -180,22 +179,16 @@ const DatatableCourse = (props) => {
               />
             </div>
             <div className="ms-3 w-50">
-              <Autocomplete
-                options={discount}
-                getOptionLabel={(option) => option.name}
-                value={selectedDiscount}
-                onChange={(event, value) => {
-                  setSelectedDiscount(value);
-                  updateQueryDiscountParams(value);
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Mã giảm giá"
-                  />
-                )}
-              />
+              <select
+                name="isPublished"
+                className="form-select form-select-sm ms-1 me-1"
+                value={selectedPublished}
+                onChange={onChangeIsPublished}
+              >
+                <option value="all">Tất cả</option>
+                <option value="true">Đã được duyệt</option>
+                <option value="false">Chưa được duyệt</option>
+              </select>
             </div>
           </div>
           <div className="col-sm-12 col-md-6">
@@ -248,4 +241,4 @@ const DatatableCourse = (props) => {
   );
 };
 
-export default DatatableCourse;
+export default DatatablePost;

@@ -67,7 +67,7 @@ const Course = () => {
     {
       name: "Hành động",
       element: (row) => (
-        <div className="d-flex align-items-center justify-content-end">
+        <div className="d-flex align-items-center justify-content-start h-100">
           <ButtonCustom type="button" to={`view/${row.id}`} view>
             Xem
           </ButtonCustom>
@@ -137,8 +137,8 @@ const Course = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const discount = searchParams.get("discount");
-    const category = searchParams.get("category");
     setDiscount(discount);
+    const category = searchParams.get("category");
     setCategory(category);
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&discount=${discount}&category=${category}`;
@@ -219,7 +219,7 @@ const Course = () => {
             )}
           </div>
           <DataTableCourse
-            name="List Courses"
+            name="Danh sách khóa học"
             data={users}
             categories={categories}
             selectedCategory={selectedCategory}
@@ -245,15 +245,15 @@ const Course = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc muốn xóa khóa học này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

@@ -138,7 +138,6 @@ const DataTable = (props) => {
 
           <div className="col-sm-12 col-md-6">
             <label className="d-inline-flex float-end align-items-center ">
-              <p className="p-0 me-2 d-flex align-item-center m-0">Search:</p>
               <LiveSearch onKeySearch={onKeySearch} />
             </label>
           </div>
