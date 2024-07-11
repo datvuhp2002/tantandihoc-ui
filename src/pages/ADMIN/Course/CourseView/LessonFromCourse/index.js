@@ -54,6 +54,14 @@ const LessonFromCourse = () => {
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
           <ButtonCustom
+            view
+            type="button"
+            to={`/admin/quiz?lesson=${row.id}`}
+            className="btn btn-sm btn-primary me-1 p-3"
+          >
+            <span>Xem</span>
+          </ButtonCustom>
+          <ButtonCustom
             type="button"
             update
             to={`/admin/lesson/lesson-update/${row.id}`}
