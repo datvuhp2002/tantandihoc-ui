@@ -200,15 +200,15 @@ const LessonUpdate = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex")}>
-      <h1 className="mt-4 p-0">Lesson Update</h1>
+      <h1 className="mt-4 p-0">Cập nhật bài học</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/course">Courses</Link>
+          <Link to="/admin/lesson">Bài học</Link>
         </li>
-        <li className="breadcrumb-item">Lesson Update</li>
+        <li className="breadcrumb-item">Cập nhật bài học</li>
       </ol>
 
       <form>

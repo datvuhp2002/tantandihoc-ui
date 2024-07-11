@@ -27,11 +27,11 @@ const Quiz = () => {
       element: (row) => row.id,
     },
     {
-      name: "Lesson",
+      name: "Bài học",
       element: (row) => row.ownership_Lesson.title,
     },
     {
-      name: "Question",
+      name: "Câu hỏi",
       element: (row) => row.question,
     },
 
@@ -44,7 +44,7 @@ const Quiz = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
           <ButtonCustom
@@ -53,17 +53,17 @@ const Quiz = () => {
             to={`quiz-answer/${row.id}`}
             className="btn btn-sm btn-primary me-1 p-3"
           >
-            <span>view</span>
+            <span>Xem</span>
           </ButtonCustom>
           <ButtonCustom update type="button" to={`quiz-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             type="button"
             remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i> Delete
+            <i className="fa fa-trash "></i> Xóa
           </ButtonCustom>
         </div>
       ),
@@ -135,12 +135,12 @@ const Quiz = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Quiz List</h1>
+          <h1 className="mt-4">Danh sách bài tập</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Quiz</li>
+            <li className="breadcrumb-item">Bài tập</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -154,15 +154,16 @@ const Quiz = () => {
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
-                className="btn btn-sm btn-danger"
+                className="btn"
                 onClick={handleMultiDelete}
+                remove
               >
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Xóa
               </ButtonCustom>
             )}
           </div>
           <DataTable
-            name="List Courses"
+            name="Danh sách câu hỏi"
             data={quiz}
             columns={columns}
             numOfPage={numOfPage}
@@ -182,15 +183,15 @@ const Quiz = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc chắn muốn xóa bài tập này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

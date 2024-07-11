@@ -40,19 +40,18 @@ const CourseReceived = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
           <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             type="button"
             remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -138,15 +137,16 @@ const CourseReceived = () => {
           {selectedRows.length > 0 && (
             <ButtonCustom
               type="button"
-              className="btn btn-sm btn-danger"
+              remove
+              className="btn"
               onClick={handleMultiDelete}
             >
-              <i className="fa fa-trash"></i> Delete
+              <i className="fa fa-trash"></i> Xóa
             </ButtonCustom>
           )}
         </div>
         <DataTable
-          name="List Courses"
+          name="Danh sách lợi ích của khóa học"
           data={data}
           columns={columns}
           numOfPage={numOfPage}
@@ -154,26 +154,24 @@ const CourseReceived = () => {
           onPageChange={setCurrentPage}
           onChangeItemsPerPage={setItemsPerPage}
           onKeySearch={(keyword) => {
-            console.log("keyword in courses list comp=> ", keyword);
             setSearchString(keyword);
           }}
           onSelectedRows={(rows) => {
-            console.log("selected rows in courses list=> ", rows);
             setSelectedRows(rows);
           }}
         />
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có muốn xóa mục này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

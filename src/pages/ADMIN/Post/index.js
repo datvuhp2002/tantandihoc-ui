@@ -5,10 +5,13 @@ import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
+import DatatablePost from "~/layout/components/DatatablePost";
+import { toast } from "react-toastify";
 
 const Post = () => {
+  const location = useLocation();
   const dispatch = useDispatch();
   const [posts, setPosts] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
@@ -20,6 +23,11 @@ const Post = () => {
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [category, setCategory] = useState();
+  const [isPublished, setIsPublished] = useState(true);
+  const [selectedPublished, setSelectedPublished] = useState(null);
 
   const columns = [
     {
@@ -31,11 +39,11 @@ const Post = () => {
       element: (row) => `${process.env.REACT_APP_API_URL}/${row.thumbnail}`,
     },
     {
-      name: "Title",
+      name: "Tiêu đề",
       element: (row) => row.title,
     },
     {
-      name: "Summary",
+      name: "Tóm tắt",
       element: (row) => row.summary,
     },
 
@@ -48,19 +56,18 @@ const Post = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
           <ButtonCustom type="button" update to={`post-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             remove
             type="button"
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -75,11 +82,47 @@ const Post = () => {
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
     setShowModal(true);
     setDeleteType("multi");
   };
-
+  const handlePublishPost = async () => {
+    console.log("multi delete => ", selectedRows);
+    const formatIds = selectedRows.map((id) => Number(id));
+    dispatch(actions.controlLoading(true));
+    await requestApi("/posts/publishPost", "PUT", formatIds)
+      .then((res) => {
+        console.log(res.data);
+        setRefresh(Date.now());
+        dispatch(actions.controlLoading(false));
+        toast.success("Duyệt bài viết thành công", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(actions.controlLoading(false));
+      });
+  };
+  const handleUnPublishPost = async () => {
+    console.log("multi delete => ", selectedRows);
+    const formatIds = selectedRows.map((id) => Number(id));
+    dispatch(actions.controlLoading(true));
+    await requestApi("/posts/unPublishPost", "PUT", formatIds)
+      .then((res) => {
+        console.log(res.data);
+        setRefresh(Date.now());
+        dispatch(actions.controlLoading(false));
+        toast.success("Gỡ bài viết thành công", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(actions.controlLoading(false));
+      });
+  };
   const requestDeleteApi = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
@@ -112,12 +155,27 @@ const Post = () => {
   };
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const category = searchParams.get("category");
+    const isPublished = searchParams.get("isPublished");
+    if (isPublished) {
+      setSelectedPublished(isPublished);
+      if (isPublished === "false") {
+        setIsPublished(false);
+      }
+      if (isPublished === "true") {
+        setIsPublished(true);
+      }
+    } else {
+      setSelectedPublished("all");
+      setIsPublished(null);
+    }
+    setCategory(category);
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&category_id=${category}&isPublished=${isPublished}`;
     console.log("query=> ", query);
     requestApi(`/posts${query}`, "GET", [])
       .then((response) => {
-        console.log("response=> ", response.data);
         setPosts(response.data.data);
         setNumOfPage(response.data.lastPage);
         dispatch(actions.controlLoading(false));
@@ -126,18 +184,34 @@ const Post = () => {
         console.log(err);
         dispatch(actions.controlLoading(false));
       });
-  }, [currentPage, itemsPerPage, searchString, refresh]);
+    requestApi("/categories?items_per_page=All", "GET")
+      .then((res) => {
+        setCategories(res.data.data);
+        if (category) {
+          setSelectedCategory(
+            res.data.data.find((item) => String(item.id) === category)
+          );
+        } else {
+          setSelectedCategory(null);
+        }
+        dispatch(actions.controlLoading(false));
+      })
+      .catch((err) => {
+        console.error(err);
+        dispatch(actions.controlLoading(false));
+      });
+  }, [currentPage, itemsPerPage, searchString, refresh, location.search]);
 
   return (
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Posts List</h1>
+          <h1 className="mt-4">Danh sách bài viết</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Posts</li>
+            <li className="breadcrumb-item">Bài viết</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -151,16 +225,44 @@ const Post = () => {
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
-                className="btn btn-sm btn-danger"
+                remove
+                className="btn"
                 onClick={handleMultiDelete}
               >
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Xóa
               </ButtonCustom>
             )}
+            {selectedRows.length > 0 && isPublished && isPublished !== null && (
+              <ButtonCustom
+                type="button"
+                update
+                className="btn"
+                onClick={handleUnPublishPost}
+              >
+                Gỡ bài
+              </ButtonCustom>
+            )}
+            {selectedRows.length > 0 &&
+              !isPublished &&
+              isPublished !== null && (
+                <ButtonCustom
+                  type="button"
+                  update
+                  className="btn"
+                  onClick={handlePublishPost}
+                >
+                  Duyệt
+                </ButtonCustom>
+              )}
           </div>
-          <DataTable
-            name="List posts"
+          <DatatablePost
+            name="Danh sách bài viết"
             data={posts}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
+            selectedPublished={selectedPublished}
+            setSelectedPublished={setSelectedPublished}
             columns={columns}
             numOfPage={numOfPage}
             currentPage={currentPage}
@@ -179,15 +281,15 @@ const Post = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc chắn muốn xóa bài viết này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

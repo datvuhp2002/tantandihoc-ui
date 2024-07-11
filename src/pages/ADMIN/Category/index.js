@@ -27,11 +27,11 @@ const Category = () => {
       element: (row) => row.id,
     },
     {
-      name: "Name",
+      name: "Tên",
       element: (row) => row.name,
     },
     {
-      name: "Description",
+      name: "Miêu tả",
       element: (row) => row.description,
     },
 
@@ -44,19 +44,18 @@ const Category = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
-        <div className="d-flex align-items-center justify-content-end">
+        <div className="d-flex align-items-center justify-content-start">
           <ButtonCustom type="button" to={`category-update/${row.id}`} update>
-            <i className="fa fa-pencil"></i> Edit
+            <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
           <ButtonCustom
             remove
             type="button"
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i>{" "}
-            <span className="fs-4">Delete</span>
+            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -131,12 +130,12 @@ const Category = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Categories List</h1>
+          <h1 className="mt-4">Danh sách thể loại</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Categories</li>
+            <li className="breadcrumb-item">Danh sách thể loại</li>
           </ol>
           <div className="mb-3 d-flex">
             <ButtonCustom
@@ -150,15 +149,16 @@ const Category = () => {
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
-                className="btn btn-sm btn-danger"
+                remove
+                className="btn"
                 onClick={handleMultiDelete}
               >
-                <i className="fa fa-trash"></i> Delete
+                <i className="fa fa-trash"></i> Xóa
               </ButtonCustom>
             )}
           </div>
           <DataTable
-            name="List Courses"
+            name="Danh sách thể loại"
             data={categories}
             columns={columns}
             numOfPage={numOfPage}
@@ -178,15 +178,15 @@ const Category = () => {
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirmation</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure want to delete?</Modal.Body>
+        <Modal.Body>Bạn có chắc sẽ xóa thể loại này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
-            Close
+            Đóng
           </Button>
           <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Delete
+            Xóa
           </Button>
         </Modal.Footer>
       </Modal>

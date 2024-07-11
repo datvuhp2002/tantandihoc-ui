@@ -122,15 +122,16 @@ const LessonAddUploadLocalVid = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex")}>
-      <h1 className="mt-4 p-0">Lesson Add</h1>
+      <h1 className="mt-4 p-0">Thêm bài học</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/course">Courses</Link>
+          <Link to="/admin/lesson">Bài học</Link>
         </li>
-        <li className="breadcrumb-item">Lesson Add</li>
+        <li className="breadcrumb-item">Thêm bài học</li>
+        <li className="breadcrumb-item">Đăng tải video</li>
       </ol>
 
       <div className="mb-4 d-flex">
@@ -142,7 +143,7 @@ const LessonAddUploadLocalVid = () => {
               : "/admin/lesson/lesson-add/upload-vid"
           }
         >
-          Upload Video
+          Đăng tải Video
         </Button>
         <Button
           className={`btn ms-2 p-3 `}
@@ -162,7 +163,7 @@ const LessonAddUploadLocalVid = () => {
               : "/admin/lesson/lesson-add/no-vid"
           }
         >
-          No Video
+          Không Video
         </Button>
       </div>
       <form>

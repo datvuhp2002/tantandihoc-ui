@@ -63,15 +63,15 @@ const DiscountAdd = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Discount Add</h1>
+      <h1 className="mt-4 p-0">Tạo giảm giá</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to="/admin/discount">Discount</Link>
+          <Link to="/admin/discount">Giảm giá</Link>
         </li>
-        <li className="breadcrumb-item">Discount Add</li>
+        <li className="breadcrumb-item">Tạo giảm giá </li>
       </ol>
       <form
         className="row d-flex align-item-center justify-content-between mb-5"

@@ -99,16 +99,16 @@ const PostAdd = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex mb-5")}>
-      <h1 className="mt-4 p-0">Posts Add</h1>
+      <h1 className="mt-4 p-0">Tạo bài viết</h1>
       <div className="d-flex align-items-center justify-content-between">
         <ol className="breadcrumb mb-4">
           <li className="breadcrumb-item">
-            <Link to="/admin/dashboard">Dashboard</Link>
+            <Link to="/admin/dashboard">Bảng tin</Link>
           </li>
           <li className="breadcrumb-item">
-            <Link to="/admin/post">Posts</Link>
+            <Link to="/admin/post">Bài viết</Link>
           </li>
-          <li className="breadcrumb-item">Posts Add</li>
+          <li className="breadcrumb-item">Tạo bài viết</li>
         </ol>
 
         <Button onClick={handleSubmit(handleSubmitFormAdd)} create rounded>

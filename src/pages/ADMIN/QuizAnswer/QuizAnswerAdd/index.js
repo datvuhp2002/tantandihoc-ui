@@ -56,18 +56,18 @@ const QuizAnswerAdd = () => {
 
   return (
     <div className={cx("wrapper", "row d-flex ")}>
-      <h1 className="mt-4 p-0">Quiz Answer Add</h1>
+      <h1 className="mt-4 p-0">Thêm câu trả lời</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
-          <Link to="/admin/dashboard">Dashboard</Link>
+          <Link to="/admin/dashboard">Bảng tin</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to={`/admin/quiz`}>Quiz</Link>
+          <Link to={`/admin/quiz`}>Bài tập</Link>
         </li>
         <li className="breadcrumb-item">
-          <Link to={`/admin/quiz/quiz-answer/${params.id}`}>Quiz Answer</Link>
+          <Link to={`/admin/quiz/quiz-answer/${params.id}`}>Câu trả lời</Link>
         </li>
-        <li className="breadcrumb-item">Quiz Answer Add</li>
+        <li className="breadcrumb-item">Thêm câu trả lời</li>
       </ol>
       <form className=" row d-flex align-item-center justify-content-between mb-5">
         <div className="col-md-7">
