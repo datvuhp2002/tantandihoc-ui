@@ -51,7 +51,7 @@ const Register = () => {
         RegisterFormData.email
       );
       if (!valid) {
-        errors.email = "Email is not valid";
+        errors.email = "Email không đúng";
       }
     }
     if (
