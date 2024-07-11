@@ -52,6 +52,13 @@ const Lesson = () => {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
+          <ButtonCustom
+            type="button"
+            update
+            to={`/admin/quiz?lesson=${row.id}`}
+          >
+            <i className="fa fa-pencil"></i> Xem
+          </ButtonCustom>
           <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
             <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>

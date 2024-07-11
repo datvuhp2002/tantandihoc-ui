@@ -5,11 +5,12 @@ import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
 
 const Quiz = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [quiz, setQuiz] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
@@ -46,7 +47,7 @@ const Quiz = () => {
     {
       name: "Hành động",
       element: (row) => (
-        <div className="d-flex align-items-center justify-content-end">
+        <div className="d-flex align-items-center justify-content-start">
           <ButtonCustom
             view
             type="button"
@@ -115,8 +116,10 @@ const Quiz = () => {
   };
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const lesson = searchParams.get("lesson");
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&lesson_id=${lesson}`;
     requestApi(`/quiz${query}`, "GET", [])
       .then((response) => {
         console.log(response.data);
