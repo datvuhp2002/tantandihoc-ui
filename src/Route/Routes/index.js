@@ -71,6 +71,8 @@ import Transaction from "~/pages/ADMIN/Transaction";
 import MyPostPublished from "~/pages/MyPostPublished";
 import MyPostUnPublished from "~/pages/MyPostUnPublished";
 import EditPost from "~/pages/EditPost";
+import ForgetPassword from "~/pages/ForgetPassword";
+import VerifyOTP from "~/pages/VerifyOTP";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -80,6 +82,16 @@ const publicRoutes = [
   {
     path: config.routes.register,
     component: Register,
+    layout: FooterOnly,
+  },
+  {
+    path: config.routes.forgetPassword,
+    component: ForgetPassword,
+    layout: FooterOnly,
+  },
+  {
+    path: config.routes.verifyToken,
+    component: VerifyOTP,
     layout: FooterOnly,
   },
 ];

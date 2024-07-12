@@ -67,8 +67,14 @@ const HeaderSetting = ({ navigator = "/" }) => {
           </Button>
         </div>
 
-        {/* action */}
-        <div className={cx("action", "d-flex justify-content-end")}>X</div>
+        <div className={cx("action", "d-flex justify-content-end")}>
+          <Button
+            more
+            to="/"
+            className="fs-1"
+            leftIcon={<FontAwesomeIcon icon={faXmark} />}
+          />
+        </div>
       </div>
     </div>
   );

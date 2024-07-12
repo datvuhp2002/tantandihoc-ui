@@ -1,5 +1,7 @@
 const routes = {
   home: "/",
+  forgetPassword: "/forget-password",
+  verifyToken: "/verify-token",
   paymentError: "/payment-error",
   paymentSuccess: "/payment-success",
   login: "/login",

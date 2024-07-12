@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import classNames from "classnames/bind";
-import styles from "./Login.module.scss";
+import styles from "./ForgetPassword.module.scss";
 import requestApi from "~/utils/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ import { faEnvelope, faLock } from "@fortawesome/free-solid-svg-icons";
 
 const cx = classNames.bind(styles);
 
-const Login = () => {
+const ForgetPassword = () => {
   const [showForgetPasswordModal, setShowForgetPasswordModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -33,7 +33,6 @@ const Login = () => {
   const validateForm = () => {
     let isValid = true;
     const errors = {};
-
     if (loginData.email === "" || loginData.email === undefined) {
       errors.email = "Email không được để trống";
     } else {
@@ -44,11 +43,6 @@ const Login = () => {
         errors.email = "Email không đúng";
       }
     }
-
-    if (loginData.password === "" || loginData.password === undefined) {
-      errors.password = "Mật khẩu không được để trống";
-    }
-
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       isValid = false;
@@ -59,55 +53,46 @@ const Login = () => {
     return isValid;
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     let valid = validateForm();
 
+    console.log(loginData);
     if (valid) {
       dispatch(actions.controlLoading(true));
-
-      requestApi("/auth/login", "POST", loginData)
+      await requestApi("/auth/send-token", "POST", loginData)
         .then((res) => {
-          dispatch(actions.controlLoading(false));
-          localStorage.setItem("access_token", res.data.access_token);
-          localStorage.setItem("refresh_token", res.data.refresh_token);
-          localStorage.setItem("role", res.data.role);
-
-          if (res.data.role === "Admin") {
-            navigate("/admin/dashboard");
-          } else {
-            navigate("/");
+          if (res.data) {
+            navigate("/verify-token");
           }
+          dispatch(actions.controlLoading(false));
+          toast.success(
+            "Đã gửi email xác minh. Vui lòng nhập mã OTP để tiếp tục.",
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
         })
         .catch((err) => {
-          console.log("Err", err);
+          console.log(err);
           dispatch(actions.controlLoading(false));
-
-          if (err.response && err.response.status !== 201) {
-            toast.error(err.response.data.message, {
-              position: "top-right",
-              autoClose: 3000,
-            });
-          } else {
-            toast.error("Server is down, please try again", {
-              position: "top-right",
-              autoClose: 3000,
-            });
-          }
         });
     }
   };
 
   return (
     <div className={cx("wrapper")}>
-      <div className={cx("container", "d-flex row")}>
-        <div className={cx("background", "col")}>
-          <Image background src={images.background}></Image>
-        </div>
+      <div
+        className={cx(
+          "container",
+          "d-flex algin-items-center justify-content-center row"
+        )}
+      >
         <div className={cx("form-login", "col-md-4")}>
           <div className={cx("welcome", "mb-4")}>
             <h1>Xin Chào</h1>
             <h5 className={cx("", "text-opacity")}>
-              Hãy đăng nhập để học cùng Tantan
+              Lấy lại mật khẩu bằng cách xác nhận mã OTP
             </h5>
           </div>
           <form>
@@ -122,36 +107,10 @@ const Login = () => {
             {formErrors.email && (
               <p style={{ color: "red" }}>{formErrors.email}</p>
             )}
-            <Input
-              leftIcon={<FontAwesomeIcon icon={faLock} />}
-              password
-              name="password"
-              type="password"
-              placeholder="Password"
-              onChange={onChange}
-            />
-            {formErrors.password && (
-              <p style={{ color: "red" }}>{formErrors.password}</p>
-            )}
-            <div
-              className={cx(
-                "forget-password",
-                "d-flex align-items-center justify-content-end"
-              )}
-            >
-              <Button
-                forgetPassword
-                variant="primary"
-                type="button"
-                to="/forget-password"
-              >
-                Quên mật khẩu?
-              </Button>
-            </div>
             <div
               className={cx(
                 "action",
-                "d-flex align-items-center justify-content-between mb-4"
+                "d-flex align-items-center justify-content-center mb-4"
               )}
             >
               <Button
@@ -159,18 +118,9 @@ const Login = () => {
                 login
                 type="button"
                 onClick={onSubmit}
-                className="w-100"
+                className="mt-3"
               >
-                Đăng nhập
-              </Button>
-              <Button
-                rounded
-                register
-                type="button"
-                className="w-100"
-                to="/register"
-              >
-                Đăng ký
+                Nhận mã OTP
               </Button>
             </div>
           </form>
@@ -180,4 +130,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgetPassword;

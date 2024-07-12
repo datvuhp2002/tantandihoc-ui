@@ -85,14 +85,14 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
         >
           <Button
             header
-            className={cx("logo", "h-100 d-flex")}
+            className={cx(
+              "logo",
+              "h-100 d-flex align-items-center justify-content-start"
+            )}
             to={`${navigator}`}
           >
             <div
-              className={cx(
-                "logo-components",
-                "d-flex align-items-center justify-content-center"
-              )}
+              className={cx("logo-components", "d-flex align-items-center  ")}
             >
               <Image logo src={Logo}></Image>
               <h5 className="mx-2 text-dark opacity-100 bold fs-2">
