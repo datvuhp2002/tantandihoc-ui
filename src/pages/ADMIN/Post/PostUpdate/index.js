@@ -182,14 +182,14 @@ const PostUpdate = () => {
             </div>
             <div className={cx("", "mb-3 mt-3")}>
               <label className="form-label">Tóm tắt:</label>
-              <input
+              <textarea
                 type="text"
                 className="form-control p-3 fs-5"
                 placeholder="Tóm tắt bài viết"
                 {...register("summary", {
                   required: "Vui lòng viết tóm tắt của bài viết",
                 })}
-              ></input>
+              ></textarea>
               {errors.summary && (
                 <p className="text-danger">{errors.summary.message}</p>
               )}

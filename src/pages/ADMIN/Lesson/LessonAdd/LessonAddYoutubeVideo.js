@@ -125,7 +125,7 @@ const LessonAddYoutubeVideo = () => {
   }, [videoUrl, setValue]);
 
   return (
-    <div className={cx("wrapper", "row d-flex")}>
+    <div className={cx("wrapper", "row d-flex mb-5")}>
       <h1 className="mt-4 p-0">Thêm bài học</h1>
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item">
@@ -281,6 +281,7 @@ const LessonAddYoutubeVideo = () => {
         <div className="d-flex align-items-end justify-content-end">
           <Button
             onClick={handleSubmit(handleSubmitFormUrlAdd)}
+            create
             className="btn"
           >
             Tạo

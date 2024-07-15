@@ -7,7 +7,7 @@ import Select from "@mui/material/Select";
 
 const LanguageSelector = ({ languages, language, onSelect }) => {
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ minWidth: 120 }} className="mb-2">
       <FormControl fullWidth>
         <Select
           labelId="demo-simple-select-label"

@@ -38,7 +38,6 @@ const CourseReceivedUpdate = () => {
         position: "top-right",
         autoClose: 3000,
       });
-      setValue("name", "");
     } catch (err) {
       console.log("err=>", err);
       dispatch(actions.controlLoading(false));
@@ -63,18 +62,15 @@ const CourseReceivedUpdate = () => {
     <div className={cx("wrapper", "row d-flex ")}>
       <div className="d-flex align-item-center justify-content-between">
         <div>
-          <h1 className="mt-4 p-0">Courses Received</h1>
+          <h1 className="mt-4 p-0">Cập nhật khóa học mang lại</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to="/admin/course">Courses</Link>
+              <Link to="/admin/course">Khóa học</Link>
             </li>
-            <li className="breadcrumb-item">
-              <Link to="/admin/course/course-add">Course Add</Link>
-            </li>
-            <li className="breadcrumb-item">Course Received</li>
+            <li className="breadcrumb-item">Cập nhật khóa học mang lại</li>
           </ol>
         </div>
       </div>

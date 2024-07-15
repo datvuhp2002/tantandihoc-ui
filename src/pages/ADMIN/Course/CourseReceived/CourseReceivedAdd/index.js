@@ -56,18 +56,18 @@ const CourseReceivedAdd = () => {
     <div className={cx("wrapper", "row d-flex ")}>
       <div className="d-flex align-item-center justify-content-between">
         <div>
-          <h1 className="mt-4 p-0">Courses Received</h1>
+          <h1 className="mt-4 p-0">Thêm khóa học mang lại</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
-              <Link to="/admin/dashboard">Dashboard</Link>
+              <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to="/admin/course">Courses</Link>
+              <Link to="/admin/course">Khóa học</Link>
             </li>
             <li className="breadcrumb-item">
-              <Link to="/admin/course/course-add">Course Add</Link>
+              <Link to="/admin/course/course-add">Thêm khóa học</Link>
             </li>
-            <li className="breadcrumb-item">Course Received</li>
+            <li className="breadcrumb-item">Thêm khóa học mang lại</li>
           </ol>
         </div>
         <div

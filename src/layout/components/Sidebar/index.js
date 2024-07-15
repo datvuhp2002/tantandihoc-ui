@@ -9,7 +9,7 @@ const cx = classNames.bind(styles);
 const Sidebar = () => {
   return (
     <div className={cx("wrapper")}>
-      <div className={cx("sidebar", "d-flex flex-column align-items-center ")}>
+      <div className={cx("sidebar", "d-flex align-items-center")}>
         <Button
           sidebar
           rounded

@@ -25,6 +25,7 @@ export default function Input({
   if (text) {
     Comp = "h5";
   }
+
   const classes = cx("wrapper", {
     login,
     error,

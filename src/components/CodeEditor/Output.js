@@ -23,13 +23,13 @@ const Output = ({ editorRef, language }) => {
   };
   return (
     <Box sx={{ minWidth: 120 }}>
-      <Button className=" m-0" onClick={runCode}>
-        Run Code
+      <Button className=" m-0 mb-2" onClick={runCode} create>
+        Chạy chương trình
       </Button>
       <Box p={2} width="100%" height="50vh" sx={{ border: "2px solid grey" }}>
         {output
           ? output.map((line, i) => <span key={i}>{line}</span>)
-          : 'Click "Run Code" to see the output here'}
+          : 'Bấm vào "Chạy chương trình" để thấy đầu ra kết quả'}
       </Box>
     </Box>
   );

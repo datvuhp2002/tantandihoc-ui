@@ -171,7 +171,7 @@ const VerifyOTP = () => {
                   onClick={onSubmitOTP}
                   className="mt-3"
                 >
-                  Nhận mã OTP
+                  Xác minh mã
                 </Button>
               </div>
             </form>

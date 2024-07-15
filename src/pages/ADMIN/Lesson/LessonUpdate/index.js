@@ -63,7 +63,7 @@ const LessonUpdate = () => {
               }
             : ""
         );
-        if (lessonData.videoUrl !== null) {
+        if (!lessonData.videoUrl) {
           setValue(
             "videoUrl",
             `https://www.youtube.com/embed/${lessonData.videoUrl}`
@@ -78,14 +78,15 @@ const LessonUpdate = () => {
 
   const handleSubmitForm = async (data) => {
     const { course_id, ...NewData } = data;
+    NewData.videoUrl = videoId;
+
     if (videoId == false) {
-      toast.error("Url không hợp lệ vui lòng thử lại!", {
+      delete NewData.videoUrl;
+      toast.warning("Url không hợp lệ nên sẽ bị để trống", {
         position: "top-right",
         autoClose: 3000,
       });
-      return;
     }
-    NewData.videoUrl = videoId;
     if (!videoId && NewData.videoUrl) {
       toast.error("Url không hợp lệ vui lòng thử lại!", {
         position: "top-right",
@@ -322,7 +323,7 @@ const LessonUpdate = () => {
                 placeholder="Nhập YouTube URL"
                 {...register("videoUrl")}
               />
-              {videoId && (
+              {videoId !== null && (
                 <iframe
                   className="mt-3"
                   width="560"

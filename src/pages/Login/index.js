@@ -71,9 +71,9 @@ const Login = () => {
           localStorage.setItem("access_token", res.data.access_token);
           localStorage.setItem("refresh_token", res.data.refresh_token);
           localStorage.setItem("role", res.data.role);
-
           if (res.data.role === "Admin") {
-            navigate("/admin/dashboard");
+            navigate("/");
+            window.open("/admin/dashboard", "_blank");
           } else {
             navigate("/");
           }

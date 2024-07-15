@@ -63,14 +63,12 @@ const CourseReceived = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
     setShowModal(true);
     setDeleteItem(id);
     setDeleteType("single");
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
     setShowModal(true);
     setDeleteType("multi");
   };
@@ -78,7 +76,7 @@ const CourseReceived = () => {
   const requestDeleteApi = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/lessons/${deleteItem}`, "DELETE", [])
+      requestApi(`/course-received/${deleteItem}`, "DELETE", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -91,11 +89,8 @@ const CourseReceived = () => {
         });
     } else {
       dispatch(actions.controlLoading(true));
-      requestApi(
-        `/lessons/multiple?ids=${selectedRows.toString()}`,
-        "DELETE",
-        []
-      )
+      const ids = selectedRows.map((i) => Number(i));
+      requestApi(`/course-received/multiple`, "DELETE", ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());

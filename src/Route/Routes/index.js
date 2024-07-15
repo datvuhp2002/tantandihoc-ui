@@ -73,6 +73,12 @@ import MyPostUnPublished from "~/pages/MyPostUnPublished";
 import EditPost from "~/pages/EditPost";
 import ForgetPassword from "~/pages/ForgetPassword";
 import VerifyOTP from "~/pages/VerifyOTP";
+import TrashCourse from "~/pages/ADMIN/Course/Trash";
+import UserTrash from "~/pages/ADMIN/User/UserTrash";
+import PracticeProgramming from "~/pages/PracticeProgramming";
+import LessonTrash from "~/pages/ADMIN/Lesson/Trash";
+import QuizTrash from "~/pages/ADMIN/Quiz/Trash";
+import PostTrash from "~/pages/ADMIN/Post/Trash";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -160,6 +166,10 @@ const privateRoutes = [
   { path: config.routes.createPost, component: CreatePost },
   { path: config.routes.setting, component: Setting, layout: SettingLayout },
   {
+    path: config.routes.practiceProgramming,
+    component: PracticeProgramming,
+  },
+  {
     path: config.routes.learning,
     component: Learning,
     layout: LessonLayout,
@@ -184,6 +194,10 @@ const adminRoutes = [
     path: config.routesAdmin.user,
     component: User,
     icon: <FontAwesomeIcon icon={faUser} />,
+  },
+  {
+    path: config.routesAdmin.userTrash,
+    component: UserTrash,
   },
   {
     path: config.routesAdmin.userAdd,
@@ -239,6 +253,10 @@ const adminRoutes = [
     component: CourseReceivedUpdate,
   },
   {
+    path: config.routesAdmin.courseTrash,
+    component: TrashCourse,
+  },
+  {
     name: "Bài học",
     path: config.routesAdmin.lesson,
     component: Lesson,
@@ -247,6 +265,10 @@ const adminRoutes = [
   {
     path: config.routesAdmin.lessonAddUrlVid,
     component: LessonAddYoutubeVideo,
+  },
+  {
+    path: config.routesAdmin.lessonTrash,
+    component: LessonTrash,
   },
 
   {
@@ -273,6 +295,10 @@ const adminRoutes = [
     component: QuizAdd,
   },
   {
+    path: config.routesAdmin.quizTrash,
+    component: QuizTrash,
+  },
+  {
     path: config.routesAdmin.quizUpdate,
     component: QuizUpdate,
   },
@@ -297,6 +323,10 @@ const adminRoutes = [
   {
     path: config.routesAdmin.postAdd,
     component: PostAdd,
+  },
+  {
+    path: config.routesAdmin.postTrash,
+    component: PostTrash,
   },
   {
     path: config.routesAdmin.postUpdate,

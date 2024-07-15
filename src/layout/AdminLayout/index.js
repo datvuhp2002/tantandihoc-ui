@@ -1,15 +1,12 @@
 import React from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
 import classNames from "classnames/bind";
 import styles from "./AdminLayout.module.scss";
-import Sidebar from "~/components/ADMIN/Sidebar";
+import AdminHeader from "../components/AdminHeader";
 const cx = classNames.bind(styles);
 const AdminLayout = ({ children }) => {
   return (
     <div className={cx("wrapper")}>
-      <Header isPublicRoute={false} navigator="/admin/dashboard" />
-      <Sidebar />
+      <AdminHeader navigator="/admin/dashboard" />
       <div className={cx("body")}>{children}</div>
     </div>
   );

@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import * as actions from "~/redux/actions";
+import * as actions from "../../../../../redux/actions";
 import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
 import { Link, useParams } from "react-router-dom";
 import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTrash,
+  faTrashCan,
+  faTrashRestore,
+} from "@fortawesome/free-solid-svg-icons";
 
 const LessonFromCourse = () => {
   const dispatch = useDispatch();
@@ -28,16 +34,16 @@ const LessonFromCourse = () => {
       element: (row) => row.id,
     },
     {
-      name: "Course",
+      name: "Khóa học",
       element: (row) => row.ownership_course.name,
     },
     {
-      name: "Title",
+      name: "Tiêu đề",
       element: (row) => row.title,
     },
 
     {
-      name: "Status",
+      name: "Trạng thái",
       element: (row) => row.status,
     },
 
@@ -50,16 +56,11 @@ const LessonFromCourse = () => {
       element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Actions",
+      name: "Hành động",
       element: (row) => (
-        <div className="d-flex align-items-center justify-content-end">
-          <ButtonCustom
-            view
-            type="button"
-            to={`/admin/quiz?lesson=${row.id}`}
-            className="btn btn-sm btn-primary me-1 p-3"
-          >
-            <span>Xem</span>
+        <div className="d-flex align-items-center justify-content-start">
+          <ButtonCustom type="button" view to={`/admin/quiz?lesson=${row.id}`}>
+            Xem
           </ButtonCustom>
           <ButtonCustom
             type="button"
@@ -81,7 +82,6 @@ const LessonFromCourse = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
     setShowModal(true);
     setDeleteItem(id);
     setDeleteType("single");
@@ -109,11 +109,8 @@ const LessonFromCourse = () => {
         });
     } else {
       dispatch(actions.controlLoading(true));
-      requestApi(
-        `/lessons/multiple?ids=${selectedRows.toString()}`,
-        "DELETE",
-        []
-      )
+      const ids = selectedRows.map((i) => Number(i));
+      requestApi(`/lessons/multiple-soft-delete`, "DELETE", ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -130,9 +127,10 @@ const LessonFromCourse = () => {
 
   useEffect(() => {
     dispatch(actions.controlLoading(true));
-    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${courseId}`;
+    let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${params.id}`;
     requestApi(`/lessons${query}`, "GET", [])
       .then((response) => {
+        console.log("response=> ", response.data);
         setLessons(response.data.data);
         setNumOfPage(response.data.lastPage);
         console.log(response.data.lastPage);
@@ -147,49 +145,65 @@ const LessonFromCourse = () => {
   return (
     <div id="layoutSidenav_content">
       <main>
-        <div className="mb-3 d-flex">
-          <ButtonCustom
-            type="button"
-            to={`/admin/lesson/lesson-add/no-vid?course_id=${params.id}`}
-            btnAdminCreate
-            className="btn me-2 fs-4"
-          >
-            <i className="fa fa-plus"></i> Tạo mới
-          </ButtonCustom>
-          {selectedRows.length > 0 && (
+        <div className="container-fluid px-4">
+          <h1 className="mt-4">Danh sách bài học</h1>
+          <ol className="breadcrumb mb-4">
+            <li className="breadcrumb-item">
+              <Link to="/admin/dashboard">Bảng tin</Link>
+            </li>
+            <li className="breadcrumb-item">Danh sách bài học</li>
+          </ol>
+          <div className="mb-3 d-flex">
             <ButtonCustom
-              remove
               type="button"
-              className="btn "
-              onClick={handleMultiDelete}
+              to={`/admin/lesson/lesson-add/no-vid?course_id=${params.id}`}
+              btnAdminCreate
+              className="btn me-2 fs-4"
             >
-              <i className="fa fa-trash"></i> Xóa
+              <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
-          )}
+            <ButtonCustom
+              type="button"
+              to={`/admin/lesson/trash?course_id=${params.id}`}
+              remove
+              className="btn me-2 fs-4"
+              leftIcon={<FontAwesomeIcon icon={faTrashCan} />}
+            >
+              Thùng rác
+            </ButtonCustom>
+            {selectedRows.length > 0 && (
+              <ButtonCustom
+                type="button"
+                remove
+                className="btn btn-sm btn-danger"
+                onClick={handleMultiDelete}
+              >
+                <i className="fa fa-trash"></i> Xóa
+              </ButtonCustom>
+            )}
+          </div>
+          <DataTable
+            name="Danh sách bài học"
+            data={lessons}
+            columns={columns}
+            numOfPage={numOfPage}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            onChangeItemsPerPage={setItemsPerPage}
+            onKeySearch={(keyword) => {
+              setSearchString(keyword);
+            }}
+            onSelectedRows={(rows) => {
+              setSelectedRows(rows);
+            }}
+          />
         </div>
-        <DataTable
-          name="Danh sách bài học"
-          data={lessons}
-          columns={columns}
-          numOfPage={numOfPage}
-          currentPage={currentPage}
-          onPageChange={setCurrentPage}
-          onChangeItemsPerPage={setItemsPerPage}
-          onKeySearch={(keyword) => {
-            console.log("keyword in courses list comp=> ", keyword);
-            setSearchString(keyword);
-          }}
-          onSelectedRows={(rows) => {
-            console.log("selected rows in courses list=> ", rows);
-            setSelectedRows(rows);
-          }}
-        />
       </main>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn có chắc là muốn xóa bài học này?</Modal.Body>
+        <Modal.Body>Bạn có chắc muốn xóa bài học này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
             Đóng

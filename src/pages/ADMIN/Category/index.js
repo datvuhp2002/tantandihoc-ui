@@ -7,6 +7,9 @@ import ButtonCustom from "~/components/Button";
 import requestApi from "~/utils/api";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 
 const Category = () => {
   const dispatch = useDispatch();
@@ -80,30 +83,47 @@ const Category = () => {
       dispatch(actions.controlLoading(true));
       requestApi(`/categories/${deleteItem}`, "DELETE", [])
         .then((response) => {
+          toast.success("Xóa thể loại thành công", {
+            position: "top-right",
+            autoClose: 3000,
+          });
           setShowModal(false);
           setRefresh(Date.now());
           dispatch(actions.controlLoading(false));
         })
         .catch((err) => {
-          console.log(err);
+          toast.error(
+            "Không thể xóa thể loại vì có khóa học và bài viết đang thuộc thể loại này",
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
           setShowModal(false);
           dispatch(actions.controlLoading(false));
         });
     } else {
       dispatch(actions.controlLoading(true));
-      requestApi(
-        `/categories/multiple?ids=${selectedRows.toString()}`,
-        "DELETE",
-        []
-      )
+      const ids = selectedRows.map((i) => Number(i));
+      requestApi(`/categories/multiple-force-delete`, "DELETE", ids)
         .then((response) => {
           setShowModal(false);
+          toast.success("Xóa thể loại thành công", {
+            position: "top-right",
+            autoClose: 3000,
+          });
           setRefresh(Date.now());
           setSelectedRows([]);
           dispatch(actions.controlLoading(false));
         })
         .catch((err) => {
-          console.log(err);
+          toast.error(
+            "Không thể xóa thể loại vì có khóa học và bài viết đang thuộc thể loại này",
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
           setShowModal(false);
           dispatch(actions.controlLoading(false));
         });
@@ -146,6 +166,7 @@ const Category = () => {
             >
               <i className="fa fa-plus"></i> Tạo mới
             </ButtonCustom>
+
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
