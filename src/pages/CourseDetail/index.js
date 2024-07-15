@@ -236,7 +236,7 @@ const CourseDetail = () => {
                 Đăng ký học
               </Button>
             ) : (
-              <Button onClick={OnBuyCourse} rounded>
+              <Button onClick={OnBuyCourse} view rounded>
                 Mua khóa học
               </Button>
             )}

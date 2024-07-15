@@ -137,14 +137,14 @@ const QuizUpdate = () => {
           </div>
           <div className={cx("", "mb-3 mt-3")}>
             <label className="form-label">Câu hỏi:</label>
-            <input
+            <textarea
               type="text"
               className="form-control p-3 fs-5"
               placeholder="Miêu tả thể loại..."
               {...register("question", {
                 required: "Vui lòng nhập câu hỏi",
               })}
-            ></input>
+            ></textarea>
             {errors.question && (
               <p className="text-danger">{errors.question.message}</p>
             )}

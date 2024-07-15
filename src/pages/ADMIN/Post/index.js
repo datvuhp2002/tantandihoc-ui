@@ -9,6 +9,8 @@ import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
 import DatatablePost from "~/layout/components/DatatablePost";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 const Post = () => {
   const location = useLocation();
@@ -75,7 +77,6 @@ const Post = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
     setShowModal(true);
     setDeleteItem(id);
     setDeleteType("single");
@@ -86,7 +87,6 @@ const Post = () => {
     setDeleteType("multi");
   };
   const handlePublishPost = async () => {
-    console.log("multi delete => ", selectedRows);
     const formatIds = selectedRows.map((id) => Number(id));
     dispatch(actions.controlLoading(true));
     await requestApi("/posts/publishPost", "PUT", formatIds)
@@ -105,7 +105,6 @@ const Post = () => {
       });
   };
   const handleUnPublishPost = async () => {
-    console.log("multi delete => ", selectedRows);
     const formatIds = selectedRows.map((id) => Number(id));
     dispatch(actions.controlLoading(true));
     await requestApi("/posts/unPublishPost", "PUT", formatIds)
@@ -139,7 +138,8 @@ const Post = () => {
         });
     } else {
       dispatch(actions.controlLoading(true));
-      requestApi(`/posts/multiple?ids=${selectedRows.toString()}`, "DELETE", [])
+      const ids = selectedRows.map((id) => Number(id));
+      requestApi(`/posts/multiple-soft-delete`, "DELETE", ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -221,6 +221,15 @@ const Post = () => {
               className="btn btn-sm btn-success me-2 fs-4"
             >
               <i className="fa fa-plus"></i> Tạo mới
+            </ButtonCustom>
+            <ButtonCustom
+              type="button"
+              to="trash"
+              leftIcon={<FontAwesomeIcon icon={faTrashCan} />}
+              remove
+              className="btn btn-sm btn-success me-2 fs-4"
+            >
+              Thùng rác
             </ButtonCustom>
             {selectedRows.length > 0 && (
               <ButtonCustom

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import * as actions from "../../../redux/actions";
+import * as actions from "../../../../redux/actions";
 import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import requestApi from "~/utils/api";
@@ -8,9 +8,10 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import ButtonCustom from "~/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDeleteLeft, faRecycle } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
-const User = () => {
+const UserTrash = () => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
@@ -18,9 +19,12 @@ const User = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchString, setSearchString] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
+  const [restoreItem, setRestoreItem] = useState(null);
+  const [restoreType, setRestoreType] = useState("single");
   const [deleteItem, setDeleteItem] = useState(null);
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
 
   const columns = [
@@ -41,18 +45,28 @@ const User = () => {
       element: (row) => moment(row.createdAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Ngày cập nhật",
-      element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
+      name: "Ngày xóa",
+      element: (row) => moment(row.deletedAt).format("DD/MM/YYYY"),
     },
     {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-start">
-          <ButtonCustom type="button" to={`user-update/${row.id}`} update>
-            <i className="fa fa-pencil"></i> Sửa
+          <ButtonCustom
+            type="button"
+            className="text-nowrap"
+            create
+            onClick={() => handleRestore(row.id)}
+            leftIcon={<FontAwesomeIcon icon={faRecycle} />}
+          >
+            Khôi phục
           </ButtonCustom>
-          <ButtonCustom remove onClick={() => handleDelete(row.id)}>
-            <i className="fa fa-trash"></i> Xóa
+          <ButtonCustom
+            remove
+            onClick={() => handleDelete(row.id)}
+            leftIcon={<FontAwesomeIcon icon={faDeleteLeft} />}
+          >
+            Xóa
           </ButtonCustom>
         </div>
       ),
@@ -60,33 +74,71 @@ const User = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
-    setShowModal(true);
+    setShowModalDelete(true);
     setDeleteItem(id);
     setDeleteType("single");
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
-    setShowModal(true);
+    setShowModalDelete(true);
     setDeleteType("multi");
   };
 
-  const requestDeleteApi = () => {
+  const handleRestore = (id) => {
+    setShowModal(true);
+    setRestoreItem(id);
+    setRestoreType("single");
+  };
+
+  const handleMultiRestore = () => {
+    setShowModal(true);
+    setRestoreType("multi");
+  };
+
+  const requestDelete = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/users/${deleteItem}`, "DELETE", [])
+      requestApi(`/users/force-delete/${deleteItem}`, "DELETE", [])
+        .then((response) => {
+          setShowModalDelete(false);
+          setRefresh(Date.now());
+          dispatch(actions.controlLoading(false));
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowModalDelete(false);
+          dispatch(actions.controlLoading(false));
+        });
+    } else {
+      dispatch(actions.controlLoading(true));
+      const ids = selectedRows.map((i) => Number(i));
+      requestApi(`/users/multiple-force-delete`, "DELETE", ids)
+        .then((response) => {
+          setShowModalDelete(false);
+          setRefresh(Date.now());
+          setSelectedRows([]);
+          dispatch(actions.controlLoading(false));
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowModalDelete(false);
+          dispatch(actions.controlLoading(false));
+        });
+    }
+  };
+
+  const requestRestore = () => {
+    if (restoreType === "single") {
+      dispatch(actions.controlLoading(true));
+      requestApi(`/users/restore/${restoreItem}`, "PUT", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
           dispatch(actions.controlLoading(false));
-          toast.success(
-            "Xoá người dùng thành công, hãy vào thùng rác để kiểm tra",
-            {
-              position: "top-right",
-              autoClose: 3000,
-            }
-          );
+          toast.success("Khôi phục người dùng thành công", {
+            position: "top-right",
+            autoClose: 3000,
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -96,20 +148,16 @@ const User = () => {
     } else {
       dispatch(actions.controlLoading(true));
       const ids = selectedRows.map((i) => Number(i));
-      requestApi(`/users/soft-delete-multiple`, "DELETE", ids)
+      requestApi(`/users/multiple-restore`, "PUT", ids)
         .then((response) => {
-          console.log(response.data);
           setShowModal(false);
           setRefresh(Date.now());
           setSelectedRows([]);
           dispatch(actions.controlLoading(false));
-          toast.success(
-            "Xoá người dùng thành công, hãy vào thùng rác để kiểm tra",
-            {
-              position: "top-right",
-              autoClose: 3000,
-            }
-          );
+          toast.success("Khôi phục người dùng thành công", {
+            position: "top-right",
+            autoClose: 3000,
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -122,7 +170,7 @@ const User = () => {
   useEffect(() => {
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}`;
-    requestApi(`/users${query}`, "GET", [])
+    requestApi(`/users/trash${query}`, "GET", [])
       .then((response) => {
         setUsers(response.data.data);
         setNumOfPage(response.data.lastPage);
@@ -146,30 +194,26 @@ const User = () => {
             <li className="breadcrumb-item">Người dùng</li>
           </ol>
           <div className="mb-3 d-flex">
-            <ButtonCustom
-              type="button"
-              to="user-add"
-              btnAdminCreate
-              className="btn me-2 fs-4"
-            >
-              <i className="fa fa-plus"></i> Tạo mới
-            </ButtonCustom>
-            <ButtonCustom
-              type="button"
-              to="trash"
-              remove
-              className="btn me-2 fs-4"
-            >
-              <i className="fa fa-trash"></i> Thùng rác
-            </ButtonCustom>
+            {selectedRows.length > 0 && (
+              <ButtonCustom
+                type="button"
+                create
+                className="btn"
+                onClick={handleMultiRestore}
+                leftIcon={<FontAwesomeIcon icon={faRecycle} />}
+              >
+                Khôi phục
+              </ButtonCustom>
+            )}
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
                 remove
                 className="btn"
                 onClick={handleMultiDelete}
+                leftIcon={<FontAwesomeIcon icon={faDeleteLeft} />}
               >
-                <i className="fa fa-trash"></i> Xóa
+                Xóa
               </ButtonCustom>
             )}
           </div>
@@ -181,14 +225,8 @@ const User = () => {
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             onChangeItemsPerPage={setItemsPerPage}
-            onKeySearch={(keyword) => {
-              console.log("keyword in user list comp=> ", keyword);
-              setSearchString(keyword);
-            }}
-            onSelectedRows={(rows) => {
-              console.log("selected rows in uselist=> ", rows);
-              setSelectedRows(rows);
-            }}
+            onKeySearch={(keyword) => setSearchString(keyword)}
+            onSelectedRows={(rows) => setSelectedRows(rows)}
           />
         </div>
       </main>
@@ -196,13 +234,40 @@ const User = () => {
         <Modal.Header closeButton>
           <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn có chắc chắn muốn xóa người dùng này?</Modal.Body>
+        <Modal.Body>Bạn có chắc chắn muốn khôi phục người dùng này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
             Đóng
           </Button>
-          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Xóa
+          <Button className="btn-success p-2 fs-5" onClick={requestRestore}>
+            Khôi phục
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showModalDelete}
+        onHide={() => setShowModalDelete(false)}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Xác nhận</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Sau khi xóa người dùng này sẽ mất hoàn toàn! Bạn có chắc chắn?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => setShowModalDelete(false)}
+            className="p-2 fs-5"
+          >
+            Đóng
+          </Button>
+          <Button
+            create
+            className="btn-danger p-2 fs-5"
+            onClick={requestDelete}
+          >
+            Xoá
           </Button>
         </Modal.Footer>
       </Modal>
@@ -210,4 +275,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default UserTrash;

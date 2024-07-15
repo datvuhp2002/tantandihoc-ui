@@ -494,9 +494,10 @@ function UpdateUserName({
               )}
             </div>
           </div>
-          <div className="w-100 my-3">
+          <div className="d-flex align-items-center justify-content-center my-3">
             <Button
-              className="w-100"
+              view
+              className=""
               rounded
               onClick={() => checkIsNull(value)}
             >
@@ -564,9 +565,10 @@ function UpdateFullname({
               )}
             </div>
           </div>
-          <div className="w-100 my-3">
+          <div className="d-flex align-items-center justify-content-center my-3">
             <Button
-              className="w-100"
+              view
+              className=""
               rounded
               onClick={() => checkIsNull(value)}
             >
@@ -745,9 +747,13 @@ function UpdatePassword({
               )}
             </div>
           </div>
-          <div className="w-100 my-3">
+          <div className="d-flex align-items-center justify-content-center my-3">
+            <Button update className="" rounded to="/forget-password">
+              Quên mật khẩu
+            </Button>
             <Button
-              className="w-100"
+              view
+              className=""
               rounded
               onClick={() =>
                 onSubmitUpdate({ oldPassword, newPassword, repeatPassword })

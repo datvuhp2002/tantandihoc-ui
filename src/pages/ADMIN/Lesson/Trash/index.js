@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import * as actions from "../../../redux/actions";
+import * as actions from "../../../../redux/actions";
 import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
@@ -8,13 +8,9 @@ import requestApi from "~/utils/api";
 import { Link } from "react-router-dom";
 import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTrash,
-  faTrashCan,
-  faTrashRestore,
-} from "@fortawesome/free-solid-svg-icons";
+import { faRecycle, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const Lesson = () => {
+const LessonTrash = () => {
   const dispatch = useDispatch();
   const [lessons, setLessons] = useState([]);
   const [numOfPage, setNumOfPage] = useState(1);
@@ -22,11 +18,12 @@ const Lesson = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchString, setSearchString] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [deleteItem, setDeleteItem] = useState(null);
-  const [deleteType, setDeleteType] = useState("single");
+  const [actionItem, setActionItem] = useState(null);
+  const [actionType, setActionType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
   const [courseId, setCourseId] = useState("");
+
   const columns = [
     {
       name: "ID",
@@ -40,29 +37,29 @@ const Lesson = () => {
       name: "Tiêu đề",
       element: (row) => row.title,
     },
-
     {
       name: "Trạng thái",
       element: (row) => row.status,
     },
-
     {
       name: "Ngày tạo",
       element: (row) => moment(row.createdAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Ngày cập nhật",
-      element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
+      name: "Ngày xóa",
+      element: (row) => moment(row.deletedAt).format("DD/MM/YYYY"),
     },
     {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-start">
-          <ButtonCustom type="button" view to={`/admin/quiz?lesson=${row.id}`}>
-            Xem
-          </ButtonCustom>
-          <ButtonCustom type="button" update to={`lesson-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Sửa
+          <ButtonCustom
+            create
+            type="button"
+            onClick={() => handleRestore(row.id)}
+            leftIcon={<FontAwesomeIcon icon={faRecycle} />}
+          >
+            Khôi phục
           </ButtonCustom>
           <ButtonCustom
             type="button"
@@ -78,38 +75,52 @@ const Lesson = () => {
 
   const handleDelete = (id) => {
     setShowModal(true);
-    setDeleteItem(id);
-    setDeleteType("single");
+    setActionItem(id);
+    setActionType("delete");
+  };
+
+  const handleRestore = (id) => {
+    setShowModal(true);
+    setActionItem(id);
+    setActionType("restore");
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
     setShowModal(true);
-    setDeleteType("multi");
+    setActionType("multiDelete");
   };
 
-  const requestDeleteApi = () => {
-    if (deleteType === "single") {
+  const handleMultiRestore = () => {
+    setShowModal(true);
+    setActionType("multiRestore");
+  };
+
+  const requestApiAction = () => {
+    let apiEndpoint = "";
+    let method = "";
+    const ids = selectedRows.map((i) => Number(i));
+    if (actionType === "delete") {
+      apiEndpoint = `/lessons/force-delete/${actionItem}`;
+      method = "DELETE";
+    } else if (actionType === "restore") {
+      apiEndpoint = `/lessons/restore/${actionItem}`;
+      method = "PUT";
+    } else if (actionType === "multiDelete") {
+      apiEndpoint = `/lessons/multiple-force-delete`;
+      method = "DELETE";
+    } else if (actionType === "multiRestore") {
+      apiEndpoint = `/lessons/multiple-restore`;
+      method = "PUT";
+    }
+    if (apiEndpoint && method) {
       dispatch(actions.controlLoading(true));
-      requestApi(`/lessons/${deleteItem}`, "DELETE", [])
+      requestApi(apiEndpoint, method, ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
-          dispatch(actions.controlLoading(false));
-        })
-        .catch((err) => {
-          console.log(err);
-          setShowModal(false);
-          dispatch(actions.controlLoading(false));
-        });
-    } else {
-      dispatch(actions.controlLoading(true));
-      const ids = selectedRows.map((i) => Number(i));
-      requestApi(`/lessons/multiple-soft-delete`, "DELETE", ids)
-        .then((response) => {
-          setShowModal(false);
-          setRefresh(Date.now());
-          setSelectedRows([]);
+          if (actionType === "multiDelete" || actionType === "multiRestore") {
+            setSelectedRows([]);
+          }
           dispatch(actions.controlLoading(false));
         })
         .catch((err) => {
@@ -123,62 +134,53 @@ const Lesson = () => {
   useEffect(() => {
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&course_id=${courseId}`;
-    requestApi(`/lessons${query}`, "GET", [])
+    requestApi(`/lessons/trash${query}`, "GET", [])
       .then((response) => {
-        console.log("response=> ", response.data);
         setLessons(response.data.data);
         setNumOfPage(response.data.lastPage);
-        console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
         console.log(err);
         dispatch(actions.controlLoading(false));
       });
-  }, [currentPage, itemsPerPage, searchString, refresh]);
+  }, [currentPage, itemsPerPage, searchString, refresh, courseId]);
 
   return (
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Danh sách bài học</h1>
+          <h1 className="mt-4">Thùng rác bài học</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Danh sách bài học</li>
+            <li className="breadcrumb-item">Thùng rác bài học</li>
           </ol>
           <div className="mb-3 d-flex">
-            <ButtonCustom
-              type="button"
-              to="lesson-add/no-vid"
-              btnAdminCreate
-              className="btn me-2 fs-4"
-            >
-              <i className="fa fa-plus"></i> Tạo mới
-            </ButtonCustom>
-            <ButtonCustom
-              type="button"
-              to="trash"
-              remove
-              className="btn me-2 fs-4"
-              leftIcon={<FontAwesomeIcon icon={faTrashCan} />}
-            >
-              Thùng rác
-            </ButtonCustom>
             {selectedRows.length > 0 && (
-              <ButtonCustom
-                type="button"
-                remove
-                className="btn btn-sm btn-danger"
-                onClick={handleMultiDelete}
-              >
-                <i className="fa fa-trash"></i> Xóa
-              </ButtonCustom>
+              <>
+                <ButtonCustom
+                  type="button"
+                  remove
+                  className="btn btn-sm btn-danger me-2"
+                  onClick={handleMultiDelete}
+                >
+                  <i className="fa fa-trash"></i> Xóa
+                </ButtonCustom>
+                <ButtonCustom
+                  type="button"
+                  create
+                  className="btn btn-sm btn-success"
+                  onClick={handleMultiRestore}
+                >
+                  <i className="fa fa-recycle"></i> Khôi phục
+                </ButtonCustom>
+              </>
             )}
           </div>
           <DataTable
-            name="Danh sách bài học"
+            name="Thùng rác bài học"
             data={lessons}
             columns={columns}
             numOfPage={numOfPage}
@@ -198,13 +200,26 @@ const Lesson = () => {
         <Modal.Header closeButton>
           <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn có chắc muốn xóa bài học này?</Modal.Body>
+        <Modal.Body>
+          {actionType === "restore" || actionType === "multiRestore"
+            ? "Bạn có chắc muốn khôi phục bài học này?"
+            : "Bạn có chắc muốn xóa bài học này?"}
+        </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
             Đóng
           </Button>
-          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Xóa
+          <Button
+            className={
+              actionType === "restore" || actionType === "multiRestore"
+                ? "btn-success p-2 fs-5"
+                : "btn-danger p-2 fs-5"
+            }
+            onClick={requestApiAction}
+          >
+            {actionType === "restore" || actionType === "multiRestore"
+              ? "Khôi phục"
+              : "Xóa"}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -212,4 +227,4 @@ const Lesson = () => {
   );
 };
 
-export default Lesson;
+export default LessonTrash;

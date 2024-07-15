@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import * as actions from "../../../redux/actions";
+import * as actions from "../../../../redux/actions";
 import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
@@ -8,9 +8,9 @@ import requestApi from "~/utils/api";
 import { Link, useLocation } from "react-router-dom";
 import moment from "moment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faRecycle, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
-const Quiz = () => {
+const QuizTrash = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [quiz, setQuiz] = useState([]);
@@ -19,12 +19,13 @@ const Quiz = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchString, setSearchString] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
-  const [deleteItem, setDeleteItem] = useState(null);
-  const [deleteType, setDeleteType] = useState("single");
+  const [actionItem, setActionItem] = useState(null);
+  const [actionType, setActionType] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
   const [hasLesson, setHasLesson] = useState(false);
   const [lesson, setLesson] = useState();
+
   const columns = [
     {
       name: "ID",
@@ -38,36 +39,32 @@ const Quiz = () => {
       name: "Câu hỏi",
       element: (row) => row.question,
     },
-
     {
       name: "Ngày tạo",
       element: (row) => moment(row.createdAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Ngày cập nhật",
-      element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
+      name: "Ngày xóa",
+      element: (row) => moment(row.deletedAt).format("DD/MM/YYYY"),
     },
     {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-start">
           <ButtonCustom
-            view
+            create
+            leftIcon={<FontAwesomeIcon icon={faRecycle} />}
             type="button"
-            to={`quiz-answer/${row.id}`}
-            className="btn btn-sm btn-primary me-1 p-3"
+            onClick={() => handleRestore(row.id)}
           >
-            <span>Xem</span>
-          </ButtonCustom>
-          <ButtonCustom update type="button" to={`quiz-update/${row.id}`}>
-            <i className="fa fa-pencil"></i> Sửa
+            Khôi phục
           </ButtonCustom>
           <ButtonCustom
             type="button"
             remove
             onClick={() => handleDelete(row.id)}
           >
-            <i className="fa fa-trash "></i> Xóa
+            <i className="fa fa-trash"></i> Xóa
           </ButtonCustom>
         </div>
       ),
@@ -75,40 +72,53 @@ const Quiz = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
     setShowModal(true);
-    setDeleteItem(id);
-    setDeleteType("single");
+    setActionItem(id);
+    setActionType("delete");
+  };
+
+  const handleRestore = (id) => {
+    setShowModal(true);
+    setActionItem(id);
+    setActionType("restore");
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
     setShowModal(true);
-    setDeleteType("multi");
+    setActionType("multiDelete");
   };
 
-  const requestDeleteApi = () => {
-    if (deleteType === "single") {
+  const handleMultiRestore = () => {
+    setShowModal(true);
+    setActionType("multiRestore");
+  };
+
+  const requestApiAction = () => {
+    let apiEndpoint = "";
+    let method = "";
+    const ids = selectedRows.map((i) => Number(i));
+    if (actionType === "delete") {
+      apiEndpoint = `/quiz/force-delete/${actionItem}`;
+      method = "DELETE";
+    } else if (actionType === "restore") {
+      apiEndpoint = `/quiz/restore/${actionItem}`;
+      method = "PUT";
+    } else if (actionType === "multiDelete") {
+      apiEndpoint = `/quiz/multiple-force-delete`;
+      method = "DELETE";
+    } else if (actionType === "multiRestore") {
+      apiEndpoint = `/quiz/multiple-restore`;
+      method = "PUT";
+    }
+    if (apiEndpoint && method) {
       dispatch(actions.controlLoading(true));
-      requestApi(`/quiz/${deleteItem}`, "DELETE", [])
+      requestApi(apiEndpoint, method, ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
-          dispatch(actions.controlLoading(false));
-        })
-        .catch((err) => {
-          console.log(err);
-          setShowModal(false);
-          dispatch(actions.controlLoading(false));
-        });
-    } else {
-      dispatch(actions.controlLoading(true));
-      const ids = selectedRows.map((i) => Number(i));
-      requestApi(`/quiz/multiple-soft-delete`, "DELETE", ids)
-        .then((response) => {
-          setShowModal(false);
-          setRefresh(Date.now());
-          setSelectedRows([]);
+          if (actionType === "multiDelete" || actionType === "multiRestore") {
+            setSelectedRows([]);
+          }
           dispatch(actions.controlLoading(false));
         })
         .catch((err) => {
@@ -130,12 +140,10 @@ const Quiz = () => {
     }
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&lesson_id=${lesson}`;
-    requestApi(`/quiz${query}`, "GET", [])
+    requestApi(`/quiz/trash${query}`, "GET", [])
       .then((response) => {
-        console.log(response.data);
         setQuiz(response.data.data);
         setNumOfPage(response.data.lastPage);
-        console.log(response.data.lastPage);
         dispatch(actions.controlLoading(false));
       })
       .catch((err) => {
@@ -148,40 +156,36 @@ const Quiz = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Danh sách bài tập</h1>
+          <h1 className="mt-4">Thùng rác bài tập</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Bài tập</li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/quiz">Bài tập</Link>
+            </li>
+            <li className="breadcrumb-item">Thùng rác</li>
           </ol>
           <div className="mb-3 d-flex">
-            <ButtonCustom
-              type="button"
-              to={!hasLesson ? "quiz-add" : `quiz-add?lesson_id=${lesson}`}
-              btnAdminCreate
-              className="btn  me-2 fs-4"
-            >
-              <i className="fa fa-plus"></i> Tạo mới
-            </ButtonCustom>
-            <ButtonCustom
-              type="button"
-              remove
-              to="trash"
-              className="btn  me-2 fs-4"
-              leftIcon={<FontAwesomeIcon icon={faTrashCan} />}
-            >
-              Thùng rác
-            </ButtonCustom>
             {selectedRows.length > 0 && (
-              <ButtonCustom
-                type="button"
-                className="btn"
-                onClick={handleMultiDelete}
-                remove
-              >
-                <i className="fa fa-trash"></i> Xóa
-              </ButtonCustom>
+              <>
+                <ButtonCustom
+                  type="button"
+                  create
+                  className="btn btn-sm btn-success me-2"
+                  onClick={handleMultiRestore}
+                >
+                  <i className="fa fa-recycle"></i> Khôi phục
+                </ButtonCustom>
+                <ButtonCustom
+                  type="button"
+                  remove
+                  className="btn btn-sm btn-danger"
+                  onClick={handleMultiDelete}
+                >
+                  <i className="fa fa-trash"></i> Xóa
+                </ButtonCustom>
+              </>
             )}
           </div>
           <DataTable
@@ -193,11 +197,9 @@ const Quiz = () => {
             onPageChange={setCurrentPage}
             onChangeItemsPerPage={setItemsPerPage}
             onKeySearch={(keyword) => {
-              console.log("keyword in quiz list comp=> ", keyword);
               setSearchString(keyword);
             }}
             onSelectedRows={(rows) => {
-              console.log("selected rows in quiz list=> ", rows);
               setSelectedRows(rows);
             }}
           />
@@ -208,15 +210,25 @@ const Quiz = () => {
           <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Nếu bạn xóa câu bài thì những câu trả lời sẽ bị xóa theo, bạn có chắc
-          chắn muốn xóa bài tập này?
+          {actionType === "restore" || actionType === "multiRestore"
+            ? "Bạn có chắc muốn khôi phục bài tập này?"
+            : "Nếu bạn xóa câu bài thì những câu trả lời sẽ bị xóa theo, bạn có chắc chắn muốn xóa bài tập này?"}
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
             Đóng
           </Button>
-          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Xóa
+          <Button
+            className={`p-2 fs-5 ${
+              actionType === "restore" || actionType === "multiRestore"
+                ? "btn-success"
+                : "btn-danger"
+            }`}
+            onClick={requestApiAction}
+          >
+            {actionType === "restore" || actionType === "multiRestore"
+              ? "Khôi phục"
+              : "Xóa"}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -224,4 +236,4 @@ const Quiz = () => {
   );
 };
 
-export default Quiz;
+export default QuizTrash;

@@ -9,9 +9,10 @@ import * as actions from "~/redux/actions";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Image from "~/components/Image";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const cx = classNames.bind(styles);
 const UserAdd = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [thumbnail, setThumbnail] = useState("");
   const {
@@ -31,6 +32,7 @@ const UserAdd = () => {
         position: "top-right",
         autoClose: 3000,
       });
+      navigate("/admin/user");
     } catch (err) {
       console.log("err=>", err.message);
       dispatch(actions.controlLoading(false));

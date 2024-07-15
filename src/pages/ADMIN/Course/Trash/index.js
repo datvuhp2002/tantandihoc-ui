@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import * as actions from "../../../redux/actions";
+import * as actions from "../../../../redux/actions";
 import { Button, Modal } from "react-bootstrap";
 import DataTable from "~/layout/components/Datatable";
 import ButtonCustom from "~/components/Button";
@@ -10,12 +10,14 @@ import moment from "moment";
 import calPrice from "~/utils/calPrice";
 import formatPrice from "~/utils/formatPrice";
 import DataTableCourse from "~/layout/components/DatatableCourse";
-import { faPercent, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDeleteLeft,
+  faRecycle,
+  faRemove,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import { toast } from "react-toastify";
-const Course = () => {
+const TrashCourse = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const [users, setUsers] = useState([]);
@@ -26,17 +28,18 @@ const Course = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [searchString, setSearchString] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
+  const [restoreItem, setRestoreItem] = useState(null);
+  const [restoreType, setRestoreType] = useState("single");
   const [deleteItem, setDeleteItem] = useState(null);
   const [deleteType, setDeleteType] = useState("single");
   const [showModal, setShowModal] = useState(false);
+  const [showModalDelete, setShowModalDelete] = useState(false);
   const [refresh, setRefresh] = useState(Date.now());
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [discountData, setDiscountData] = useState([]);
   const [selectedDiscount, setSelectedDiscount] = useState(null);
-  const [showModalDiscount, setShowModalDiscount] = useState(false);
-  const [selectDiscountForCourse, setSelectedDiscountForCourse] =
-    useState(null);
+
   const columns = [
     {
       name: "ID",
@@ -68,25 +71,30 @@ const Course = () => {
       element: (row) => moment(row.createdAt).format("DD/MM/YYYY"),
     },
     {
-      name: "Ngày cập nhật",
-      element: (row) => moment(row.updatedAt).format("DD/MM/YYYY"),
+      name: "Ngày xóa",
+      element: (row) => moment(row.deletedAt).format("DD/MM/YYYY"),
     },
+
     {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-start h-100">
-          <ButtonCustom type="button" to={`view/${row.id}`} view>
-            Xem
-          </ButtonCustom>
-          <ButtonCustom type="button" to={`course-update/${row.id}`} update>
-            <i className="fa fa-pencil"></i> Sửa
+          <ButtonCustom
+            create
+            type="button"
+            onClick={() => handleRestore(row.id)}
+            className="text-nowrap"
+            leftIcon={<FontAwesomeIcon icon={faRecycle} />}
+          >
+            <span className="fs-4">Khôi phục</span>
           </ButtonCustom>
           <ButtonCustom
             remove
             type="button"
             onClick={() => handleDelete(row.id)}
+            leftIcon={<FontAwesomeIcon icon={faDeleteLeft} />}
           >
-            <i className="fa fa-trash "></i> <span className="fs-4">Xóa</span>
+            <span className="fs-4">Xóa</span>
           </ButtonCustom>
         </div>
       ),
@@ -94,28 +102,62 @@ const Course = () => {
   ];
 
   const handleDelete = (id) => {
-    console.log("single delete with id => ", id);
-    setShowModal(true);
+    setShowModalDelete(true);
     setDeleteItem(id);
     setDeleteType("single");
   };
 
   const handleMultiDelete = () => {
-    console.log("multi delete => ", selectedRows);
-    setShowModal(true);
+    setShowModalDelete(true);
     setDeleteType("multi");
   };
-  const handleAddDiscount = () => {
-    setShowModalDiscount(true);
+
+  const handleRestore = (id) => {
+    setShowModal(true);
+    setRestoreItem(id);
+    setRestoreType("single");
   };
-  const handleCloseDiscountModal = () => {
-    setSelectedDiscountForCourse(null);
-    setShowModalDiscount(false);
+
+  const handleMultiRestore = () => {
+    setShowModal(true);
+    setRestoreType("multi");
   };
-  const requestDeleteApi = () => {
+
+  const requestDelete = () => {
     if (deleteType === "single") {
       dispatch(actions.controlLoading(true));
-      requestApi(`/courses/${deleteItem}`, "DELETE", [])
+      requestApi(`/courses/force-delete/${deleteItem}`, "DELETE", [])
+        .then((response) => {
+          setShowModalDelete(false);
+          setRefresh(Date.now());
+          dispatch(actions.controlLoading(false));
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowModalDelete(false);
+          dispatch(actions.controlLoading(false));
+        });
+    } else {
+      dispatch(actions.controlLoading(true));
+      const ids = selectedRows.map((i) => Number(i));
+      requestApi(`/courses/multiple-force-delete`, "DELETE", ids)
+        .then((response) => {
+          setShowModalDelete(false);
+          setRefresh(Date.now());
+          setSelectedRows([]);
+          dispatch(actions.controlLoading(false));
+        })
+        .catch((err) => {
+          console.log(err);
+          setShowModalDelete(false);
+          dispatch(actions.controlLoading(false));
+        });
+    }
+  };
+  const requestRestore = () => {
+    if (restoreType === "single") {
+      dispatch(actions.controlLoading(true));
+      requestApi(`/courses/restore/${restoreItem}`, "Put", [])
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -129,7 +171,7 @@ const Course = () => {
     } else {
       dispatch(actions.controlLoading(true));
       const ids = selectedRows.map((i) => Number(i));
-      requestApi(`/courses/multiple-soft-delete`, "DELETE", ids)
+      requestApi(`/courses/multiple-restore`, "PUT", ids)
         .then((response) => {
           setShowModal(false);
           setRefresh(Date.now());
@@ -143,39 +185,6 @@ const Course = () => {
         });
     }
   };
-  const requestAddDiscount = async () => {
-    console.log(selectDiscountForCourse.id);
-    if (!selectDiscountForCourse) {
-      toast.error("Không được để trống mã giảm giá", {
-        position: "top-right",
-        autoClose: 3000,
-      });
-      return;
-    }
-    dispatch(actions.controlLoading(true));
-    const ids = selectedRows.map((i) => Number(i));
-    await requestApi(
-      `/courses/add-discount/${selectDiscountForCourse.id}`,
-      "PUT",
-      ids
-    )
-      .then((res) => {
-        toast.success("Thêm mã giảm giá thành công", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        dispatch(actions.controlLoading(false));
-        handleCloseDiscountModal();
-      })
-      .catch((err) => {
-        toast.error("Thêm mã thất bại thành công", {
-          position: "top-right",
-          autoClose: 3000,
-        });
-        dispatch(actions.controlLoading(false));
-        handleCloseDiscountModal();
-      });
-  };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
@@ -185,7 +194,7 @@ const Course = () => {
     setCategory(category);
     dispatch(actions.controlLoading(true));
     let query = `?items_per_page=${itemsPerPage}&page=${currentPage}&search=${searchString}&discount=${discount}&category=${category}`;
-    requestApi(`/courses${query}`, "GET", [])
+    requestApi(`/courses/trash${query}`, "GET", [])
       .then((response) => {
         console.log("response=> ", response.data);
         setUsers(response.data.data);
@@ -239,35 +248,21 @@ const Course = () => {
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Bảng tin</Link>
             </li>
-            <li className="breadcrumb-item">Khóa học</li>
+            <li className="breadcrumb-item">
+              <Link to="/admin/course">Khóa học</Link>
+            </li>
+            <li className="breadcrumb-item">Thùng rác</li>
           </ol>
           <div className="mb-3 d-flex">
-            <ButtonCustom
-              type="button"
-              btnAdminCreate
-              to="course-add"
-              className="btn  me-2 fs-4"
-            >
-              <i className="fa fa-plus"></i> Tạo mới
-            </ButtonCustom>
-            <ButtonCustom
-              type="button"
-              remove
-              className="btn  me-2 fs-4"
-              leftIcon={<FontAwesomeIcon icon={faTrashCan} />}
-              to="trash"
-            >
-              Thùng rác
-            </ButtonCustom>
             {selectedRows.length > 0 && (
               <ButtonCustom
                 type="button"
                 create
                 className="btn"
-                leftIcon={<FontAwesomeIcon icon={faPercent} />}
-                onClick={handleAddDiscount}
+                onClick={handleMultiRestore}
+                leftIcon={<FontAwesomeIcon icon={faRecycle} />}
               >
-                Thêm mã giảm giá
+                Khôi phục
               </ButtonCustom>
             )}
             {selectedRows.length > 0 && (
@@ -276,8 +271,9 @@ const Course = () => {
                 remove
                 className="btn"
                 onClick={handleMultiDelete}
+                leftIcon={<FontAwesomeIcon icon={faDeleteLeft} />}
               >
-                <i className="fa fa-trash"></i> Xóa
+                Xóa
               </ButtonCustom>
             )}
           </div>
@@ -310,46 +306,40 @@ const Course = () => {
         <Modal.Header closeButton>
           <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn có chắc muốn xóa khóa học này?</Modal.Body>
+        <Modal.Body>Bạn có chắc muốn khôi phục khóa học này?</Modal.Body>
         <Modal.Footer>
           <Button onClick={() => setShowModal(false)} className="p-2 fs-5">
             Đóng
           </Button>
-          <Button className="btn-danger p-2 fs-5" onClick={requestDeleteApi}>
-            Xóa
+          <Button className="btn-success p-2 fs-5" onClick={requestRestore}>
+            Khôi phục
           </Button>
         </Modal.Footer>
       </Modal>
       <Modal
-        show={showModalDiscount}
-        onHide={() => handleCloseDiscountModal()}
+        show={showModalDelete}
+        onHide={() => setShowModalDelete(false)}
         centered
       >
         <Modal.Header closeButton>
-          <Modal.Title>Thêm mã giảm giá</Modal.Title>
+          <Modal.Title>Xác nhận</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Autocomplete
-            options={discountData}
-            getOptionLabel={(option) => option.name}
-            value={selectedDiscount}
-            onChange={(event, value) => {
-              setSelectedDiscountForCourse(value);
-            }}
-            renderInput={(params) => (
-              <TextField {...params} variant="outlined" label="Mã giảm giá" />
-            )}
-          />
+          Sau khi xóa khóa học sẽ mất hoàn toàn! bạn đã chắc chắn?
         </Modal.Body>
         <Modal.Footer>
           <Button
-            onClick={() => handleCloseDiscountModal()}
+            onClick={() => setShowModalDelete(false)}
             className="p-2 fs-5"
           >
             Đóng
           </Button>
-          <Button className="btn-success p-2 fs-5" onClick={requestAddDiscount}>
-            Thêm
+          <Button
+            create
+            className="btn-danger p-2 fs-5"
+            onClick={requestDelete}
+          >
+            Xoá
           </Button>
         </Modal.Footer>
       </Modal>
@@ -357,4 +347,4 @@ const Course = () => {
   );
 };
 
-export default Course;
+export default TrashCourse;

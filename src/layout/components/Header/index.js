@@ -35,8 +35,6 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isLearningRoute = location.pathname.match("/course-detail");
-
   const handleBackClick = () => {
     navigate("./");
   };
@@ -47,9 +45,10 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
       { title: "Bài viết đã lưu", path: "/saved-posts" },
       { title: "Bài viết của bạn", path: "/my-posts" },
     ],
+    [{ title: "Luyện tập lập trình", path: "/practice-programming" }],
     [
-      { title: "cài đặt", path: `/setting` },
-      { title: "đăng xuất", onClick: onHandleLogout, path: "/login" },
+      { title: "Cài đặt", path: `/setting` },
+      { title: "Đăng xuất", onClick: onHandleLogout, path: "/login" },
     ],
   ];
   const handleChange = (e) => {
@@ -85,17 +84,17 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
         >
           <Button
             header
-            className={cx("logo", "h-100 d-flex")}
+            className={cx(
+              "logo",
+              "h-100 d-flex align-items-center justify-content-start"
+            )}
             to={`${navigator}`}
           >
             <div
-              className={cx(
-                "logo-components",
-                "d-flex align-items-center justify-content-center"
-              )}
+              className={cx("logo-components", "d-flex align-items-center  ")}
             >
               <Image logo src={Logo}></Image>
-              <h5 className="mx-2 text-dark opacity-100 bold fs-2">
+              <h5 className={cx("", "mx-2 text-dark opacity-100 bold fs-2")}>
                 Tantandihoc
               </h5>
             </div>
@@ -122,20 +121,14 @@ const Header = ({ isPublicRoute = false, navigator = "/" }) => {
                 )}
               >
                 <Image logo src={Logo}></Image>
-                {isLearningRoute ? (
-                  <Button
-                    back_button
-                    onClick={handleBackClick}
-                    className="mx-2 text-dark opacity-100 bold fs-2"
-                    leftIcon={<FontAwesomeIcon icon={faChevronLeft} />}
-                  >
-                    Back
-                  </Button>
-                ) : (
-                  <h5 className="mx-2 text-dark opacity-100 bold fs-2">
-                    Tantandihoc
-                  </h5>
-                )}
+                <h5
+                  className={cx(
+                    "web-name",
+                    "mx-2 text-dark opacity-100 bold fs-2"
+                  )}
+                >
+                  Tantandihoc
+                </h5>
               </div>
             </Button>
           </div>

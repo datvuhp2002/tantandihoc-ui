@@ -10,9 +10,18 @@
   z-index: 100 !important;
   top: 0;
   right: 0;
+
+  @include desktop {
+    .action {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: var(--header-height);
+    }
+  }
   @include tabletAndMoblie {
     justify-content: space-between !important;
-    .web-name {
+    .action {
       display: none;
     }
     .Menu {
@@ -22,25 +31,23 @@
       display: block;
     }
   }
+  @include desktop {
+    .openMenu {
+      display: none;
+    }
+  }
 }
 .content {
   height: 100%;
   min-width: 98.5%;
 }
 .navbar {
-  flex: 1 1;
   height: 100%;
 }
 .logo {
-  flex: 1 1;
   padding: 0;
 }
 
-.action {
-  flex: 1 1;
-  justify-content: flex-end;
-  height: var(--header-height);
-}
 .result {
   background-color: #fff;
 }

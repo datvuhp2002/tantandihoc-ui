@@ -10,7 +10,7 @@ const DefaultLayout = ({ children }) => {
     <div className={cx("wrapper")}>
       <Header isPublicRoute={false} />
       <Sidebar />
-      <div className={cx("body")}>{children}</div>
+      <div className={cx("body", "mb-5")}>{children}</div>
       {/* <Footer /> */}
     </div>
   );
