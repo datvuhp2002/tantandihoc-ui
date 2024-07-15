@@ -24,8 +24,8 @@ const MyPost = () => {
   }, []);
   return (
     <div className={cx("wrapper")}>
-      <div className="mb-5">
-        <div className={cx("", "d-flex row mt-5 col-8")}>
+      <div className="mb-5 mx-2">
+        <div className={cx("", "d-flex row mt-5 ")}>
           <h1 className="p-0">Bài viết của bạn</h1>
           <div className={cx("group-post")}>
             <Button toActive="/my-posts" more className="fs-2 p-3">

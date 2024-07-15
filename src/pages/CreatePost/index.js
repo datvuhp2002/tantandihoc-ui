@@ -102,7 +102,7 @@ const PostAdd = () => {
   }
 
   return (
-    <div className={cx("wrapper", "row d-flex mb-5")}>
+    <div className={cx("wrapper", "row d-flex mb-5 mx-2 align-items-center")}>
       <h1 className="mt-4 p-0">Bài viết</h1>
       <div className="d-flex align-items-center justify-content-end">
         <Button

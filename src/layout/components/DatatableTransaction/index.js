@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import LiveSearch from "../LiveSearch";
 import Image from "~/components/Image";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -15,45 +15,95 @@ const DatatableTransaction = (props) => {
     onChangeItemsPerPage,
     onKeySearch,
   } = props;
+
   const [selectedRows, setSelectedRows] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    // Effect to handle selectedRows change
+    console.log("Selected Rows:", selectedRows);
+  }, [selectedRows]);
+
   const renderHeaders = () => {
     return columns.map((col, index) => <th key={index}>{col.name}</th>);
   };
+
   const renderData = () => {
     return data.map((item, index) => (
       <tr key={index}>
-        {columns.map((col, ind) => {
-          return col.name !== "Thumbnail" ? (
-            <td key={ind}>{col.element(item)}</td>
-          ) : (
-            <td key={ind}>
+        <td>
+          <input
+            type="checkbox"
+            checked={selectedRows.includes(item.id)}
+            onChange={(e) => handleCheckboxChange(e, item.id)}
+          />
+        </td>
+        {columns.map((col, ind) => (
+          <td key={ind}>
+            {col.name !== "Thumbnail" ? (
+              col.element(item)
+            ) : (
               <Image tableImg src={col.element(item)} />
-            </td>
-          );
-        })}
+            )}
+          </td>
+        ))}
       </tr>
     ));
   };
 
+  const handleCheckboxChange = (e, itemId) => {
+    const checked = e.target.checked;
+    if (checked) {
+      setSelectedRows([...selectedRows, itemId]);
+    } else {
+      setSelectedRows(selectedRows.filter((id) => id !== itemId));
+    }
+  };
+
   const renderPagination = () => {
     const pagination = [];
-    const nextPage = currentPage + 1 > numOfPage ? null : currentPage + 1;
-    const prevPage = currentPage - 1 < 1 ? null : currentPage - 1;
+    const prevPage = currentPage > 1 ? currentPage - 1 : null;
+    const nextPage = currentPage < numOfPage ? currentPage + 1 : null;
+    const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(numOfPage, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
     pagination.push(
-      <li key="prev" className={prevPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(prevPage)}>
-          &laquo;
+      <li
+        key="prev"
+        className={`page-item ${prevPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(prevPage)}
+          disabled={!prevPage}
+        >
+          &laquo; Prev
         </button>
       </li>
     );
-    for (let i = 1; i <= numOfPage; i++) {
+
+    if (startPage > 1) {
+      pagination.push(
+        <li key="ellipsis-prev" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       pagination.push(
         <li
           key={i}
-          className={currentPage === i ? "page-item active" : "page-item"}
+          className={`page-item ${currentPage === i ? "active" : ""}`}
+          style={{ display: "inline-block", margin: "0 5px" }}
         >
           <button className="page-link" onClick={() => onPageChange(i)}>
             {i}
@@ -61,22 +111,43 @@ const DatatableTransaction = (props) => {
         </li>
       );
     }
+
+    if (endPage < numOfPage) {
+      pagination.push(
+        <li key="ellipsis-next" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
     pagination.push(
-      <li key="next" className={nextPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(nextPage)}>
-          &raquo;
+      <li
+        key="next"
+        className={`page-item ${nextPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(nextPage)}
+          disabled={!nextPage}
+        >
+          Next &raquo;
         </button>
       </li>
     );
-    return pagination;
+
+    return (
+      <div className="pagination-wrapper">
+        <ul className="pagination">{pagination}</ul>
+      </div>
+    );
   };
 
-  const onChangeOption = (event) => {
-    const target = event.target;
-    onChangeItemsPerPage(target.value);
+  const handleChangeItemsPerPage = (e) => {
+    onChangeItemsPerPage(e.target.value);
   };
 
-  const onChangeStatus = (e) => {
+  const handleChangeStatus = (e) => {
     const target = e.target.value;
     const params = new URLSearchParams(location.search);
     if (target === "all") {
@@ -95,12 +166,12 @@ const DatatableTransaction = (props) => {
       </div>
       <div className="card-body">
         <div className="row mb-3">
-          <div className="col-sm-12 col-md-6 d-flex algin-items-center">
-            <div>
+          <div className="col-sm-12 col-md-6 d-flex align-items-center">
+            <div className="me-3">
               <select
-                name="example_length"
-                className="form-select form-select-sm ms-1 me-1"
-                onChange={onChangeOption}
+                name="itemsPerPage"
+                className="form-select form-select-sm"
+                onChange={handleChangeItemsPerPage}
               >
                 <option value="10">10</option>
                 <option value="15">15</option>
@@ -109,12 +180,12 @@ const DatatableTransaction = (props) => {
                 <option value="30">30</option>
               </select>
             </div>
-            <div className="ms-3 w-50">
+            <div>
               <select
-                name="isPublished"
-                className="form-select form-select-sm ms-1 me-1"
+                name="status"
+                className="form-select form-select-sm"
                 value={selectedStatus}
-                onChange={onChangeStatus}
+                onChange={handleChangeStatus}
               >
                 <option value="all">Tất cả</option>
                 <option value="1">Đã hoàn thành</option>
@@ -123,28 +194,54 @@ const DatatableTransaction = (props) => {
             </div>
           </div>
           <div className="col-sm-12 col-md-6">
-            <label className="d-inline-flex float-end align-items-center ">
-              <LiveSearch onKeySearch={onKeySearch} />
-            </label>
+            <LiveSearch onKeySearch={onKeySearch} />
           </div>
         </div>
-        <table
-          className="table table-striped table-bordered"
-          cellSpacing="0"
-          width="100%"
-        >
-          <thead>
-            <tr>{renderHeaders()}</tr>
-          </thead>
-          <tbody>{renderData()}</tbody>
-          <tfoot>
-            <tr>{renderHeaders()}</tr>
-          </tfoot>
-        </table>
+        <div className="table-responsive">
+          <table className="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedRows.length === data.length && data.length > 0
+                    }
+                    onChange={(e) =>
+                      e.target.checked
+                        ? setSelectedRows(data.map((item) => item.id))
+                        : setSelectedRows([])
+                    }
+                  />
+                </th>
+                {renderHeaders()}
+              </tr>
+            </thead>
+            <tbody>{renderData()}</tbody>
+            <tfoot>
+              <tr>
+                <th>
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedRows.length === data.length && data.length > 0
+                    }
+                    onChange={(e) =>
+                      e.target.checked
+                        ? setSelectedRows(data.map((item) => item.id))
+                        : setSelectedRows([])
+                    }
+                  />
+                </th>
+                {renderHeaders()}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         {numOfPage > 1 && (
           <div className="row">
             <div className="col-sm-12 col-md-7">
-              <ul className="pagination justify-content-end">
+              <ul className="pagination justify-content-end mt-2">
                 {renderPagination()}
               </ul>
             </div>

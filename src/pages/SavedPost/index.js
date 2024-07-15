@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import requestApi from "~/utils/api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import classNames from "classnames/bind";
-import styles from "./SavedPost.module.scss";
-import Image from "~/components/Image";
-import Button from "~/components/Button";
-import Input from "~/components/Input";
-import { Wrapper } from "~/layout/components/Popper";
-import { useDispatch } from "react-redux";
-import * as actions from "~/redux/actions";
-import { useForm } from "react-hook-form";
 import moment from "moment";
+import requestApi from "~/utils/api";
+import styles from "./SavedPost.module.scss";
+
 const cx = classNames.bind(styles);
+
 const SavedPost = () => {
-  const [listPostSaved, setListPostSaved] = useState({});
+  const [listPostSaved, setListPostSaved] = useState({ total: 0, data: [] });
+
   useEffect(() => {
-    requestApi(`/saved-post`, "get").then((res) => {
-      console.log(res.data);
-      setListPostSaved(res.data);
-    });
+    const fetchSavedPosts = async () => {
+      try {
+        const response = await requestApi("/saved-post", "GET");
+        setListPostSaved(response.data);
+      } catch (error) {
+        console.error("Error fetching saved posts:", error);
+      }
+    };
+
+    fetchSavedPosts();
   }, []);
+
   return (
     <div className={cx("wrapper")}>
-      <div className="mb-5">
-        <div className={cx("", "d-flex row mt-5 col-8")}>
+      <div className="mx-2 mb-5">
+        <div className={cx("d-flex", "row", "mt-5")}>
           <h1 className="p-0">Bài viết đã lưu</h1>
           <div className={cx("group-post")}>
             <h2>
@@ -33,8 +35,8 @@ const SavedPost = () => {
           </div>
           {listPostSaved.data &&
             listPostSaved.data.map((item) => (
-              <div className={cx("item")}>
-                <Link key={item.id} to={`/blog/post-detail/${item.post_id}`}>
+              <div key={item.id} className={cx("item")}>
+                <Link to={`/blog/post-detail/${item.post_id}`}>
                   <h3>{item.ownership_post.title}</h3>
                   <div className={cx("author", "fs-4")}>
                     <span className={cx("time")}>

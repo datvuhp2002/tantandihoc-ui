@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import requestApi from "~/utils/api";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import classNames from "classnames/bind";
 import styles from "./Info.module.scss";
 import Image from "~/components/Image";
 import Button from "~/components/Button";
 import { useDispatch } from "react-redux";
 import * as actions from "~/redux/actions";
-import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
+import { useForm } from "react-hook-form";
 
 const cx = classNames.bind(styles);
 
 const Info = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const params = useParams();
   const {
     register,
@@ -31,58 +30,77 @@ const Info = () => {
 
   useEffect(() => {
     const username = params.username;
-    console.log(username);
-    try {
-      requestApi(
-        `/posts/get-all-user-post/${username}?items_per_page=5`,
-        "GET"
-      ).then((res) => {
-        setMyPosts(res.data);
-      });
-      requestApi(`/user-progress/user-course`, "GET").then((res) => {
-        setListCourses(res.data);
-      });
-      requestApi(`/users/profile/${username}`, "GET")
-        .then((res) => {
-          setUserData({
-            ...res.data,
-            avatar: `${process.env.REACT_APP_API_URL}/${res.data.avatar}`,
-          });
-          Object.keys(res.data).map((key) => {
-            setValue(key, res.data[key]);
-          });
-        })
-        .catch((err) => {
-          console.log(err);
+
+    // Fetch user profile, user posts, and user courses
+    const fetchData = async () => {
+      try {
+        const userProfile = await requestApi(
+          `/users/profile/${username}`,
+          "GET"
+        );
+        setUserData({
+          ...userProfile.data,
+          avatar: `${process.env.REACT_APP_API_URL}/${userProfile.data.avatar}`,
         });
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+        Object.keys(userProfile.data).forEach((key) => {
+          setValue(key, userProfile.data[key]);
+        });
+
+        const userPosts = await requestApi(
+          `/posts/get-all-user-post/${username}?items_per_page=5`,
+          "GET"
+        );
+        setMyPosts(userPosts.data);
+
+        const userCourses = await requestApi(
+          `/user-progress/user-course`,
+          "GET"
+        );
+        setListCourses(userCourses.data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+        toast.error("Failed to fetch user information.");
+      }
+    };
+
+    fetchData();
+  }, [params.username]);
 
   return (
-    <div className={cx("wrapper", "row w-100 m-0 pb-5")}>
+    <div className={cx("wrapper", "row", "w-100", "m-0", "pb-5")}>
       <div
         className={cx(
           "avatar",
-          "col-12 d-flex flex-column align-items-start mb-5"
+          "col-12",
+          "d-flex",
+          "flex-column",
+          "align-items-start",
+          "mb-5"
         )}
       >
         <div className={cx("avatar-item")}>
           <div className={cx("avatar-img")}>
-            <Image avatar_profile rounded src={userData.avatar}></Image>
+            <Image avatar_profile rounded src={userData.avatar} />
           </div>
           <div className={cx("username", "m-0")}>
             <h1 className="m-0">{userData.username}</h1>
           </div>
         </div>
       </div>
-      <div className="d-flex align-items-start justify-content-between row w-100">
-        <div className={cx("content-left", "col-md-5 col-sm-12 mt-2")}>
+      <div
+        className={cx(
+          "d-flex",
+          "align-items-start",
+          "justify-content-between",
+          "row",
+          "w-100"
+        )}
+      >
+        <div className={cx("content-left", "col-md-5", "col-sm-12", "mt-4")}>
           <div className={cx("information")}>
             <h2>Giới thiệu</h2>
             <div className={cx("group-item", "d-flex")}>
-              <FontAwesomeIcon icon={faUserGroup} />{" "}
+              <FontAwesomeIcon icon={faUserGroup} />
               <p className="ms-3">
                 Thành viên của <strong>Tantandihoc</strong> vào{" "}
                 {moment(userData.createdAt).fromNow()}
@@ -96,7 +114,11 @@ const Info = () => {
                 <Button
                   more
                   to={`/blog/user-posts?user=${params.username}`}
-                  className="d-flex align-items-end justify-content-end"
+                  className={cx(
+                    "d-flex",
+                    "align-items-end",
+                    "justify-content-end"
+                  )}
                 >
                   Xem thêm
                 </Button>
@@ -134,7 +156,7 @@ const Info = () => {
             </div>
           </div>
         </div>
-        <div className={cx("content-right", "col-md-7 col-sm-12 mt-2")}>
+        <div className={cx("content-right", "col-md-7", "col-sm-12", "mt-4")}>
           <div className={cx("information")}>
             <div className="d-flex align-items-center justify-content-between">
               <h2>Khoá học đã tham gia</h2>

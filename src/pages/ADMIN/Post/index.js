@@ -61,6 +61,14 @@ const Post = () => {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-end">
+          <ButtonCustom
+            type="button"
+            view
+            to={`comment/${row.id}`}
+            className="text-nowrap"
+          >
+            Xem bình luận
+          </ButtonCustom>
           <ButtonCustom type="button" update to={`post-update/${row.id}`}>
             <i className="fa fa-pencil"></i> Sửa
           </ButtonCustom>
@@ -206,7 +214,7 @@ const Post = () => {
     <div id="layoutSidenav_content">
       <main>
         <div className="container-fluid px-4">
-          <h1 className="mt-4">Danh sách bài viết</h1>
+          <h1 className="mt-4">Danh sách bình luận</h1>
           <ol className="breadcrumb mb-4">
             <li className="breadcrumb-item">
               <Link to="/admin/dashboard">Bảng tin</Link>

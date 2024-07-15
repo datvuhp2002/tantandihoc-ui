@@ -1,6 +1,6 @@
 @import "../../../components/Mixin/Mixin.scss";
 
-@include tabletAndMoblie {
+@include tabletAndMobile {
   .wrapper {
     position: fixed;
     top: unset;

@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Chart from "~/components/Chart";
 import requestApi from "~/utils/api";
-import styles from "./Dashboad.module.scss";
+import styles from "./Dashboard.module.scss";
 import classNames from "classnames/bind";
 import formatPrice from "~/utils/formatPrice";
-import Card from "~/layout/components/Card";
 import CardCourseAdmin from "~/layout/components/CardCourseAdmin";
 
 const cx = classNames.bind(styles);
@@ -25,14 +24,16 @@ const Dashboard = () => {
     []
   );
   const [revenue, setRevenue] = useState(0);
-  const [thisYear, setThisYear] = useState(2024);
+  const [thisYear, setThisYear] = useState(new Date().getFullYear());
   const [coursesStatistics, setCoursesStatistics] = useState([]);
   const [topCourses, setTopCourses] = useState([]);
+
   useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    setThisYear(currentYear);
     const fetchData = async () => {
       try {
+        const currentYear = new Date().getFullYear();
+        setThisYear(currentYear);
+
         const [
           userRes,
           courseRes,
@@ -77,6 +78,7 @@ const Dashboard = () => {
           totalCategory: categoryRes.data.total,
           totalTransaction: transactionRes.data.total,
         });
+
         setUserStatistics(userStatsRes.data);
         setTransactionStatistics(transactionStatsRes.data);
         setPostStatistics(postsStatsRes.data);
@@ -87,9 +89,8 @@ const Dashboard = () => {
         setPostUnPublishedStatistics(postsUnPublishStatsRes.data);
         setCoursesStatistics(coursesStatsRes.data);
         setTopCourses(topRevenueRes.data);
-        console.log(topRevenueRes.data);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching dashboard data:", error);
       }
     };
 
@@ -97,252 +98,249 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <div className="container px-4 my-5 d-flex flex-column align-items-center justify-content-center">
-      <h1 className="mt-4 fs-1 text-start d-flex align-items-start justify-content-start w-100">
-        Bảng tin
-      </h1>
-      <ol className="breadcrumb mb-4 "></ol>
-      <div className="row mb-4">
-        <div className="col-lg-6 row ">
-          <div className="col-md-6 ">
-            <div className="card bg-success text-white">
-              <div className="card-body">
-                Doanh thu {thisYear}
-                <h2 className="small text-white fs-1">
-                  {formatPrice(revenue)}
-                </h2>
+    <div className="container px-4 my-5">
+      <h1 className="mt-4 fs-1">Bảng tin</h1>
+      <div className="row mt-4">
+        <div className="col-lg-6">
+          <div className="row mb-4">
+            <div className="col-md-6">
+              <div className="card bg-success text-white mb-3">
+                <div className="card-body">
+                  Doanh thu {thisYear}
+                  <h2 className="small text-white fs-1">
+                    {formatPrice(revenue)}
+                  </h2>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6">
-            <div className="card bg-primary text-white">
-              <div className="card-body">
-                Tổng người dùng
-                {dashboardData.totalUser && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <div className="col-md-6">
+              <div className="card bg-primary text-white mb-3">
+                <div className="card-body">
+                  Tổng người dùng
+                  <span className="badge bg-danger">
                     {dashboardData.totalUser}
                   </span>
-                )}
-              </div>
-              <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link
-                  className="small text-white stretched-link"
-                  to={"/admin/user"}
-                >
-                  Xem chi tiết <i className="fas fa-angle-right"></i>
-                </Link>
+                </div>
+                <div className="card-footer">
+                  <Link className="small text-white" to="/admin/user">
+                    Xem chi tiết <i className="fas fa-angle-right"></i>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6">
-            <div className="card bg-warning text-white">
-              <div className="card-body">
-                Tổng khoá học
-                {dashboardData.totalCourse && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <div className="col-md-6">
+              <div className="card bg-warning text-white mb-3">
+                <div className="card-body">
+                  Tổng khoá học
+                  <span className="badge bg-danger">
                     {dashboardData.totalCourse}
                   </span>
-                )}
-              </div>
-              <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link
-                  className="small text-white stretched-link"
-                  to={"/admin/course"}
-                >
-                  Xem chi tiết <i className="fas fa-angle-right"></i>
-                </Link>
+                </div>
+                <div className="card-footer">
+                  <Link className="small text-white" to="/admin/course">
+                    Xem chi tiết <i className="fas fa-angle-right"></i>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6 ">
-            <div className="card bg-success text-white">
-              <div className="card-body">
-                Tổng bài viết
-                {dashboardData.totalPost && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <div className="col-md-6">
+              <div className="card bg-success text-white mb-3">
+                <div className="card-body">
+                  Tổng bài viết
+                  <span className="badge bg-danger">
                     {dashboardData.totalPost}
                   </span>
-                )}
-              </div>
-              <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link
-                  className="small text-white stretched-link"
-                  to={"/admin/post"}
-                >
-                  Xem chi tiết <i className="fas fa-angle-right"></i>
-                </Link>
+                </div>
+                <div className="card-footer">
+                  <Link className="small text-white" to="/admin/post">
+                    Xem chi tiết <i className="fas fa-angle-right"></i>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6 ">
-            <div className="card bg-secondary text-white">
-              <div className="card-body">
-                Tổng thể loại
-                {dashboardData.totalCategory && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <div className="col-md-6">
+              <div className="card bg-secondary text-white mb-3">
+                <div className="card-body">
+                  Tổng thể loại
+                  <span className="badge bg-danger">
                     {dashboardData.totalCategory}
                   </span>
-                )}
-              </div>
-              <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link
-                  className="small text-white stretched-link"
-                  to={"/admin/categories"}
-                >
-                  Xem chi tiết <i className="fas fa-angle-right"></i>
-                </Link>
+                </div>
+                <div className="card-footer">
+                  <Link className="small text-white" to="/admin/categories">
+                    Xem chi tiết <i className="fas fa-angle-right"></i>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="col-md-6 ">
-            <div className="card bg-danger text-white">
-              <div className="card-body">
-                Tổng giao dịch
-                {dashboardData.totalTransaction && (
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <div className="col-md-6">
+              <div className="card bg-danger text-white mb-3">
+                <div className="card-body">
+                  Tổng giao dịch
+                  <span className="badge bg-danger">
                     {dashboardData.totalTransaction}
                   </span>
-                )}
-              </div>
-              <div className="card-footer d-flex align-items-center justify-content-between">
-                <Link
-                  className="small text-white stretched-link"
-                  to={"/admin/transaction"}
-                >
-                  Xem chi tiết <i className="fas fa-angle-right"></i>
-                </Link>
+                </div>
+                <div className="card-footer">
+                  <Link className="small text-white" to="/admin/transaction">
+                    Xem chi tiết <i className="fas fa-angle-right"></i>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-lg-6 ">
-          <h2>Thông kê người dùng</h2>
+
+        <div className="col-lg-6">
+          <h2 className="mb-3">Thông kê người dùng</h2>
           <div
             className={cx(
               "chart",
-              "d-flex flex-column align-items-center justify-content-center"
+              "d-flex flex-column align-items-center justify-content-center",
+              "mb-4"
             )}
           >
             {userStatistics.length > 0 && <Chart data={userStatistics} />}
-            <label>
-              <strong>Thống kê số người dùng mới trong năm {thisYear}</strong>
-            </label>
+            <strong>Thống kê số người dùng mới trong năm {thisYear}</strong>
           </div>
         </div>
       </div>
-      <div className="col-12 mb-4">
-        <h2>Thống kê Khóa học</h2>
-        <div className="row">
-          <div className="col-md-4 mb-4">
-            <div className="chart d-flex flex-column align-items-center justify-content-center">
-              {coursesStatistics.length > 0 && (
-                <Chart data={coursesStatistics} />
-              )}
-              <label>
-                <strong>Thống kê số bài viết mới trong năm {thisYear}</strong>
-              </label>
-            </div>
-          </div>
 
-          <div className="col-md-8 mb-4">
-            <div className="chart d-flex flex-column align-items-center justify-content-center">
-              <div className="row d-flex">
-                {topCourses &&
-                  topCourses.map((item, index) => (
-                    <div className="col-md-4">
-                      <CardCourseAdmin
-                        data={item.course}
-                        revenue={item.totalRevenue}
-                      />
-                    </div>
-                  ))}
-              </div>
-              <label>
-                <strong>Top khóa học bán chạy nhất {thisYear}</strong>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-12 mb-4">
-          <h2>Thống kê giao dịch</h2>
+      <div className="row mt-4">
+        <div className="col-12">
+          <h2 className="mb-3">Thống kê Khóa học</h2>
           <div className="row">
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
+                {coursesStatistics.length > 0 && (
+                  <Chart data={coursesStatistics} />
+                )}
+                <strong>Thống kê số bài viết mới trong năm {thisYear}</strong>
+              </div>
+            </div>
+            <div className="col-md-8 mb-4">
+              <div className="row">
+                {topCourses.map((item, index) => (
+                  <div className="col-md-4 mb-3" key={index}>
+                    <CardCourseAdmin
+                      data={item.course}
+                      revenue={item.totalRevenue}
+                    />
+                  </div>
+                ))}
+              </div>
+              <strong>Top khóa học bán chạy nhất {thisYear}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row mt-4">
+        <div className="col-12">
+          <h2 className="mb-3">Thống kê giao dịch</h2>
+          <div className="row">
+            <div className="col-md-4 mb-4">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {transactionStatistics.length > 0 && (
                   <Chart data={transactionStatistics} />
                 )}
-                <label>
-                  <strong>
-                    Thống kê số giao dịch mới trong năm {thisYear}
-                  </strong>
-                </label>
+                <strong>Thống kê số giao dịch mới trong năm {thisYear}</strong>
               </div>
             </div>
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {transactionSuccessStatistics.length > 0 && (
                   <Chart data={transactionSuccessStatistics} />
                 )}
-                <label>
-                  <strong>
-                    Thống kê số giao dịch thành công trong năm {thisYear}
-                  </strong>
-                </label>
+                <strong>
+                  Thống kê số giao dịch thành công trong năm {thisYear}
+                </strong>
               </div>
             </div>
-
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {transactionFailStatistics.length > 0 && (
                   <Chart data={transactionFailStatistics} />
                 )}
-                <label>
-                  <strong>
-                    Thống kê số giao dịch thất bại trong năm {thisYear}
-                  </strong>
-                </label>
+                <strong>
+                  Thống kê số giao dịch thất bại trong năm {thisYear}
+                </strong>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="col-12 mb-4">
-          <h2>Thông kê bài viết</h2>
+      <div className="row mt-4">
+        <div className="col-12">
+          <h2>Thống kê bài viết</h2>
           <div className="row">
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {postStatistics.length > 0 && <Chart data={postStatistics} />}
-                <label>
-                  <strong>Thống kê số bài viết mới trong năm {thisYear}</strong>
-                </label>
+                <strong>Thống kê số bài viết mới trong năm {thisYear}</strong>
               </div>
             </div>
-
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {postPublishedStatistics.length > 0 && (
                   <Chart data={postPublishedStatistics} />
                 )}
-                <label>
-                  <strong>
-                    Thống kê số bài viết đã được xuất bản trong năm {thisYear}
-                  </strong>
-                </label>
+                <strong>
+                  Thống kê số bài viết được xuất bản trong năm {thisYear}
+                </strong>
               </div>
             </div>
-
             <div className="col-md-4 mb-4">
-              <div className="chart d-flex flex-column align-items-center justify-content-center">
+              <div
+                className={cx(
+                  "chart",
+                  "d-flex flex-column align-items-center justify-content-center",
+                  "mb-3"
+                )}
+              >
                 {postUnPublishedStatistics.length > 0 && (
                   <Chart data={postUnPublishedStatistics} />
                 )}
-                <label>
-                  <strong>
-                    Thống kê số bài viết chưa được xuất bản trong năm {thisYear}
-                  </strong>
-                </label>
+                <strong>
+                  Thống kê số bài viết chưa xuất bản trong năm {thisYear}
+                </strong>
               </div>
             </div>
           </div>

@@ -43,7 +43,6 @@ const Home = () => {
 
   return (
     <div className={cx("wrapper")}>
-      {/* New courses section */}
       <div className="mb-5">
         <div
           className={cx(

@@ -332,7 +332,29 @@ const Learning = () => {
         </div>
       )}
       <div className={cx("action", "d-flex  justify-content-between")}>
-        <div className="col-1"></div>
+        <div className={cx("visible-block", "col-1")}></div>
+        <div>
+          {showLesson ? (
+            <button
+              className={cx("menu", "p-0 w-0")}
+              onClick={() => {
+                setShowLesson(!showLesson);
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowRight} />
+            </button>
+          ) : (
+            <button
+              className={cx("menu", "p-0 w-0")}
+              onClick={() => {
+                setShowLesson(!showLesson);
+              }}
+            >
+              <FontAwesomeIcon icon={faBars} />
+            </button>
+          )}
+        </div>
+
         {lessonData.data && (
           <div className="d-flex align-items-center">
             <Button
@@ -356,7 +378,7 @@ const Learning = () => {
         <div className="me-3">
           {showLesson ? (
             <Button
-              className="p-0 w-0"
+              className={cx("menu_btn", "p-0 w-0")}
               previous_lesson
               onClick={() => {
                 setShowLesson(!showLesson);
@@ -365,7 +387,7 @@ const Learning = () => {
             ></Button>
           ) : (
             <Button
-              className="p-0 w-0"
+              className={cx("menu_btn", "p-0 w-0")}
               previous_lesson
               onClick={() => {
                 setShowLesson(!showLesson);

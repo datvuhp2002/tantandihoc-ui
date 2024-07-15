@@ -22,14 +22,24 @@ const MyPostPublished = () => {
   const [refresh, setRefresh] = useState(Date.now());
 
   useEffect(() => {
-    requestApi(`/posts/get-all-my-post?isPublished=true`, "get").then((res) => {
-      setListPostSaved(res.data);
-    });
+    fetchMyPublishedPosts();
   }, [refresh]);
+
+  const fetchMyPublishedPosts = async () => {
+    try {
+      const response = await requestApi(
+        `/posts/get-all-my-post?isPublished=true`,
+        "GET"
+      );
+      setListPostSaved(response.data);
+    } catch (error) {
+      console.error("Error fetching published posts:", error);
+    }
+  };
 
   const requestDeleteApi = (deleteItem) => {
     dispatch(actions.controlLoading(true));
-    requestApi(`/posts/${deleteItem}`, "DELETE", [])
+    requestApi(`/posts/${deleteItem}`, "DELETE")
       .then((response) => {
         setShowModal(false);
         setRefresh(Date.now());
@@ -37,7 +47,7 @@ const MyPostPublished = () => {
         toast.success("Bài viết đã được xóa thành công!");
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Delete post error:", err);
         setShowModal(false);
         dispatch(actions.controlLoading(false));
         toast.error("Xóa bài viết không thành công!");
@@ -51,25 +61,31 @@ const MyPostPublished = () => {
 
   return (
     <div className={cx("wrapper")}>
-      <div className="mb-5">
-        <div className={cx("", "d-flex row mt-5 col-8")}>
-          <h1 className="p-0">Bài viết của bạn</h1>
-          <div className={cx("group-post")}>
-            <Button toActive="/my-posts" more className="fs-2 p-3">
-              <strong>Bài viết </strong>
+      <div className=" mb-5">
+        <div className={cx("", "d-flex", "flex-column", "mt-5")}>
+          <h1 className={cx("p-0", "mb-4")}>Bài viết của bạn</h1>
+          <div className={cx("group-post", "mb-3")}>
+            <Button toActive="/my-posts" more className={cx("fs-2", "p-3")}>
+              <strong>Bài viết</strong>
             </Button>
-
-            <Button toActive="/my-posts-published" more className="fs-2 p-3">
+            <Button
+              toActive="/my-posts-published"
+              more
+              className={cx("fs-2", "p-3", "active")}
+            >
               <strong>Đã xuất bản ({listPostSaved.total})</strong>
             </Button>
-
-            <Button toActive="/my-posts-unpublished" more className="fs-2 p-3">
+            <Button
+              toActive="/my-posts-unpublished"
+              more
+              className={cx("fs-2", "p-3")}
+            >
               <strong>Đang đợi duyệt</strong>
             </Button>
           </div>
           {listPostSaved.data &&
             listPostSaved.data.map((item) => (
-              <div className={cx("item")} key={item.id}>
+              <div key={item.id} className={cx("item", "mb-4")}>
                 <div className="d-flex align-items-center justify-content-between">
                   <Link to={`/blog/post-detail/${item.id}`}>
                     <h3>{item.title}</h3>
@@ -105,13 +121,13 @@ const MyPostPublished = () => {
           <Button
             update
             onClick={() => setShowModal(false)}
-            className="p-2 fs-5"
+            className={cx("p-2", "fs-5")}
           >
             Đóng
           </Button>
           <Button
             remove
-            className="btn-danger p-2 fs-5"
+            className={cx("btn-danger", "p-2", "fs-5")}
             onClick={() => requestDeleteApi(deleteItemId)}
           >
             Xóa

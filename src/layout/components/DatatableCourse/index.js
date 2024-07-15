@@ -86,20 +86,47 @@ const DatatableCourse = (props) => {
 
   const renderPagination = () => {
     const pagination = [];
-    const nextPage = currentPage + 1 > numOfPage ? null : currentPage + 1;
-    const prevPage = currentPage - 1 < 1 ? null : currentPage - 1;
+    const prevPage = currentPage > 1 ? currentPage - 1 : null;
+    const nextPage = currentPage < numOfPage ? currentPage + 1 : null;
+    const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(numOfPage, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
     pagination.push(
-      <li key="prev" className={prevPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(prevPage)}>
-          &laquo;
+      <li
+        key="prev"
+        className={`page-item ${prevPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(prevPage)}
+          disabled={!prevPage}
+        >
+          &laquo; Prev
         </button>
       </li>
     );
-    for (let i = 1; i <= numOfPage; i++) {
+
+    if (startPage > 1) {
+      pagination.push(
+        <li key="ellipsis-prev" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       pagination.push(
         <li
           key={i}
-          className={currentPage === i ? "page-item active" : "page-item"}
+          className={`page-item ${currentPage === i ? "active" : ""}`}
+          style={{ display: "inline-block", margin: "0 5px" }}
         >
           <button className="page-link" onClick={() => onPageChange(i)}>
             {i}
@@ -107,19 +134,40 @@ const DatatableCourse = (props) => {
         </li>
       );
     }
+
+    if (endPage < numOfPage) {
+      pagination.push(
+        <li key="ellipsis-next" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
     pagination.push(
-      <li key="next" className={nextPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(nextPage)}>
-          &raquo;
+      <li
+        key="next"
+        className={`page-item ${nextPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(nextPage)}
+          disabled={!nextPage}
+        >
+          Next &raquo;
         </button>
       </li>
     );
-    return pagination;
+
+    return (
+      <div className="pagination-wrapper">
+        <ul className="pagination">{pagination}</ul>
+      </div>
+    );
   };
 
   const onChangeOption = (event) => {
     const target = event.target;
-    console.log("change item per page to=> ", target.value);
     onChangeItemsPerPage(target.value);
   };
 
@@ -151,8 +199,8 @@ const DatatableCourse = (props) => {
       </div>
       <div className="card-body">
         <div className="row mb-3">
-          <div className="col-sm-12 col-md-6 d-flex algin-items-center">
-            <div>
+          <div className="col-12 col-md-6">
+            <div className="d-flex align-items-center">
               <select
                 name="example_length"
                 className="form-select form-select-sm ms-1 me-1"
@@ -161,11 +209,9 @@ const DatatableCourse = (props) => {
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
-                <option value="20">25</option>
-                <option value="20">30</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
               </select>
-            </div>
-            <div className="ms-3 w-50">
               <Autocomplete
                 options={categories}
                 getOptionLabel={(option) => option.name}
@@ -178,8 +224,6 @@ const DatatableCourse = (props) => {
                   <TextField {...params} variant="outlined" label="Thể loại" />
                 )}
               />
-            </div>
-            <div className="ms-3 w-50">
               <Autocomplete
                 options={discount}
                 getOptionLabel={(option) => option.name}
@@ -198,46 +242,46 @@ const DatatableCourse = (props) => {
               />
             </div>
           </div>
-          <div className="col-sm-12 col-md-6">
-            <label className="d-inline-flex float-end align-items-center ">
-              <LiveSearch onKeySearch={onKeySearch} />
-            </label>
+          <div className="col-12 col-md-6 mt-3 mt-md-0 ">
+            <LiveSearch onKeySearch={onKeySearch} />
           </div>
         </div>
-        <table
-          className="table table-striped table-bordered"
-          cellSpacing="0"
-          width="100%"
-        >
-          <thead>
-            <tr>
-              <td>
-                <input
-                  checked={
-                    selectedRows.length === data.length && data.length > 0
-                      ? true
-                      : false
-                  }
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={onSelectAll}
-                />
-              </td>
-              {renderHeaders()}
-            </tr>
-          </thead>
-          <tbody>{renderData()}</tbody>
-          <tfoot>
-            <tr>
-              <td></td>
-              {renderHeaders()}
-            </tr>
-          </tfoot>
-        </table>
+        <div className="table-responsive">
+          <table
+            className="table table-striped table-bordered"
+            cellSpacing="0"
+            width="100%"
+          >
+            <thead>
+              <tr>
+                <td>
+                  <input
+                    checked={
+                      selectedRows.length === data.length && data.length > 0
+                        ? true
+                        : false
+                    }
+                    type="checkbox"
+                    className="form-check-input"
+                    onChange={onSelectAll}
+                  />
+                </td>
+                {renderHeaders()}
+              </tr>
+            </thead>
+            <tbody>{renderData()}</tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                {renderHeaders()}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         {numOfPage > 1 && (
           <div className="row">
             <div className="col-sm-12 col-md-7">
-              <ul className="pagination justify-content-end">
+              <ul className="pagination justify-content-end mt-2">
                 {renderPagination()}
               </ul>
             </div>

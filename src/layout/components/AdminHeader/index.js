@@ -5,28 +5,20 @@ import styles from "./AdminHeader.module.scss";
 import Button from "~/components/Button";
 import Logo from "~/public/assets/images/logo.png";
 import Image from "~/components/Image";
-
-import requestApi from "~/utils/api";
 import { adminRoutes } from "~/Route/Routes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faClose } from "@fortawesome/free-solid-svg-icons";
+import requestApi from "~/utils/api";
+
 const cx = classNames.bind(styles);
-const AdminHeader = ({ navigator = "/" }) => {
+
+const AdminHeader = ({ navigator }) => {
   const [userData, setUserData] = useState({});
-  const [searchValue, setSearchValue] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleBackClick = () => {
-    navigate("./");
-  };
-
-  const handleChange = (e) => {
-    const searchValue = e.target.value;
-    if (!searchValue.startsWith(" ")) {
-      setSearchValue(searchValue);
-    }
-  };
   useEffect(() => {
     try {
       requestApi("/users/profile", "GET")
@@ -43,8 +35,26 @@ const AdminHeader = ({ navigator = "/" }) => {
       console.log(err);
     }
   }, []);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
+  const handleOverlayClick = () => {
+    if (menuOpen) {
+      closeMenu();
+    }
+  };
+
   return (
     <div className={cx("wrapper")}>
+      {menuOpen && (
+        <div className={cx("overlay")} onClick={handleOverlayClick} />
+      )}
       <div
         className={cx(
           "content",
@@ -63,7 +73,7 @@ const AdminHeader = ({ navigator = "/" }) => {
                 "d-flex align-items-center justify-content-center"
               )}
             >
-              <Image logo src={Logo}></Image>
+              <Image logo src={Logo} />
               <h5
                 className={cx(
                   "web-name",
@@ -75,29 +85,70 @@ const AdminHeader = ({ navigator = "/" }) => {
             </div>
           </Button>
         </div>
-        <div className={cx("action", "")}>
-          {adminRoutes.map((item, index) =>
-            item.name ? (
-              <Button
-                className="m-0"
-                sidebar
-                key={index}
-                toActive={item.path}
-                leftIcon={item.icon}
-              >
-                {item.name}
-              </Button>
-            ) : (
-              ""
-            )
+        <div className={cx("action")}>
+          {adminRoutes.map(
+            (item, index) =>
+              item.name && (
+                <Button
+                  key={index}
+                  className="m-0"
+                  sidebar
+                  toActive={item.path}
+                  leftIcon={item.icon}
+                >
+                  {item.name}
+                </Button>
+              )
           )}
         </div>
-        <div></div>
         <div className={cx("openMenu")}>
-          <Button sidebar leftIcon={<FontAwesomeIcon icon={faBars} />} />
+          <Button
+            sidebar
+            leftIcon={<FontAwesomeIcon icon={faBars} />}
+            onClick={toggleMenu}
+          />
+          {menuOpen && (
+            <div className={cx("sidebar", "open")}>
+              <div className={cx("sidebar-content")}>
+                <div
+                  className={cx(
+                    "sidebar-header",
+                    "d-flex align-items-center justify-content-end"
+                  )}
+                >
+                  <Button
+                    more
+                    className={cx("close-button", "fs-4 d-flex")}
+                    leftIcon={<FontAwesomeIcon icon={faClose} />}
+                    onClick={closeMenu}
+                  >
+                    Đóng
+                  </Button>
+                </div>
+                <div className={cx("sidebar-links")}>
+                  {adminRoutes.map(
+                    (item, index) =>
+                      item.name && (
+                        <Button
+                          key={index}
+                          sidebar
+                          toActive={item.path}
+                          onClick={closeMenu}
+                        >
+                          {item.name}
+                        </Button>
+                      )
+                  )}
+                </div>
+              </div>
+              <div className={cx("overlay")} onClick={closeMenu} />{" "}
+              {/* Overlay for sidebar */}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
 export default AdminHeader;

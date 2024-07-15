@@ -1,4 +1,5 @@
 @import "../../../components/Mixin/Mixin.scss";
+
 .wrapper {
   color: red;
   height: var(--header-height);
@@ -7,7 +8,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   position: fixed;
-  z-index: 100 !important;
+  z-index: 100;
   top: 0;
   right: 0;
 
@@ -18,32 +19,70 @@
       justify-content: flex-end;
       height: var(--header-height);
     }
-  }
-  @include tabletAndMoblie {
-    justify-content: space-between !important;
-    .action {
-      display: none;
-    }
-    .Menu {
-      display: none;
-    }
-    .Btn-Menu {
-      display: block;
-    }
-  }
-  @include desktop {
     .openMenu {
       display: none;
     }
   }
+
+  @include tabletAndMobile {
+    justify-content: space-between !important;
+
+    .action {
+      display: none;
+    }
+
+    .openMenu {
+      display: block; /* Hiển thị nút menu trên thiết bị di động */
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      height: 100%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: left 0.3s ease-in-out;
+      z-index: 10;
+      width: 100%; /* Chia layout sidebar thành hai nửa */
+      &.open {
+        left: 0;
+      }
+      .sidebar-content {
+        background-color: #fff;
+        height: 100%;
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        z-index: 11;
+        .sidebar-links {
+          display: flex;
+          flex-direction: column;
+          .sidebar-link {
+            padding: 10px 0;
+            cursor: pointer;
+            &:hover {
+              background-color: #f0f0f0;
+            }
+          }
+        }
+      }
+      .overlay {
+        position: fixed; /* Dùng position fixed để overlay theo màn hình */
+        top: 0;
+        right: 0;
+        width: 65%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Màu nền phủ mờ và độ mờ */
+        z-index: 10; /* Đảm bảo nó hiển thị trên sidebar */
+      }
+    }
+  }
 }
-.content {
-  height: 100%;
-  min-width: 98.5%;
-}
+
 .navbar {
   height: 100%;
 }
+
 .logo {
   padding: 0;
 }

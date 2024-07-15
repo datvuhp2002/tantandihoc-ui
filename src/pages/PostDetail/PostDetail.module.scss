@@ -1,9 +1,17 @@
+@import "../../components/Mixin/Mixin.scss";
 .wrapper {
   width: 100%;
   position: relative;
   padding-bottom: 8rem;
-  .wrapper_content {
-    width: 70%;
+  @include desktop {
+    .wrapper_content {
+      width: 70%;
+    }
+  }
+  @include tabletAndMobile {
+    .wrapper_content {
+      width: 90%;
+    }
   }
   .other {
     width: 100%;

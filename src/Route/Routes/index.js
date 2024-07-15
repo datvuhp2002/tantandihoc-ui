@@ -79,6 +79,8 @@ import PracticeProgramming from "~/pages/PracticeProgramming";
 import LessonTrash from "~/pages/ADMIN/Lesson/Trash";
 import QuizTrash from "~/pages/ADMIN/Quiz/Trash";
 import PostTrash from "~/pages/ADMIN/Post/Trash";
+import CommentPost from "~/pages/ADMIN/CommentPost";
+import LessonView from "~/pages/ADMIN/Lesson/View";
 const publicRoutes = [
   {
     path: config.routes.login,
@@ -263,6 +265,10 @@ const adminRoutes = [
     icon: <FontAwesomeIcon icon={faGraduationCap} />,
   },
   {
+    path: config.routesAdmin.lessonView,
+    component: LessonView,
+  },
+  {
     path: config.routesAdmin.lessonAddUrlVid,
     component: LessonAddYoutubeVideo,
   },
@@ -323,6 +329,10 @@ const adminRoutes = [
   {
     path: config.routesAdmin.postAdd,
     component: PostAdd,
+  },
+  {
+    path: config.routesAdmin.commentPost,
+    component: CommentPost,
   },
   {
     path: config.routesAdmin.postTrash,

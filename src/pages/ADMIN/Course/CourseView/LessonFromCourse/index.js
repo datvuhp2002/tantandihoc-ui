@@ -59,7 +59,7 @@ const LessonFromCourse = () => {
       name: "Hành động",
       element: (row) => (
         <div className="d-flex align-items-center justify-content-start">
-          <ButtonCustom type="button" view to={`/admin/quiz?lesson=${row.id}`}>
+          <ButtonCustom type="button" view to={`/admin/lesson/view/${row.id}`}>
             Xem
           </ButtonCustom>
           <ButtonCustom

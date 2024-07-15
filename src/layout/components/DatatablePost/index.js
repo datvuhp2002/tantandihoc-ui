@@ -40,36 +40,34 @@ const DatatablePost = (props) => {
         <td>
           <input
             type="checkbox"
-            checked={selectedRows.includes(String(item.id)) ? true : false}
+            checked={selectedRows.includes(String(item.id))}
             className="form-check-input"
-            value={item.id}
             onChange={onClickCheckbox}
           />
         </td>
-        {columns.map((col, ind) => {
-          return col.name !== "Thumbnail" ? (
-            <td key={ind}>{col.element(item)}</td>
-          ) : (
-            <td key={ind}>
+        {columns.map((col, ind) => (
+          <td key={ind}>
+            {col.name !== "Thumbnail" ? (
+              col.element(item)
+            ) : (
               <Image tableImg src={col.element(item)} />
-            </td>
-          );
-        })}
+            )}
+          </td>
+        ))}
       </tr>
     ));
   };
 
   const onClickCheckbox = (event) => {
-    let checked = event.target.checked;
-    let value = event.target.value;
+    const checked = event.target.checked;
+    const value = event.target.value;
+
     if (checked) {
       if (!selectedRows.includes(value)) {
         setSelectedRows([...selectedRows, value]);
       }
     } else {
-      let index = selectedRows.indexOf(value);
-      const temp = [...selectedRows];
-      temp.splice(index, 1);
+      const temp = selectedRows.filter((row) => row !== value);
       setSelectedRows(temp);
     }
   };
@@ -85,20 +83,47 @@ const DatatablePost = (props) => {
 
   const renderPagination = () => {
     const pagination = [];
-    const nextPage = currentPage + 1 > numOfPage ? null : currentPage + 1;
-    const prevPage = currentPage - 1 < 1 ? null : currentPage - 1;
+    const prevPage = currentPage > 1 ? currentPage - 1 : null;
+    const nextPage = currentPage < numOfPage ? currentPage + 1 : null;
+    const maxVisiblePages = 5; // Số lượng trang tối đa hiển thị
+
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(numOfPage, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
     pagination.push(
-      <li key="prev" className={prevPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(prevPage)}>
-          &laquo;
+      <li
+        key="prev"
+        className={`page-item ${prevPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(prevPage)}
+          disabled={!prevPage}
+        >
+          &laquo; Prev
         </button>
       </li>
     );
-    for (let i = 1; i <= numOfPage; i++) {
+
+    if (startPage > 1) {
+      pagination.push(
+        <li key="ellipsis-prev" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
       pagination.push(
         <li
           key={i}
-          className={currentPage === i ? "page-item active" : "page-item"}
+          className={`page-item ${currentPage === i ? "active" : ""}`}
+          style={{ display: "inline-block", margin: "0 5px" }}
         >
           <button className="page-link" onClick={() => onPageChange(i)}>
             {i}
@@ -106,39 +131,63 @@ const DatatablePost = (props) => {
         </li>
       );
     }
+
+    if (endPage < numOfPage) {
+      pagination.push(
+        <li key="ellipsis-next" className="page-item disabled">
+          <span className="page-link">...</span>
+        </li>
+      );
+    }
+
     pagination.push(
-      <li key="next" className={nextPage ? "page-item" : "page-item disabled"}>
-        <button className="page-link" onClick={() => onPageChange(nextPage)}>
-          &raquo;
+      <li
+        key="next"
+        className={`page-item ${nextPage ? "" : "disabled"}`}
+        style={{ display: "inline-block", margin: "0 5px" }}
+      >
+        <button
+          className="page-link"
+          onClick={() => onPageChange(nextPage)}
+          disabled={!nextPage}
+        >
+          Next &raquo;
         </button>
       </li>
     );
-    return pagination;
-  };
 
+    return (
+      <div className="pagination-wrapper">
+        <ul className="pagination">{pagination}</ul>
+      </div>
+    );
+  };
   const onChangeOption = (event) => {
-    const target = event.target;
-    onChangeItemsPerPage(target.value);
+    onChangeItemsPerPage(event.target.value);
   };
 
   const onChangeIsPublished = (e) => {
     const target = e.target.value;
     const params = new URLSearchParams(location.search);
+
     if (target === "all") {
       params.delete("isPublished");
     } else {
       params.set("isPublished", target);
     }
+
     navigate({ search: params.toString() });
   };
 
   const updateQueryCategoryParams = (category) => {
     const params = new URLSearchParams(location.search);
+
     if (category) {
       params.set("category", category.id);
     } else {
       params.delete("category");
     }
+
     navigate({ search: params.toString() });
   };
 
@@ -150,87 +199,89 @@ const DatatablePost = (props) => {
       </div>
       <div className="card-body">
         <div className="row mb-3">
-          <div className="col-sm-12 col-md-6 d-flex algin-items-center">
-            <div>
-              <select
-                name="example_length"
-                className="form-select form-select-sm ms-1 me-1"
-                onChange={onChangeOption}
-              >
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-              </select>
-            </div>
-            <div className="ms-3 w-50">
-              <Autocomplete
-                options={categories}
-                getOptionLabel={(option) => option.name}
-                value={selectedCategory}
-                onChange={(event, value) => {
-                  setSelectedCategory(value);
-                  updateQueryCategoryParams(value);
-                }}
-                renderInput={(params) => (
-                  <TextField {...params} variant="outlined" label="Thể loại" />
-                )}
-              />
-            </div>
-            <div className="ms-3 w-50">
-              <select
-                name="isPublished"
-                className="form-select form-select-sm ms-1 me-1"
-                value={selectedPublished}
-                onChange={onChangeIsPublished}
-              >
-                <option value="all">Tất cả</option>
-                <option value="true">Đã được duyệt</option>
-                <option value="false">Chưa được duyệt</option>
-              </select>
+          <div className="col-sm-12 col-md-6">
+            <div className="d-flex align-items-center">
+              <div>
+                <select
+                  name="example_length"
+                  className="form-select form-select-sm ms-1 me-1"
+                  onChange={onChangeOption}
+                >
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                  <option value="25">25</option>
+                  <option value="30">30</option>
+                </select>
+              </div>
+              <div className="ms-3 flex-grow-1">
+                <Autocomplete
+                  options={categories}
+                  getOptionLabel={(option) => option.name}
+                  value={selectedCategory}
+                  onChange={(event, value) => {
+                    setSelectedCategory(value);
+                    updateQueryCategoryParams(value);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Thể loại"
+                    />
+                  )}
+                />
+              </div>
+              <div className="ms-3">
+                <select
+                  name="isPublished"
+                  className="form-select form-select-sm ms-1 me-1"
+                  value={selectedPublished}
+                  onChange={onChangeIsPublished}
+                >
+                  <option value="all">Tất cả</option>
+                  <option value="true">Đã được duyệt</option>
+                  <option value="false">Chưa được duyệt</option>
+                </select>
+              </div>
             </div>
           </div>
           <div className="col-sm-12 col-md-6">
-            <label className="d-inline-flex float-end align-items-center ">
+            <label className="d-inline-flex float-end align-items-center">
               <LiveSearch onKeySearch={onKeySearch} />
             </label>
           </div>
         </div>
-        <table
-          className="table table-striped table-bordered"
-          cellSpacing="0"
-          width="100%"
-        >
-          <thead>
-            <tr>
-              <td>
-                <input
-                  checked={
-                    selectedRows.length === data.length && data.length > 0
-                      ? true
-                      : false
-                  }
-                  type="checkbox"
-                  className="form-check-input"
-                  onChange={onSelectAll}
-                />
-              </td>
-              {renderHeaders()}
-            </tr>
-          </thead>
-          <tbody>{renderData()}</tbody>
-          <tfoot>
-            <tr>
-              <td></td>
-              {renderHeaders()}
-            </tr>
-          </tfoot>
-        </table>
+        <div className="table-responsive">
+          <table className="table table-striped table-bordered" width="100%">
+            <thead>
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={
+                      selectedRows.length === data.length && data.length > 0
+                    }
+                    className="form-check-input"
+                    onChange={onSelectAll}
+                  />
+                </td>
+                {renderHeaders()}
+              </tr>
+            </thead>
+            <tbody>{renderData()}</tbody>
+            <tfoot>
+              <tr>
+                <td></td>
+                {renderHeaders()}
+              </tr>
+            </tfoot>
+          </table>
+        </div>
         {numOfPage > 1 && (
           <div className="row">
             <div className="col-sm-12 col-md-7">
-              <ul className="pagination justify-content-end">
+              <ul className="pagination justify-content-end mt-2">
                 {renderPagination()}
               </ul>
             </div>

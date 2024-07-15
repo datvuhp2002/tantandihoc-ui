@@ -1,3 +1,5 @@
+@import "../Mixin/Mixin.scss";
+
 .wrapper {
   position: fixed;
   top: 0;
@@ -19,8 +21,13 @@
     z-index: 1;
     background-color: #0009;
   }
-  .comment {
+  @include desktop {
     width: 40vw;
+  }
+  @include tabletAndMobile {
+    width: 100vw;
+  }
+  .comment {
     height: 100vh;
     position: absolute;
     top: var(--header-height);

@@ -17,13 +17,15 @@ const LiveSearch = ({ onKeySearch }) => {
     setKeyword(target.value);
   };
   return (
-    <input
-      type="search"
-      onChange={onTyping}
-      value={keyword}
-      className="form-control form-control-sm ms-1 p-3 fs-5"
-      placeholder="Tìm kiếm..."
-    />
+    <div className="d-flex align-items-center justify-content-center h-100">
+      <input
+        type="search"
+        onChange={onTyping}
+        value={keyword}
+        className="form-control form-control-sm ms-1 p-3 fs-5"
+        placeholder="Tìm kiếm..."
+      />
+    </div>
   );
 };
 
